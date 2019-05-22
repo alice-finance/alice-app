@@ -27,7 +27,7 @@ const NewMnemonicScreen = () => {
         <Container style={styles.container}>
             <SubtitleText aboveText={true}>{t("start:newSeedPhrase")}</SubtitleText>
             <CaptionText>{t("start:newSeedPhrase.description")}</CaptionText>
-            <View style={styles.main}>
+            <View style={styles.content}>
                 {refreshing ? (
                     <Spinner />
                 ) : (
@@ -56,7 +56,7 @@ const NewMnemonicScreen = () => {
 
 const styles = StyleSheet.create({
     container: { flex: 1 },
-    main: { flex: 1, margin: Spacing.normal },
+    content: { flex: 1, margin: Spacing.normal },
     mnemonic: {
         flexDirection: "row",
         flexWrap: "wrap",
