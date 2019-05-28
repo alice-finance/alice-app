@@ -15,15 +15,18 @@ const ConfirmMnemonicScreen = () => {
     const { push } = useNavigation();
     const mnemonic = useNavigationParam("mnemonic");
     const [confirmed, setConfirmed] = useState(false);
-    const onChangeMnemonic = useCallback(m => {
-        setConfirmed(mnemonic === m.trim());
-    }, mnemonic);
+    const onChangeMnemonic = useCallback(
+        m => {
+            setConfirmed(mnemonic === m.trim());
+        },
+        [mnemonic]
+    );
     const onComplete = useCallback(async () => {
         if (confirmed) {
             await SecureStore.setItemAsync("mnemonic", mnemonic);
             push("Complete");
         }
-    }, mnemonic);
+    }, [confirmed, mnemonic]);
     return (
         <Container style={styles.container}>
             <SubtitleText aboveText={true}>{t("start:confirmSeedPhrase")}</SubtitleText>
