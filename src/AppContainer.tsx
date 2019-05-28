@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Platform } from "react-native";
 import {
     createAppContainer,
@@ -6,6 +7,7 @@ import {
     createStackNavigator,
     createSwitchNavigator
 } from "react-navigation";
+import { useNavigation } from "react-navigation-hooks";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
 import { fromRight } from "react-navigation-transitions";
 
@@ -109,6 +111,16 @@ const AppNavigator = createSwitchNavigator({
     Main: MainNavigator
 });
 
-const AppContainer = createAppContainer(AppNavigator);
+const I18nAppNavigator = Component => {
+    const HOC = () => {
+        const { t } = useTranslation("common");
+        const navigation = useNavigation();
+        return <Component navigation={navigation} screenProps={{ t }} />;
+    };
+    HOC.router = Component.router;
+    return HOC;
+};
+
+const AppContainer = createAppContainer(I18nAppNavigator(AppNavigator));
 
 export default AppContainer;

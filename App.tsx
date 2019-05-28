@@ -15,7 +15,7 @@ export default class App extends React.Component {
             <I18nextProvider i18n={i18n}>
                 <StyleProvider style={getTheme(platform)}>
                     <Root>
-                        <AppContainer />
+                        <AppContainer screenProps={{ t: i18n.t }} />
                     </Root>
                 </StyleProvider>
             </I18nextProvider>

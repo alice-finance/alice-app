@@ -845,7 +845,7 @@
     hoist-non-react-statics "^2.5.0"
     prop-types "^15.6.0"
 
-"@expo/vector-icons@~9.0.0":
+"@expo/vector-icons@^9.0.0", "@expo/vector-icons@~9.0.0":
   version "9.0.0"
   resolved "https://registry.yarnpkg.com/@expo/vector-icons/-/vector-icons-9.0.0.tgz#7f18e21d3edc8b99b76d7d1b8e26b212393e08b3"
   integrity sha512-k5ndrW3oueW5jRDLt3o8iXKmiU+CvvCZPewOvxY7eRMivi8hIr6TkW6tMCGE1vS5fwmXffIkIpKGZkSbX7TxwA==

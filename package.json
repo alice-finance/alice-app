@@ -8,6 +8,7 @@
     "postinstall": "expo-enable-hooks"
   },
   "dependencies": {
+    "@expo/vector-icons": "^9.0.0",
     "bip39": "^3.0.2",
     "color": "^3.1.1",
     "crypto-browserify": "3.12.0",

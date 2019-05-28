@@ -13,7 +13,8 @@ const SplashScreen = () => {
         ExpoSplashScreen.preventAutoHide();
         Font.loadAsync({
             Roboto: require("native-base/Fonts/Roboto.ttf"),
-            Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf")
+            Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf"),
+            SimpleLineIcons: require("@expo/vector-icons/fonts/SimpleLineIcons.ttf")
         }).finally(() => setFontLoaded(true));
     }, []);
     useEffect(() => {
