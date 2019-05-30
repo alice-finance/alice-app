@@ -8,8 +8,9 @@
     "postinstall": "expo-enable-hooks"
   },
   "dependencies": {
+    "@dnextco/alice-proxies": "^1.0.0",
     "@expo/vector-icons": "^9.0.0",
-    "bip39": "^3.0.2",
+    "bip39": "^2.5.0",
     "color": "^3.1.1",
     "crypto-browserify": "3.12.0",
     "ed25519-hd-key": "^1.0.0",
@@ -17,7 +18,7 @@
     "expo": "^32.0.0",
     "i18next": "^15.1.2",
     "lodash": "^4.17.11",
-    "loom-js": "^1.51.1",
+    "loom-js": "^1.53.0",
     "native-base": "^2.12.1",
     "node-libs-react-native": "^1.0.3",
     "react": "16.8.6",
@@ -29,12 +30,15 @@
     "react-navigation-hooks": "^1.0.0-alpha.2",
     "react-navigation-material-bottom-tabs": "^1.0.0",
     "react-navigation-transitions": "^1.0.10",
+    "truffle-contract": "^4.0.17",
     "vm-browserify": "1.1.0",
     "web3": "1.0.0-beta.37",
+    "web3-utils": "1.0.0-beta.37",
     "whatwg-url": "^7.0.0"
   },
   "devDependencies": {
     "@kevinwolf/expo-enable-hooks": "^1.0.0",
+    "@types/bip39": "^2.4.2",
     "@types/expo": "^32.0.13",
     "@types/hdkey": "^0.7.0",
     "@types/react": "16.8.12",

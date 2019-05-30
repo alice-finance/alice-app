@@ -1,25 +1,31 @@
 // @ts-ignore
-import { ETHEREUM_PROVIDER_URL } from "react-native-dotenv";
+import { ETHEREUM_CHAIN_ID, ETHEREUM_PROVIDER_URL } from "react-native-dotenv";
 
 import { mnemonicToSeed } from "bip39";
-import EthereumWallet from "ethereumjs-wallet";
-import EthereumHDKey from "ethereumjs-wallet/hdkey";
+import EthWallet from "ethereumjs-wallet";
+import EthHDKey from "ethereumjs-wallet/hdkey";
 import EventEmitter from "events";
+import { LocalAddress } from "loom-js";
 import Web3 from "web3";
+import Address from "./Address";
 import Wallet from "./Wallet";
 
-class ForeignWallet implements Wallet {
+class EthereumWallet implements Wallet {
     public web3: Web3;
     public mnemonic: string;
-    public privateKey?: string;
-    public address?: string;
+    public address: Address;
     private eventEmitter: EventEmitter;
-    private ethereumWallet: EthereumWallet;
+    private ethereumWallet: EthWallet;
 
     constructor(mnemonic: string) {
-        this.web3 = this.createWeb3(mnemonic);
         this.mnemonic = mnemonic;
+        this.ethereumWallet = this.ethereumWalletFromMnemonic(mnemonic);
+        this.address = new Address(
+            ETHEREUM_CHAIN_ID,
+            LocalAddress.fromHexString(this.ethereumWallet.getChecksumAddressString())
+        );
         this.eventEmitter = new EventEmitter();
+        this.web3 = this.createWeb3(mnemonic);
     }
 
     public createWeb3 = (mnemonic: string) => {
@@ -32,18 +38,13 @@ class ForeignWallet implements Wallet {
             this.web3 = this.createWeb3(mnemonic);
         });
 
-        this.ethereumWallet = this.ethereumWalletFromMnemonic(mnemonic);
-        this.privateKey = this.ethereumWallet.getPrivateKeyString();
-        this.address = this.ethereumWallet.getChecksumAddressString();
-
         const web3 = new Web3(provider);
         web3.eth.accounts.wallet.clear();
-        if (this.privateKey) {
-            web3.eth.accounts.wallet.add(this.privateKey);
+        const privateKey = this.ethereumWallet.getPrivateKeyString();
+        if (privateKey) {
+            web3.eth.accounts.wallet.add(privateKey);
         }
-        if (this.address) {
-            web3.eth.defaultAccount = this.address;
-        }
+        web3.eth.defaultAccount = this.address.local.toChecksumString();
         return web3;
     };
 
@@ -55,10 +56,10 @@ class ForeignWallet implements Wallet {
 
     private ethereumWalletFromMnemonic = (mnemonic: string) => {
         const seed = mnemonicToSeed(mnemonic);
-        return EthereumHDKey.fromMasterSeed(seed)
+        return EthHDKey.fromMasterSeed(seed)
             .derivePath("m/44'/60'/0'/0/0")
             .getWallet();
     };
 }
 
-export default ForeignWallet;
+export default EthereumWallet;
