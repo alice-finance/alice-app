@@ -1,7 +1,15 @@
 import { Address as LoomAddress } from "loom-js";
+import { LocalAddress } from "loom-js/dist";
 import { NULL_ADDRESS } from "../constants/token";
 
 export default class Address extends LoomAddress {
+    public static fromString(address: string): Address {
+        const parts = address.split(":");
+        if (parts.length !== 2) {
+            throw new Error("Invalid address string");
+        }
+        return new Address(parts[0], LocalAddress.fromHexString(parts[1]));
+    }
     public toLocalAddressString = () => this.local.toChecksumString();
     public isNull = () => this.local.toString() === NULL_ADDRESS;
 }

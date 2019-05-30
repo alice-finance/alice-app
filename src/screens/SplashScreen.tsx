@@ -23,8 +23,7 @@ const SplashScreen = () => {
                     setMnemonic(mnemonic);
                     setLoomWallet(loomWallet);
                     setEthereumWallet(new EthereumWallet(mnemonic));
-                    const registry = await loomWallet.ERC20Registry.deployed();
-                    setTokens(registry.getRegisteredERC20Tokens());
+                    setTokens(await loomWallet.fetchERC20Tokens());
                     navigate("Main");
                 } else {
                     navigate("Start");

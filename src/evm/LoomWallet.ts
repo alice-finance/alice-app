@@ -1,5 +1,5 @@
 // @ts-ignore
-import { LOOM_CHAIN_ID, LOOM_READ_URL, LOOM_WRITE_URL } from "react-native-dotenv";
+import { ETHEREUM_CHAIN_ID, LOOM_CHAIN_ID, LOOM_READ_URL, LOOM_WRITE_URL } from "react-native-dotenv";
 
 import { mnemonicToSeed } from "bip39";
 import EventEmitter from "events";
@@ -8,6 +8,7 @@ import { Client, CryptoUtils, LocalAddress, LoomProvider, NonceTxMiddleware, Sig
 import Web3 from "web3";
 import Address from "./Address";
 import Contract from "./Contract";
+import ERC20Token from "./ERC20Token";
 import Wallet from "./Wallet";
 
 class LoomWallet implements Wallet {
@@ -62,6 +63,20 @@ class LoomWallet implements Wallet {
 
     public removeEventListener = (event: "connected" | "disconnected", listener: (...args: any[]) => void) =>
         this.eventEmitter.removeListener(event, listener);
+
+    public fetchERC20Tokens = async () => {
+        const registry = await this.ERC20Registry.deployed();
+        return (await registry.getRegisteredERC20Tokens()).map(
+            token =>
+                new ERC20Token(
+                    token.name,
+                    token.symbol,
+                    token.decimals,
+                    Address.fromString(LOOM_CHAIN_ID + ":" + token.localAddress),
+                    Address.fromString(ETHEREUM_CHAIN_ID + ":" + token.foreignAddress)
+                )
+        );
+    };
 
     private privateKeyFromMnemonic = (mnemonic: string) => {
         const seed = mnemonicToSeed(mnemonic);

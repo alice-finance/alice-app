@@ -106,7 +106,7 @@
     "asset": {
         "savings": "Savings",
         "myAssets": "My Assets",
-        "myAssets.description": "You can only use the deposited assets for trading.",
+        "myAssets.description": "Deposit assets from Ethereum network and use financial services now!",
         "ethereumWallet": "Ethereum wallet",
         "tradeWallet": "Trade wallet",
         "tradeWallet.description": "Deposit your assets into your trade wallet and start investing.",

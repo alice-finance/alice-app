@@ -1,0 +1,1 @@
+export const DEFAULT_GAS_PRICE = 20 * 1000000000;
