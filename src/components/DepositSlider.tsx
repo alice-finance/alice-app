@@ -5,7 +5,6 @@ import { Dialog, Portal } from "react-native-paper";
 
 import { Button, Text } from "native-base";
 import platform from "../../native-base-theme/variables/platform";
-import { Spacing } from "../constants/dimension";
 import { BalancesContext } from "../contexts/BalancesContext";
 import { PendingTransactionsContext } from "../contexts/PendingTransactionsContext";
 import ERC20Token from "../evm/ERC20Token";
@@ -80,7 +79,7 @@ const DepositSlider = ({ token }: { token: ERC20Token }) => {
                             style={[preset.textAlignCenter, preset.marginRightSmall, { fontSize: 48 }]}>
                             {formatValue(amount, 2, 2)}
                         </TextInput>
-                        <Text style={[preset.alignFlexEnd, preset.marginBottomSmall, { fontSize: 24 }]}>
+                        <Text style={[preset.alignFlexEnd, preset.marginBottomSmall, preset.fontSize24]}>
                             {token.symbol}
                         </Text>
                     </View>
@@ -143,9 +142,9 @@ const DepositInProgress = ({
     return depositing || pendingDepositTransactions.length > 0 ? (
         <View>
             <Spinner compact={true} label={t("depositing") + ` (${pendingDepositTransactions.length}/2)`} />
-            <Text style={{ color: platform.brandDanger, margin: Spacing.large }}>{t("deposit.description")}</Text>
+            <Text style={[preset.colorDanger, preset.marginLarge]}>{t("deposit.description")}</Text>
             {pendingDepositTransactions.length > 0 && (
-                <Button bordered={true} onPress={onPress} style={{ alignSelf: "center" }}>
+                <Button bordered={true} onPress={onPress} style={preset.alignCenter}>
                     <Text numberOfLines={1} ellipsizeMode="middle">
                         {t("viewTransaction")}
                     </Text>
@@ -172,9 +171,9 @@ const WithdrawInProgress = ({
     return withdrawing || pendingWithdrawalTransactions.length > 0 ? (
         <View>
             <Spinner compact={true} label={t("withdrawing") + ` (${pendingWithdrawalTransactions.length}/3)`} />
-            <Text style={{ color: platform.brandDanger, margin: Spacing.large }}>{t("withdrawal.description")}</Text>
+            <Text style={[preset.colorDanger, preset.marginLarge]}>{t("withdrawal.description")}</Text>
             {pendingWithdrawalTransactions.length >= 3 && (
-                <Button bordered={true} onPress={onPress} style={{ alignSelf: "center" }}>
+                <Button bordered={true} onPress={onPress} style={preset.alignCenter}>
                     <Text numberOfLines={1} ellipsizeMode="middle">
                         {t("viewTransaction")}
                     </Text>
@@ -216,21 +215,21 @@ const SetDepositAmountDialog = ({
             </Dialog.Title>
             <Dialog.Content>
                 <Text>{t("wouldYouChangeTheDepositAmount")}</Text>
-                <View style={{ marginVertical: Spacing.normal, height: 1, backgroundColor: platform.listDividerBg }} />
+                <View style={[preset.marginTopNormal, preset.marginBottomNormal, styles.border]} />
                 <Row label={t("depositChange")} value={changing} />
                 <Row label={t("newDepositAmount")} value={changed} />
-                <View style={{ marginVertical: Spacing.normal, height: 1, backgroundColor: platform.listDividerBg }} />
-                <Text style={{ flex: 0, fontSize: 14, color: "grey" }}>
+                <View style={[preset.marginTopNormal, preset.marginBottomNormal, styles.border]} />
+                <Text style={[preset.flex0, preset.fontSize14, preset.colorGrey]}>
                     {change.gt(toBN(0)) ? t("deposit.description") : t("withdrawal.description")}
                 </Text>
             </Dialog.Content>
             <Dialog.Actions>
-                <View style={{ flexDirection: "row" }}>
+                <View style={preset.flexDirectionRow}>
                     <Button rounded={true} block={true} transparent={true} onPress={onCancel}>
-                        <Text style={{ color: platform.brandPrimary }}>{t("cancel")}</Text>
+                        <Text style={preset.colorPrimary}>{t("cancel")}</Text>
                     </Button>
                     <Button rounded={true} block={true} transparent={true} onPress={onOk}>
-                        <Text style={{ color: platform.brandPrimary }}>{t("ok")}</Text>
+                        <Text style={preset.colorPrimary}>{t("ok")}</Text>
                     </Button>
                 </View>
             </Dialog.Actions>
@@ -239,14 +238,15 @@ const SetDepositAmountDialog = ({
 };
 
 const Row = ({ label, value }) => (
-    <View style={{ flexDirection: "row", marginVertical: Spacing.tiny }}>
-        <Text style={{ flex: 0, fontSize: 14, color: "grey" }}>{label}</Text>
-        <Text style={{ flex: 1, fontSize: 14, textAlign: "right" }}>{value}</Text>
+    <View style={[preset.flexDirectionRow, preset.marginTopTiny, preset.marginBottomTiny]}>
+        <Text style={[preset.flex0, preset.colorGrey, preset.fontSize14]}>{label}</Text>
+        <Text style={[preset.flex1, preset.textAlignRight, preset.fontSize14]}>{value}</Text>
     </View>
 );
 
 const styles = StyleSheet.create({
-    scaleText: { flex: 1, color: "darkgrey", fontSize: 12 }
+    scaleText: { flex: 1, color: "darkgrey", fontSize: 12 },
+    border: { height: 1, backgroundColor: platform.listDividerBg }
 });
 
 export default DepositSlider;
