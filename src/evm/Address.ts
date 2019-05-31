@@ -1,5 +1,4 @@
-import { Address as LoomAddress } from "loom-js";
-import { LocalAddress } from "loom-js/dist";
+import { Address as LoomAddress, LocalAddress } from "loom-js";
 import { NULL_ADDRESS } from "../constants/token";
 
 export default class Address extends LoomAddress {

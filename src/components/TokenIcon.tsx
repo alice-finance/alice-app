@@ -1,9 +1,15 @@
 import React, { useCallback, useState } from "react";
-import { Image, StyleSheet, View } from "react-native";
+import { Image, StyleSheet, View, ViewProps } from "react-native";
 
 import { NULL_ADDRESS } from "../constants/token";
 
-const TokenIcon = ({ address, width, height, style = {} }) => {
+interface TokenIconProps extends ViewProps {
+    address: string;
+    width: number;
+    height: number;
+}
+
+const TokenIcon: React.FunctionComponent<TokenIconProps> = ({ address, width, height, style }) => {
     address = address && address.toString().toLowerCase();
     const [loaded, setLoaded] = useState(false);
     const onLoad = useCallback(() => setLoaded(true), [loaded]);

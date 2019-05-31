@@ -1,46 +1,31 @@
 import React, { useCallback, useState } from "react";
 
 import BN from "bn.js";
+import Address from "../evm/Address";
 import { toBN } from "../utils/erc20-utils";
 
 export const BalancesContext = React.createContext({
-    getLoomBalance: (address: string): BN => toBN(0),
-    setLoomBalances: (balances: { [address: string]: BN }) => {},
-    getEthereumBalance: (address: string): BN => toBN(0),
-    setEthereumBalances: (balances: { [address: string]: BN }) => {},
-    updateEthereumBalance: (address: string, balance: BN) => {}
+    getBalance: (address: Address): BN => toBN(0),
+    updateBalance: (address: Address, balance: BN) => {}
 });
 
 export const BalancesProvider = ({ children }) => {
-    const [loomBalances, setLoomBalances] = useState({} as { [address: string]: BN });
-    const getLoomBalance = useCallback(
-        (address: string): BN => {
-            return loomBalances[address] ? toBN(loomBalances[address]) : toBN(0);
+    const [balances, setBalances] = useState({} as { [address: string]: BN });
+    const getBalance = useCallback(
+        (address: Address): BN => {
+            return balances[address.toString()] ? toBN(balances[address.toString()]) : toBN(0);
         },
-        [loomBalances]
+        [balances]
     );
-    const updateLoomBalance = useCallback((address: string, balance: BN) => {
-        setLoomBalances({ ...loomBalances, [address]: balance });
-    }, []);
-    const [ethereumBalances, setEthereumBalances] = useState({} as { [address: string]: BN });
-    const getEthereumBalance = useCallback(
-        (address: string): BN => {
-            return ethereumBalances[address] ? toBN(ethereumBalances[address]) : toBN(0);
-        },
-        [ethereumBalances]
-    );
-    const updateEthereumBalance = useCallback((address: string, balance: BN) => {
-        setEthereumBalances({ ...ethereumBalances, [address]: balance });
+    const updateBalance = useCallback((address: Address, balance: BN) => {
+        setBalances({ ...balances, [address.toString()]: balance });
     }, []);
     return (
         <BalancesContext.Provider
             value={{
-                getLoomBalance,
-                setLoomBalances,
-                updateLoomBalance,
-                getEthereumBalance,
-                setEthereumBalances,
-                updateEthereumBalance
+                getBalance,
+                setBalances,
+                updateBalance
             }}>
             {children}
         </BalancesContext.Provider>

@@ -1,7 +1,7 @@
 export class Spacing {
-    static tiny = 4;
-    static small = 8;
-    static normal = 16;
-    static large = 32;
-    static huge = 64;
+    public static tiny = 4;
+    public static small = 8;
+    public static normal = 16;
+    public static large = 32;
+    public static huge = 64;
 }
