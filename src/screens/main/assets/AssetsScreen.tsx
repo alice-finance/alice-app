@@ -1,26 +1,27 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FlatList, View } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
 import { Body, Button, Container, Icon, ListItem, Text } from "native-base";
-import platform from "../../../../native-base-theme/variables/platform";
 import CaptionText from "../../../components/CaptionText";
 import TitleText from "../../../components/TitleText";
 import TokenIcon from "../../../components/TokenIcon";
 import { Spacing } from "../../../constants/dimension";
+import { ERC20_MAX_PRECISION } from "../../../constants/token";
 import { BalancesContext } from "../../../contexts/BalancesContext";
 import { TokensContext } from "../../../contexts/TokensContext";
 import { WalletContext } from "../../../contexts/WalletContext";
 import ERC20Token from "../../../evm/ERC20Token";
-import { formatValue, toBN } from "../../../utils/erc20-utils";
+import preset from "../../../styles/preset";
+import { formatValue, pow10, toBN } from "../../../utils/erc20-utils";
 
 const AssetsScreen = () => {
     const { refreshing, onRefresh } = useTokensUpdater();
     const { sortedByName, setSortedByName, sortedTokens } = useTokenSorter();
     const { push, setParams } = useNavigation();
     const onSort = useCallback(() => setSortedByName(!sortedByName), [sortedByName]);
-    const onPress = useCallback(token => push("ManageAsset", { tokenAddress: token.address }), []);
+    const onPress = useCallback((token: ERC20Token) => push("ManageAsset", { token }), []);
     const renderItem = useCallback(({ item }) => <TokenListItem token={item} onPress={onPress} />, []);
     useEffect(() => {
         setParams({ onSort });
@@ -43,7 +44,7 @@ const AssetsScreen = () => {
 AssetsScreen.navigationOptions = ({ navigation }) => ({
     headerRight: (
         <Button rounded={true} transparent={true} onPress={navigation.getParam("onSort")}>
-            <Icon type="MaterialIcons" name="sort" style={{ color: platform.brandPrimary }} />
+            <Icon type="MaterialIcons" name="sort" style={preset.colorPrimary} />
         </Button>
     )
 });
@@ -69,19 +70,16 @@ const useTokensUpdater = () => {
 const useTokenSorter = () => {
     const [sortedByName, setSortedByName] = useState(false);
     const { tokens } = useContext(TokensContext);
-    const { getLoomBalance, getEthereumBalance } = useContext(BalancesContext);
+    const { getBalance } = useContext(BalancesContext);
     const sortedTokens = useCallback(() => {
         if (sortedByName) {
             return tokens.sort((t1, t2) => t1.symbol.localeCompare(t2.symbol));
         } else {
             return tokens.sort((t1, t2) =>
-                getEthereumBalance(t1.ethereumAddress.toLocalAddressString())
-                    .add(getLoomBalance(t1.loomAddress.toLocalAddressString()))
-                    .sub(
-                        getEthereumBalance(t2.ethereumAddress.toLocalAddressString()).add(
-                            getLoomBalance(t2.loomAddress.toLocalAddressString())
-                        )
-                    )
+                getBalance(t1.ethereumAddress)
+                    .add(getBalance(t1.loomAddress))
+                    .sub(getBalance(t2.ethereumAddress).add(getBalance(t2.loomAddress)))
+                    .div(pow10(18 - ERC20_MAX_PRECISION))
                     .toNumber()
             );
         }
@@ -92,21 +90,21 @@ const useTokenSorter = () => {
 const TokenListItem = ({ token, onPress }: { token: ERC20Token; onPress: (ERC20Token) => void }) => {
     return (
         <ListItem button={true} noBorder={true} iconRight={true} onPress={useCallback(() => onPress(token), [token])}>
-            <Body style={{ flex: 0, marginLeft: Spacing.small, paddingRight: Spacing.normal }}>
+            <Body style={styles.tokenIcon}>
                 <TokenIcon address={token.ethereumAddress.toLocalAddressString()} width={32} height={32} />
             </Body>
-            <Body style={{ flex: 1 }}>
-                <Text style={{ fontSize: 20 }}>{token.symbol}</Text>
+            <Body style={preset.flex0}>
+                <Text style={preset.fontSize20}>{token.symbol}</Text>
                 <Text note={true} style={{ color: "darkgrey" }}>
                     {token.name}
                 </Text>
             </Body>
-            <Body style={{ flex: 0 }}>
-                <Text style={{ fontSize: 20, textAlign: "right", color: "darkgrey", marginRight: Spacing.tiny }}>
+            <Body style={preset.flex1}>
+                <Text style={[preset.fontSize20, preset.textAlignRight, preset.colorDarkGrey, preset.marginRightTiny]}>
                     {formatValue(toBN(0).add(toBN(0)), token.decimals, 2)}
                 </Text>
             </Body>
-            <Icon type="MaterialIcons" name="chevron-right" style={{ color: platform.brandPrimary }} />
+            <Icon type="MaterialIcons" name="chevron-right" style={preset.colorPrimary} />
         </ListItem>
     );
 };
@@ -116,9 +114,13 @@ const ListHeader = () => {
     return (
         <View>
             <TitleText aboveText={true}>{t("myAssets")}</TitleText>
-            <CaptionText style={{ marginBottom: Spacing.large }}>{t("myAssets.description")}</CaptionText>
+            <CaptionText style={preset.marginBottomLarge}>{t("myAssets.description")}</CaptionText>
         </View>
     );
 };
+
+const styles = StyleSheet.create({
+    tokenIcon: { flex: 0, marginLeft: Spacing.small, paddingRight: Spacing.normal }
+});
 
 export default AssetsScreen;
