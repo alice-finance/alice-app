@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from "react";
 import { View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
-import { Font, SecureStore, SplashScreen as ExpoSplashScreen } from "expo";
+import { Asset, Font, SecureStore, SplashScreen as ExpoSplashScreen } from "expo";
 import { AddressMapper } from "loom-js/dist/contracts";
 import { TokensContext } from "../contexts/TokensContext";
 import { WalletContext } from "../contexts/WalletContext";
@@ -18,6 +18,7 @@ const SplashScreen = () => {
         const init = async () => {
             try {
                 await loadFonts();
+                await loadResources();
                 const mnemonic = await SecureStore.getItemAsync("mnemonic");
                 if (mnemonic) {
                     const loomWallet = new LoomWallet(mnemonic);
@@ -47,8 +48,22 @@ const loadFonts = (): Promise<void> => {
         Roboto: require("native-base/Fonts/Roboto.ttf"),
         Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf"),
         SimpleLineIcons: require("@expo/vector-icons/fonts/SimpleLineIcons.ttf"),
-        MaterialIcons: require("@expo/vector-icons/fonts/MaterialIcons.ttf")
+        MaterialIcons: require("@expo/vector-icons/fonts/MaterialIcons.ttf"),
+        AntDesign: require("@expo/vector-icons/fonts/AntDesign.ttf")
     });
+};
+
+const loadResources = (): Promise<void[]> => {
+    const images = [
+        require("../assets/main-bg.png"),
+        require("../assets/icon-light.png"),
+        require("../assets/logo-light.png")
+    ];
+    return Promise.all(
+        images.map(image => {
+            return Asset.fromModule(image).downloadAsync();
+        })
+    );
 };
 
 const addIdentityMapping = async (ethereumWallet: EthereumWallet, loomWallet: LoomWallet) => {

@@ -29,7 +29,7 @@ const CompleteScreen = () => {
                     }}
                 />
                 <Button
-                    success={true}
+                    info={true}
                     block={true}
                     large={true}
                     style={{ marginTop: Spacing.normal }}

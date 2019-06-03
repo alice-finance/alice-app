@@ -19,7 +19,7 @@ const StartScreen = () => {
                 <Image
                     style={styles.icon}
                     resizeMode="contain"
-                    source={require("../../assets/icon.png")}
+                    source={require("../../assets/icon-light.png")}
                     fadeDuration={0}
                 />
                 <Image
@@ -38,7 +38,7 @@ const StartScreen = () => {
 const CreateWalletButton = ({ onPress }) => {
     const { t } = useTranslation("start");
     return (
-        <Button block={true} primary={true} style={styles.button} onPress={onPress}>
+        <Button block={true} large={true} primary={true} rounded={true} style={styles.button} onPress={onPress}>
             <Text uppercase={false} style={{ fontWeight: "bold" }}>
                 {t("createNewWallet")}
             </Text>
@@ -49,7 +49,14 @@ const CreateWalletButton = ({ onPress }) => {
 const ImportWalletButton = ({ onPress }) => {
     const { t } = useTranslation("start");
     return (
-        <Button block={true} light={true} bordered={true} style={styles.button} onPress={onPress}>
+        <Button
+            block={true}
+            large={true}
+            light={true}
+            rounded={true}
+            bordered={true}
+            style={styles.button}
+            onPress={onPress}>
             <Text uppercase={false}>{t("importExistingWallet")}</Text>
         </Button>
     );
@@ -63,12 +70,12 @@ const styles = StyleSheet.create({
         padding: Spacing.normal
     },
     icon: {
-        width: 96,
-        height: 96,
+        width: 84,
+        height: 84,
         marginBottom: Spacing.tiny
     },
     logo: {
-        width: 144,
+        width: 140,
         height: 70,
         marginBottom: Spacing.huge
     },
@@ -78,13 +85,13 @@ const styles = StyleSheet.create({
     },
     background: {
         position: "absolute",
-        top: "-15%",
-        left: "-200%"
+        left: "-110%",
+        bottom: "0%"
     },
     backgroundImage: {
         resizeMode: "contain"
     },
-    button: { marginTop: Spacing.normal }
+    button: { margin: Spacing.small }
 });
 
 StartScreen.navigationOptions = () => ({
