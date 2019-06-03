@@ -3,6 +3,7 @@ import { View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
 import { Font, SecureStore, SplashScreen as ExpoSplashScreen } from "expo";
+import { AddressMapper } from "loom-js/dist/contracts";
 import { TokensContext } from "../contexts/TokensContext";
 import { WalletContext } from "../contexts/WalletContext";
 import EthereumWallet from "../evm/EthereumWallet";
@@ -20,9 +21,11 @@ const SplashScreen = () => {
                 const mnemonic = await SecureStore.getItemAsync("mnemonic");
                 if (mnemonic) {
                     const loomWallet = new LoomWallet(mnemonic);
+                    const ethereumWallet = new EthereumWallet(mnemonic);
+                    await addIdentityMapping(ethereumWallet, loomWallet);
                     setMnemonic(mnemonic);
                     setLoomWallet(loomWallet);
-                    setEthereumWallet(new EthereumWallet(mnemonic));
+                    setEthereumWallet(ethereumWallet);
                     setTokens(await loomWallet.fetchERC20Tokens());
                     navigate("Main");
                 } else {
@@ -46,6 +49,13 @@ const loadFonts = (): Promise<void> => {
         SimpleLineIcons: require("@expo/vector-icons/fonts/SimpleLineIcons.ttf"),
         MaterialIcons: require("@expo/vector-icons/fonts/MaterialIcons.ttf")
     });
+};
+
+const addIdentityMapping = async (ethereumWallet: EthereumWallet, loomWallet: LoomWallet) => {
+    const addressMapper = await AddressMapper.createAsync(loomWallet.client, loomWallet.address);
+    if (!(await addressMapper.hasMappingAsync(ethereumWallet.address))) {
+        await addressMapper.addIdentityMappingAsync(loomWallet.address, ethereumWallet.address, ethereumWallet);
+    }
 };
 
 export default SplashScreen;

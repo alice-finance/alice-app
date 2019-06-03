@@ -2,15 +2,17 @@
 import { ETHEREUM_CHAIN_ID, ETHEREUM_PROVIDER_URL } from "react-native-dotenv";
 
 import { mnemonicToSeed } from "bip39";
+import ethutil from "ethereumjs-util";
 import EthWallet from "ethereumjs-wallet";
 import EthHDKey from "ethereumjs-wallet/hdkey";
 import EventEmitter from "events";
 import { LocalAddress } from "loom-js";
+import { IEthereumSigner } from "loom-js/dist";
 import Web3 from "web3";
 import Address from "./Address";
 import Wallet from "./Wallet";
 
-class EthereumWallet implements Wallet {
+class EthereumWallet implements Wallet, IEthereumSigner {
     public web3: Web3;
     public mnemonic: string;
     public address: Address;
@@ -53,6 +55,20 @@ class EthereumWallet implements Wallet {
 
     public removeEventListener = (event: "connected" | "disconnected", listener: (...args: any[]) => void) =>
         this.eventEmitter.removeListener(event, listener);
+
+    public async signAsync(msg: string): Promise<Uint8Array> {
+        const privateKey = this.ethereumWallet.getPrivateKeyString();
+        const ret = await this.web3.eth.accounts.sign(msg, privateKey);
+        // @ts-ignore
+        const sig = ret.signature.slice(2);
+
+        const mode = 1; // Geth
+        const r = ethutil.toBuffer("0x" + sig.substring(0, 64)) as Buffer;
+        const s = ethutil.toBuffer("0x" + sig.substring(64, 128)) as Buffer;
+        const v = parseInt(sig.substring(128, 130), 16);
+
+        return Buffer.concat([ethutil.toBuffer(mode) as Buffer, r, s, ethutil.toBuffer(v) as Buffer]);
+    }
 
     private ethereumWalletFromMnemonic = (mnemonic: string) => {
         const seed = mnemonicToSeed(mnemonic);

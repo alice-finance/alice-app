@@ -53,6 +53,7 @@ class LoomWallet implements Wallet {
             this.web3 = this.createWeb3(mnemonic);
         });
 
+        // @ts-ignore
         const web3 = new Web3(provider);
         web3.eth.defaultAccount = this.address.local.toChecksumString();
         return web3;
