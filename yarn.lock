@@ -845,10 +845,10 @@
     hoist-non-react-statics "^2.5.0"
     prop-types "^15.6.0"
 
-"@dnextco/alice-proxies@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@dnextco/alice-proxies/-/alice-proxies-1.0.0.tgz#14c707bf4bb8a1b1cb1f35ae88ae740e35224754"
-  integrity sha512-/2haTyiVMp1COADA2tyThqMPMcbBup1lK+AOooenA+1zcecZqwRPD7M25YmJjSd6FGCklatTAAsHqGmMxe49zw==
+"@dnextco/alice-proxies@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@dnextco/alice-proxies/-/alice-proxies-1.0.3.tgz#6cb61f7cbff5a8e3dfdc97947e828209adea9a4d"
+  integrity sha512-wKhZb7iev6qmNanxq5ZyknOsXlCXeJamMEdT9qJv5/KZXnIaR4c7b9dnQut9+AWTfChnz5NunHhCQGCk0PhiZw==
   dependencies:
     dotenv "^8.0.0"
     loom-truffle-provider "^0.13.0"
@@ -982,11 +982,6 @@
   version "6.5.3"
   resolved "https://registry.yarnpkg.com/@types/qs/-/qs-6.5.3.tgz#1c3b71b091eaeaf5924538006b7f70603ce63d38"
   integrity sha512-Jugo5V/1bS0fRhy2z8+cUAHEyWOATaz4rbyLVvcFs7+dXp5HfwpEwzF1Q11bB10ApUqHf+yTauxI0UXQDwGrbA==
-
-"@types/react-native-dotenv@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@types/react-native-dotenv/-/react-native-dotenv-0.2.0.tgz#32c58422a422c1adf68acce363ed791314d5a8e7"
-  integrity sha512-ZxX+dU/yoQc0jTk+/NWttkiuXceJyN5FpOSqDl0WynN5GDzxwH7OMruQ47qcY8llo2RD3irjvzJ9BwC8gDiq0A==
 
 "@types/react-native@*", "@types/react-native@^0.57.53":
   version "0.57.53"

@@ -50,20 +50,23 @@ AssetsScreen.navigationOptions = ({ navigation }) => ({
 });
 
 const useTokensUpdater = () => {
-    const { setTokens } = useContext(TokensContext);
-    const { loomWallet } = useContext(WalletContext);
+    const { tokens } = useContext(TokensContext);
+    const { updateBalance } = useContext(BalancesContext);
+    const { ethereumWallet, loomWallet } = useContext(WalletContext);
     const [refreshing, setRefreshing] = useState(false);
     const onRefresh = useCallback(async () => {
         setRefreshing(true);
         try {
-            if (loomWallet) {
-                setTokens(await loomWallet.fetchERC20Tokens());
-                // TODO: update balances
+            if (ethereumWallet && loomWallet) {
+                await Promise.all([
+                    ethereumWallet.fetchERC20Balances(tokens, updateBalance),
+                    loomWallet.fetchERC20Balances(tokens, updateBalance)
+                ]);
             }
         } finally {
             setRefreshing(false);
         }
-    }, []);
+    }, [tokens, ethereumWallet, loomWallet]);
     return { refreshing, onRefresh };
 };
 
@@ -88,6 +91,7 @@ const useTokenSorter = () => {
 };
 
 const TokenListItem = ({ token, onPress }: { token: ERC20Token; onPress: (ERC20Token) => void }) => {
+    const { getBalance } = useContext(BalancesContext);
     return (
         <ListItem button={true} noBorder={true} iconRight={true} onPress={useCallback(() => onPress(token), [token])}>
             <Body style={styles.tokenIcon}>
@@ -101,7 +105,11 @@ const TokenListItem = ({ token, onPress }: { token: ERC20Token; onPress: (ERC20T
             </Body>
             <Body style={preset.flex1}>
                 <Text style={[preset.fontSize20, preset.textAlignRight, preset.colorDarkGrey, preset.marginRightTiny]}>
-                    {formatValue(toBN(0).add(toBN(0)), token.decimals, 2)}
+                    {formatValue(
+                        getBalance(token.ethereumAddress).add(getBalance(token.loomAddress)),
+                        token.decimals,
+                        2
+                    )}
                 </Text>
             </Body>
             <Icon type="MaterialIcons" name="chevron-right" style={preset.colorPrimary} />

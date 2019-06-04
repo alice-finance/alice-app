@@ -1,7 +1,12 @@
-// @ts-ignore
-import { ETHEREUM_CHAIN_ID, ETHEREUM_PROVIDER_URL } from "react-native-dotenv";
+import {
+    ETHEREUM_CHAIN_ID,
+    ETHEREUM_ERC20_GATEWAY,
+    ETHEREUM_NETWORK_NAME,
+    ETHEREUM_PROVIDER_URL
+} from "react-native-dotenv";
 
 import { mnemonicToSeed } from "bip39";
+import BN from "bn.js";
 import ethutil from "ethereumjs-util";
 import EthWallet from "ethereumjs-wallet";
 import EthHDKey from "ethereumjs-wallet/hdkey";
@@ -9,13 +14,18 @@ import EventEmitter from "events";
 import { LocalAddress } from "loom-js";
 import { IEthereumSigner } from "loom-js/dist";
 import Web3 from "web3";
+import { toBN } from "../utils/erc20-utils";
 import Address from "./Address";
+import ContractFactory from "./ContractFactory";
+import ERC20Token from "./ERC20Token";
 import Wallet from "./Wallet";
 
 class EthereumWallet implements Wallet, IEthereumSigner {
     public web3: Web3;
     public mnemonic: string;
     public address: Address;
+    public ERC20: ContractFactory;
+    public ERC20Gateway: ContractFactory;
     private eventEmitter: EventEmitter;
     private ethereumWallet: EthWallet;
 
@@ -28,6 +38,17 @@ class EthereumWallet implements Wallet, IEthereumSigner {
         );
         this.eventEmitter = new EventEmitter();
         this.web3 = this.createWeb3(mnemonic);
+        this.ERC20 = new ContractFactory(this.web3, {
+            abi: require("loom-js/dist/mainnet-contracts/ERC20.json")
+        });
+        this.ERC20Gateway = new ContractFactory(this.web3, {
+            abi: require("loom-js/dist/mainnet-contracts/ERC20Gateway.json"),
+            networks: {
+                [ETHEREUM_NETWORK_NAME]: {
+                    address: ETHEREUM_ERC20_GATEWAY
+                }
+            }
+        });
     }
 
     public createWeb3 = (mnemonic: string) => {
@@ -55,6 +76,30 @@ class EthereumWallet implements Wallet, IEthereumSigner {
 
     public removeEventListener = (event: "connected" | "disconnected", listener: (...args: any[]) => void) =>
         this.eventEmitter.removeListener(event, listener);
+
+    public getBalance = async () => {
+        const balance = await this.web3.eth.getBalance(this.address.toLocalAddressString());
+        return toBN(balance);
+    };
+
+    public fetchERC20Balances = async (
+        tokens: ERC20Token[],
+        updateBalance: (address: Address, balance: BN) => void
+    ) => {
+        const ethToken = tokens.find(token => token.ethereumAddress.isNull());
+        if (ethToken) {
+            updateBalance(ethToken.ethereumAddress, await this.getBalance());
+        }
+        await Promise.all(
+            tokens
+                .filter(token => !token.loomAddress.isNull())
+                .map(async token => {
+                    const erc20 = await this.ERC20.at(token.ethereumAddress.toLocalAddressString());
+                    const balance = await erc20.balanceOf(this.address.toLocalAddressString());
+                    updateBalance(token.ethereumAddress, balance);
+                })
+        );
+    };
 
     public async signAsync(msg: string): Promise<Uint8Array> {
         const privateKey = this.ethereumWallet.getPrivateKeyString();

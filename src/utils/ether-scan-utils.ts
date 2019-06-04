@@ -1,4 +1,3 @@
-// @ts-ignore
 import { ETHER_SCAN_URL } from "react-native-dotenv";
 
 import { Linking } from "expo";

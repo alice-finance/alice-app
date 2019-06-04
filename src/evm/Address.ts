@@ -10,5 +10,6 @@ export default class Address extends LoomAddress {
         return new Address(parts[0], LocalAddress.fromHexString(parts[1]));
     }
     public toLocalAddressString = () => this.local.toChecksumString();
+    public toString = () => this.chainId + ":" + this.toLocalAddressString();
     public isNull = () => this.local.toString() === NULL_ADDRESS;
 }

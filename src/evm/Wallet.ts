@@ -1,3 +1,4 @@
+import BN from "bn.js";
 import Web3 from "web3";
 import Address from "./Address";
 
@@ -8,6 +9,7 @@ interface Wallet {
 
     addEventListener: (event: "connected" | "disconnected", listener: (...args: any[]) => void) => void;
     removeEventListener: (event: "connected" | "disconnected", listener: (...args: any[]) => void) => void;
+    getBalance: () => Promise<BN>;
 }
 
 export default Wallet;

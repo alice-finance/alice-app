@@ -17,14 +17,12 @@ export const BalancesProvider = ({ children }) => {
         },
         [balances]
     );
-    const updateBalance = useCallback((address: Address, balance: BN) => {
-        setBalances({ ...balances, [address.toString()]: balance });
-    }, []);
+    const updateBalance = (address: Address, balance: BN) =>
+        setBalances(oldBalances => ({ ...oldBalances, [address.toString()]: balance }));
     return (
         <BalancesContext.Provider
             value={{
                 getBalance,
-                setBalances,
                 updateBalance
             }}>
             {children}
