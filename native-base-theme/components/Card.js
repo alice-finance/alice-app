@@ -29,8 +29,8 @@ export default (variables /*: * */ = variable) => {
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
-        shadowRadius: 8,
-        elevation: 2
+        shadowRadius: 16,
+        elevation: 8
     };
 
     return cardTheme;

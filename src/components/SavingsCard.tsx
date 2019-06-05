@@ -1,6 +1,7 @@
-import React, { useContext } from "react";
+import React, { useCallback, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
+import { useNavigation } from "react-navigation-hooks";
 
 import { Body, Button, Card, CardItem, Icon, Left, Right, Text } from "native-base";
 import TokenIcon from "../components/TokenIcon";
@@ -11,9 +12,11 @@ import { formatValue } from "../utils/bn-utils";
 
 const SavingsCard = () => {
     const { t } = useTranslation("finance");
+    const { push } = useNavigation();
     const { asset, totalBalance, myTotalPrincipal, apr } = useContext(SavingsContext);
+    const onPress = useCallback(() => push("NewSavings"), []);
     return (
-        <View style={[preset.marginLeftNormal, preset.marginRightNormal]}>
+        <View style={[preset.marginNormal]}>
             <Card>
                 <CardItem>
                     <Left>
@@ -50,10 +53,10 @@ const SavingsCard = () => {
                         </View>
                     </Body>
                 </CardItem>
-                <CardItem>
+                <CardItem style={preset.marginBottomSmall}>
                     <Left />
                     <Right>
-                        <Button primary={true} transparent={true} iconRight={true}>
+                        <Button primary={true} rounded={true} iconRight={true} onPress={onPress}>
                             <Text style={{ fontSize: 16, paddingRight: 8 }}>{t("startSaving")}</Text>
                             <Icon type="SimpleLineIcons" name="paper-plane" style={{ fontSize: 18 }} />
                         </Button>

@@ -186,7 +186,7 @@ export default (variables /*: * */ = variable) => {
         },
         flexDirection: "row",
         alignItems: "center",
-        borderRadius: 8,
+        borderRadius: 16,
         padding: variables.cardItemPadding + 5,
         paddingVertical: variables.cardItemPadding,
         backgroundColor: variables.cardDefaultBg
