@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
-import { Portal } from "react-native-paper";
 import { useNavigation } from "react-navigation-hooks";
 
 import { Container } from "native-base";
@@ -29,23 +28,21 @@ const ManageAssetScreen = () => {
     const inProgress = pendingDepositTransactions.length > 0 || pendingWithdrawalTransactions.length > 0;
     if (token) {
         return (
-            <Portal.Host>
-                <Container>
-                    <TokenView token={token} />
-                    <HeadlineText aboveText={true}>{t("depositAmount")}</HeadlineText>
-                    <CaptionText small={true}>{t("depositAmount.description")}</CaptionText>
-                    <View style={preset.marginNormal}>
-                        {inProgress ? (
-                            <View style={[preset.marginBottomLarge, preset.paddingNormal]}>
-                                <DepositInProgress token={token} />
-                                <WithdrawalInProgress token={token} />
-                            </View>
-                        ) : (
-                            <DepositSlider token={token} />
-                        )}
-                    </View>
-                </Container>
-            </Portal.Host>
+            <Container>
+                <TokenView token={token} />
+                <HeadlineText aboveText={true}>{t("depositAmount")}</HeadlineText>
+                <CaptionText small={true}>{t("depositAmount.description")}</CaptionText>
+                <View style={preset.marginNormal}>
+                    {inProgress ? (
+                        <View style={[preset.marginBottomLarge, preset.paddingNormal]}>
+                            <DepositInProgress token={token} />
+                            <WithdrawalInProgress token={token} />
+                        </View>
+                    ) : (
+                        <DepositSlider token={token} />
+                    )}
+                </View>
+            </Container>
         );
     } else {
         return <Container />;

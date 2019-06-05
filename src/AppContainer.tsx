@@ -16,6 +16,7 @@ import TabBarIcon from "./components/TabBarIcon";
 import AssetsScreen from "./screens/main/assets/AssetsScreen";
 import ManageAssetScreen from "./screens/main/assets/ManageAssetScreen";
 import FinanceScreen from "./screens/main/finance/FinanceScreen";
+import NewSavingsScreen from "./screens/main/finance/NewSavingsScreen";
 import ProfileScreen from "./screens/main/profile/ProfileScreen";
 import SplashScreen from "./screens/SplashScreen";
 import CompleteScreen from "./screens/start/CompleteScreen";
@@ -61,7 +62,8 @@ const StartNavigator = createDefaultStackNavigator(
 const tabs = {
     FinanceTab: {
         screen: createDefaultStackNavigator({
-            Finance: FinanceScreen
+            Finance: FinanceScreen,
+            NewSavings: NewSavingsScreen
         }),
         navigationOptions: tabBarNavigationOptions("finance", "present")
     },

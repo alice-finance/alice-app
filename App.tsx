@@ -9,6 +9,7 @@ import platform from "./native-base-theme/variables/platform";
 import AppContainer from "./src/AppContainer";
 import { ContextProvider } from "./src/contexts";
 import i18n from "./src/i18n";
+import { Portal } from "react-native-paper";
 
 export default class App extends React.Component {
     public render() {
@@ -17,7 +18,9 @@ export default class App extends React.Component {
                 <ContextProvider>
                     <StyleProvider style={getTheme(platform)}>
                         <Root>
-                            <AppContainer screenProps={{ t: i18n.t }} />
+                            <Portal.Host>
+                                <AppContainer screenProps={{ t: i18n.t }} />
+                            </Portal.Host>
                         </Root>
                     </StyleProvider>
                 </ContextProvider>

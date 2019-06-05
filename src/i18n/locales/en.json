@@ -167,6 +167,9 @@
         "apr": "APR",
         "inquiring": "Inquiring",
         "startSaving": "Start Saving",
+        "startSaving.description": "Savings on Alice, powered by smart contracts, guarantee you can withdraw your assets at any time.",
+        "amount": "Amount",
+        "myBalance": "My Balance",
         "loan": "Mortage Loan",
         "loan.description": "Deposit tokens as collateral which you believe whose price will increase and you will get paid for your DAI stable coins."
     }
