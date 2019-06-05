@@ -57,7 +57,6 @@ const DepositSlider = ({ token }: { token: ERC20Token }) => {
             <View style={[preset.flex1, preset.marginTopSmall, preset.marginBottomSmall]}>
                 <Slider
                     step={1}
-                    value={amount}
                     maximumValue={max.toNumber()}
                     minimumTrackTintColor={platform.brandInfo}
                     maximumTrackTintColor={platform.brandInfo}
