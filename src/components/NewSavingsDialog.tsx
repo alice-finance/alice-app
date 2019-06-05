@@ -10,7 +10,7 @@ import ERC20Token from "../evm/ERC20Token";
 import preset from "../styles/preset";
 import { formatValue, toBN } from "../utils/bn-utils";
 
-interface DepositAmountDialogProps {
+interface NewSavingsDialogProps {
     visible: boolean;
     onDismiss: () => void;
     onCancel: () => void;
@@ -18,7 +18,7 @@ interface DepositAmountDialogProps {
     token: ERC20Token;
 }
 
-const DepositAmountDialog: FunctionComponent<DepositAmountDialogProps> = ({
+const NewSavingsDialog: FunctionComponent<NewSavingsDialogProps> = ({
     visible,
     onDismiss,
     onCancel,
@@ -77,4 +77,4 @@ const styles = StyleSheet.create({
     border: { height: 1, backgroundColor: platform.listDividerBg }
 });
 
-export default DepositAmountDialog;
+export default NewSavingsDialog;

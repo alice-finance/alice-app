@@ -17,11 +17,16 @@ const preset = StyleSheet.create({
     colorDarkGrey: { color: "darkgrey" },
     colorGrey: { color: "grey" },
     colorPrimary: { color: platform.brandPrimary },
+    colorInfo: { color: platform.brandInfo },
     colorDanger: { color: platform.brandDanger },
+    marginLeft0: { marginLeft: 0 },
+    marginLeftSmall: { marginLeft: Spacing.small },
     marginLeftNormal: { marginLeft: Spacing.normal },
+    marginLeftLarge: { marginLeft: Spacing.large },
     marginRightTiny: { marginRight: Spacing.tiny },
     marginRightSmall: { marginRight: Spacing.small },
     marginRightNormal: { marginRight: Spacing.normal },
+    marginRightLarge: { marginRight: Spacing.large },
     marginTopTiny: { marginTop: Spacing.tiny },
     marginTopSmall: { marginTop: Spacing.small },
     marginTopNormal: { marginTop: Spacing.normal },
@@ -33,6 +38,7 @@ const preset = StyleSheet.create({
     marginBottomLarge: { marginBottom: Spacing.large },
     marginNormal: { margin: Spacing.normal },
     marginLarge: { margin: Spacing.large },
+    padding0: { padding: 0 },
     paddingNormal: { padding: Spacing.normal }
 });
 export default preset;

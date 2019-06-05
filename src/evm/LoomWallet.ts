@@ -6,7 +6,7 @@ import EventEmitter from "events";
 import HDKey from "hdkey";
 import { Client, CryptoUtils, LocalAddress, LoomProvider, NonceTxMiddleware, SignedTxMiddleware } from "loom-js";
 import Web3 from "web3";
-import { toBN } from "../utils/erc20-utils";
+import { toBN } from "../utils/bn-utils";
 import Address from "./Address";
 import ContractFactory from "./ContractFactory";
 import ERC20Token from "./ERC20Token";
@@ -20,6 +20,8 @@ class LoomWallet implements Wallet {
     public ERC20: ContractFactory;
     public ERC20Registry: ContractFactory;
     public ERC20Proxy: ContractFactory;
+    public MoneyMarket: ContractFactory;
+    public SavingsInterestCalculator: ContractFactory;
     private eventEmitter: EventEmitter;
 
     constructor(mnemonic: string) {
@@ -41,6 +43,13 @@ class LoomWallet implements Wallet {
         this.ERC20Proxy = new ContractFactory(this.web3, {
             abi: require("@dnextco/alice-proxies/abis/ERC20Proxy.json"),
             networks: require("@dnextco/alice-proxies/networks/ERC20Proxy.json")
+        });
+        this.MoneyMarket = new ContractFactory(this.web3, {
+            abi: require("@alice-finance/money-market/abis/MoneyMarket.json"),
+            networks: require("@alice-finance/money-market/networks/MoneyMarket.json")
+        });
+        this.SavingsInterestCalculator = new ContractFactory(this.web3, {
+            abi: require("@alice-finance/money-market/abis/SavingsInterestCalculatorV1.json")
         });
     }
 
@@ -101,6 +110,16 @@ class LoomWallet implements Wallet {
         const erc20Proxy = await this.ERC20Proxy.deployed();
         const balances = await erc20Proxy.getERC20Balances(addresses.map(address => address.toLocalAddressString()));
         addresses.forEach((address, index) => updateBalance(address, toBN(balances[index])));
+    };
+
+    public fetchSavingsMultiplier = async () => {
+        const market = await this.MoneyMarket.deployed();
+        return toBN(await market.MULTIPLIER());
+    };
+
+    public fetchSavingsAssetAddress = async () => {
+        const market = await this.MoneyMarket.deployed();
+        return Address.fromString(LOOM_CHAIN_ID + ":" + (await market.asset()));
     };
 
     private privateKeyFromMnemonic = (mnemonic: string) => {

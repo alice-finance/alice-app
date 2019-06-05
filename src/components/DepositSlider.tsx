@@ -7,7 +7,7 @@ import platform from "../../native-base-theme/variables/platform";
 import { BalancesContext } from "../contexts/BalancesContext";
 import ERC20Token from "../evm/ERC20Token";
 import preset from "../styles/preset";
-import { formatValue, parseValue, pow10, toBN } from "../utils/erc20-utils";
+import { formatValue, parseValue, pow10, toBN } from "../utils/bn-utils";
 import DepositAmountDialog from "./DepositAmountDialog";
 
 const DepositSlider = ({ token }: { token: ERC20Token }) => {

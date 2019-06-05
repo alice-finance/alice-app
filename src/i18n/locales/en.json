@@ -17,7 +17,8 @@
         "previous": "Previous",
         "next": "Next",
         "start": "Start",
-        "seedPhrase": "Seed Phrase"
+        "seedPhrase": "Seed Phrase",
+        "blogUrl": "https://medium.com/alice-korean"
     },
     "start": {
         "createNewWallet": "Create New Wallet",
@@ -159,7 +160,13 @@
     },
     "finance": {
         "savings": "Savings",
-        "savings.description": "Deposit your DAI stable coins and start savings with 8% of annual interest rate. You can withdraw coins whenever you want.",
+        "savings.description": "Deposit your DAI stable coins and start savings with 8% of maximum annual interest rate. You can withdraw coins whenever you want.",
+        "startSavingsNow": "Start savings now!",
+        "totalBalance": "Total Savings",
+        "mySavings": "My Savings",
+        "apr": "APR",
+        "inquiring": "Inquiring",
+        "startSaving": "Start Saving",
         "loan": "Mortage Loan",
         "loan.description": "Deposit tokens as collateral which you believe whose price will increase and you will get paid for your DAI stable coins."
     }

@@ -17,7 +17,7 @@ import { BalancesContext } from "../../../contexts/BalancesContext";
 import { PendingTransactionsContext } from "../../../contexts/PendingTransactionsContext";
 import ERC20Token from "../../../evm/ERC20Token";
 import preset from "../../../styles/preset";
-import { formatValue } from "../../../utils/erc20-utils";
+import { formatValue } from "../../../utils/bn-utils";
 
 const ManageAssetScreen = () => {
     const { t } = useTranslation("asset");

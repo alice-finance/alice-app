@@ -3,7 +3,9 @@ import { View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
 import { Asset, Font, SecureStore, SplashScreen as ExpoSplashScreen } from "expo";
+import { LocalAddress } from "loom-js/dist";
 import { AddressMapper } from "loom-js/dist/contracts";
+import { SavingsContext } from "../contexts/SavingsContext";
 import { TokensContext } from "../contexts/TokensContext";
 import { WalletContext } from "../contexts/WalletContext";
 import EthereumWallet from "../evm/EthereumWallet";
@@ -12,6 +14,7 @@ import LoomWallet from "../evm/LoomWallet";
 const SplashScreen = () => {
     const { setMnemonic, setLoomWallet, setEthereumWallet } = useContext(WalletContext);
     const { setTokens } = useContext(TokensContext);
+    const { setDecimals, setAsset } = useContext(SavingsContext);
     const { navigate } = useNavigation();
     useEffect(() => {
         ExpoSplashScreen.preventAutoHide();
@@ -23,11 +26,21 @@ const SplashScreen = () => {
                 if (mnemonic) {
                     const loomWallet = new LoomWallet(mnemonic);
                     const ethereumWallet = new EthereumWallet(mnemonic);
+                    const market = await loomWallet.MoneyMarket.deployed();
                     await addIdentityMapping(ethereumWallet, loomWallet);
+                    const tokens = await loomWallet.fetchERC20Tokens();
+                    const assetAddress = await market.asset();
+                    const asset = tokens.find(token =>
+                        token.loomAddress.local.equals(LocalAddress.fromHexString(assetAddress))
+                    );
+                    const decimals = Number((await market.DECIMALS()).toString());
                     setMnemonic(mnemonic);
                     setLoomWallet(loomWallet);
                     setEthereumWallet(ethereumWallet);
-                    setTokens(await loomWallet.fetchERC20Tokens());
+                    setTokens(tokens);
+                    setAsset(asset);
+                    setDecimals(decimals);
+
                     navigate("Main");
                 } else {
                     navigate("Start");

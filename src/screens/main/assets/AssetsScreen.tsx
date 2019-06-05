@@ -14,7 +14,7 @@ import { TokensContext } from "../../../contexts/TokensContext";
 import { WalletContext } from "../../../contexts/WalletContext";
 import ERC20Token from "../../../evm/ERC20Token";
 import preset from "../../../styles/preset";
-import { formatValue, pow10, toBN } from "../../../utils/erc20-utils";
+import { formatValue, pow10 } from "../../../utils/bn-utils";
 
 const AssetsScreen = () => {
     const { refreshing, onRefresh } = useTokensUpdater();

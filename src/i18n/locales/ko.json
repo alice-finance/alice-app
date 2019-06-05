@@ -17,7 +17,8 @@
         "previous": "이전",
         "next": "다음",
         "start": "시작하기",
-        "seedPhrase": "시드 단어"
+        "seedPhrase": "시드 단어",
+        "blogUrl": "https://medium.com/alice-finance-korean"
     },
     "start": {
         "createNewWallet": "새로운 지갑 생성하기",
@@ -148,7 +149,13 @@
     },
     "finance": {
         "savings": "저축",
-        "savings.description": "지금 바로 DAI 스테이블 코인을 예치하고 연이율 8%로 저축을 시작하세요. 추후 언제든 인출이 가능합니다.",
+        "savings.description": "지금 바로 DAI 스테이블 코인을 예치하고 최대 연이율 8%로 저축을 시작하세요. 추후 언제든 인출이 가능합니다.",
+        "startSavingsNow": "지금 저축을 시작하세요!",
+        "totalBalance": "전체 저축",
+        "mySavings": "나의 저축",
+        "apr": "APR(연이율)",
+        "inquiring": "조회 중",
+        "startSaving": "저축 시작하기",
         "loan": "담보 대출",
         "loan.description": "가격이 오를 것으로 기대되는 암호화폐를 담보로 묶어놓고 DAI 스테이블 코인을 대출받으세요."
     }

@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react";
 
 import BN from "bn.js";
 import Address from "../evm/Address";
-import { toBN } from "../utils/erc20-utils";
+import { toBN } from "../utils/bn-utils";
 
 export const BalancesContext = React.createContext({
     getBalance: (address: Address): BN => toBN(0),

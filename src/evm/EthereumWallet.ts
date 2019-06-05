@@ -14,7 +14,7 @@ import EventEmitter from "events";
 import { LocalAddress } from "loom-js";
 import { IEthereumSigner } from "loom-js/dist";
 import Web3 from "web3";
-import { toBN } from "../utils/erc20-utils";
+import { toBN } from "../utils/bn-utils";
 import Address from "./Address";
 import ContractFactory from "./ContractFactory";
 import ERC20Token from "./ERC20Token";

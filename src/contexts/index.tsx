@@ -3,6 +3,7 @@ import React from "react";
 import { BalancesConsumer, BalancesProvider } from "./BalancesContext";
 import { ConfigConsumer, ConfigProvider } from "./ConfigContext";
 import { PendingTransactionsConsumer, PendingTransactionsProvider } from "./PendingTransactionsContext";
+import { SavingsConsumer, SavingsProvider } from "./SavingsContext";
 import { TokensConsumer, TokensProvider } from "./TokensContext";
 import { WalletConsumer, WalletProvider } from "./WalletContext";
 
@@ -11,9 +12,11 @@ export const ContextProvider = ({ children }) => {
         <TokensProvider>
             <WalletProvider>
                 <BalancesProvider>
-                    <PendingTransactionsProvider>
-                        <ConfigProvider>{children}</ConfigProvider>
-                    </PendingTransactionsProvider>
+                    <SavingsProvider>
+                        <PendingTransactionsProvider>
+                            <ConfigProvider>{children}</ConfigProvider>
+                        </PendingTransactionsProvider>
+                    </SavingsProvider>
                 </BalancesProvider>
             </WalletProvider>
         </TokensProvider>
@@ -26,25 +29,30 @@ export const ContextConsumer = ({ children }) => {
             {tokensContext => (
                 <WalletConsumer>
                     {walletContext => (
-                        <BalancesConsumer>
-                            {balancesContext => (
-                                <PendingTransactionsConsumer>
-                                    {pendingTransactionsContext => (
-                                        <ConfigConsumer>
-                                            {configContext =>
-                                                children({
-                                                    ...tokensContext,
-                                                    ...walletContext,
-                                                    ...balancesContext,
-                                                    ...pendingTransactionsContext,
-                                                    ...configContext
-                                                })
-                                            }
-                                        </ConfigConsumer>
+                        <SavingsConsumer>
+                            {savingsContext => (
+                                <BalancesConsumer>
+                                    {balancesContext => (
+                                        <PendingTransactionsConsumer>
+                                            {pendingTransactionsContext => (
+                                                <ConfigConsumer>
+                                                    {configContext =>
+                                                        children({
+                                                            ...tokensContext,
+                                                            ...walletContext,
+                                                            ...savingsContext,
+                                                            ...balancesContext,
+                                                            ...pendingTransactionsContext,
+                                                            ...configContext
+                                                        })
+                                                    }
+                                                </ConfigConsumer>
+                                            )}
+                                        </PendingTransactionsConsumer>
                                     )}
-                                </PendingTransactionsConsumer>
+                                </BalancesConsumer>
                             )}
-                        </BalancesConsumer>
+                        </SavingsConsumer>
                     )}
                 </WalletConsumer>
             )}

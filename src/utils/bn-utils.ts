@@ -6,7 +6,7 @@ export const toBN = utils.toBN;
 
 export const pow10 = (e: number) => toBN(10).pow(toBN(e));
 
-export const isZero = (value: string) => toBN(value).toString() === "0";
+export const isZero = (value: string | BN) => toBN(value).toString() === "0";
 
 export const formatValue = (value: string | BN, decimals: number, precision = ERC20_MAX_PRECISION) => {
     let formatted = fromWei(
