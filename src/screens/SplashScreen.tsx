@@ -3,16 +3,16 @@ import { View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
 import { Asset, Font, SecureStore, SplashScreen as ExpoSplashScreen } from "expo";
-import { LocalAddress } from "loom-js/dist";
+import { EthersSigner, LocalAddress } from "loom-js/dist";
 import { AddressMapper } from "loom-js/dist/contracts";
+import { ConnectorContext } from "../contexts/ConnectorContext";
 import { SavingsContext } from "../contexts/SavingsContext";
 import { TokensContext } from "../contexts/TokensContext";
-import { WalletContext } from "../contexts/WalletContext";
-import EthereumWallet from "../evm/EthereumWallet";
-import LoomWallet from "../evm/LoomWallet";
+import EthereumConnector from "../evm/EthereumConnector";
+import LoomConnector from "../evm/LoomConnector";
 
 const SplashScreen = () => {
-    const { setMnemonic, setLoomWallet, setEthereumWallet } = useContext(WalletContext);
+    const { setMnemonic, setEthereumConnector, setLoomConnector } = useContext(ConnectorContext);
     const { setTokens } = useContext(TokensContext);
     const { setDecimals, setAsset } = useContext(SavingsContext);
     const { navigate } = useNavigation();
@@ -24,19 +24,21 @@ const SplashScreen = () => {
                 await loadResources();
                 const mnemonic = await SecureStore.getItemAsync("mnemonic");
                 if (mnemonic) {
-                    const loomWallet = new LoomWallet(mnemonic);
-                    const ethereumWallet = new EthereumWallet(mnemonic);
-                    const market = await loomWallet.MoneyMarket.deployed();
-                    await addIdentityMapping(ethereumWallet, loomWallet);
-                    const tokens = await loomWallet.fetchERC20Tokens();
+                    const ethereumConnector = new EthereumConnector(mnemonic);
+                    const loomConnector = new LoomConnector(mnemonic);
+                    await addIdentityMapping(ethereumConnector, loomConnector);
+
+                    const tokens = await loomConnector.fetchERC20Tokens();
+                    const market = loomConnector.getMoneyMarket();
                     const assetAddress = await market.asset();
                     const asset = tokens.find(token =>
                         token.loomAddress.local.equals(LocalAddress.fromHexString(assetAddress))
                     );
                     const decimals = Number((await market.DECIMALS()).toString());
+
                     setMnemonic(mnemonic);
-                    setLoomWallet(loomWallet);
-                    setEthereumWallet(ethereumWallet);
+                    setEthereumConnector(ethereumConnector);
+                    setLoomConnector(loomConnector);
                     setTokens(tokens);
                     setAsset(asset);
                     setDecimals(decimals);
@@ -79,11 +81,12 @@ const loadResources = (): Promise<void[]> => {
     );
 };
 
-const addIdentityMapping = async (ethereumWallet: EthereumWallet, loomWallet: LoomWallet) => {
-    const addressMapper = await AddressMapper.createAsync(loomWallet.client, loomWallet.address);
-    if (!(await addressMapper.hasMappingAsync(ethereumWallet.address))) {
-        await addressMapper.addIdentityMappingAsync(loomWallet.address, ethereumWallet.address, ethereumWallet);
-    }
+const addIdentityMapping = async (ethereumConnector: EthereumConnector, loomConnector: LoomConnector) => {
+    const addressMapper = await AddressMapper.createAsync(LoomConnector.CLIENT, loomConnector.address);
+    try {
+        const signer = new EthersSigner(ethereumConnector.wallet);
+        await addressMapper.addIdentityMappingAsync(loomConnector.address, ethereumConnector.address, signer);
+    } catch (e) {}
 };
 
 export default SplashScreen;

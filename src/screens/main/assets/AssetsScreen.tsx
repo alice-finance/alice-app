@@ -11,13 +11,13 @@ import { Spacing } from "../../../constants/dimension";
 import { ERC20_MAX_PRECISION } from "../../../constants/token";
 import { BalancesContext } from "../../../contexts/BalancesContext";
 import { TokensContext } from "../../../contexts/TokensContext";
-import { WalletContext } from "../../../contexts/WalletContext";
 import ERC20Token from "../../../evm/ERC20Token";
+import useTokenBalanceUpdater from "../../../hooks/useTokenBalanceUpdater";
 import preset from "../../../styles/preset";
-import { formatValue, pow10 } from "../../../utils/bn-utils";
+import { formatValue, pow10 } from "../../../utils/big-number-utils";
 
 const AssetsScreen = () => {
-    const { refreshing, onRefresh } = useTokensUpdater();
+    const { updating, update } = useTokenBalanceUpdater();
     const { sortedByName, setSortedByName, sortedTokens } = useTokenSorter();
     const { push, setParams } = useNavigation();
     const onSort = useCallback(() => setSortedByName(!sortedByName), [sortedByName]);
@@ -25,7 +25,7 @@ const AssetsScreen = () => {
     const renderItem = useCallback(({ item }) => <TokenListItem token={item} onPress={onPress} />, []);
     useEffect(() => {
         setParams({ onSort });
-        onRefresh();
+        update();
     }, []);
     return (
         <Container>
@@ -33,8 +33,8 @@ const AssetsScreen = () => {
                 data={sortedTokens()}
                 keyExtractor={useCallback((item, index) => index.toString(), [])}
                 renderItem={renderItem}
-                refreshing={refreshing}
-                onRefresh={onRefresh}
+                refreshing={updating}
+                onRefresh={update}
                 ListHeaderComponent={<ListHeader />}
             />
         </Container>
@@ -48,27 +48,6 @@ AssetsScreen.navigationOptions = ({ navigation }) => ({
         </Button>
     )
 });
-
-const useTokensUpdater = () => {
-    const { tokens } = useContext(TokensContext);
-    const { updateBalance } = useContext(BalancesContext);
-    const { ethereumWallet, loomWallet } = useContext(WalletContext);
-    const [refreshing, setRefreshing] = useState(false);
-    const onRefresh = useCallback(async () => {
-        setRefreshing(true);
-        try {
-            if (ethereumWallet && loomWallet) {
-                await Promise.all([
-                    ethereumWallet.fetchERC20Balances(tokens, updateBalance),
-                    loomWallet.fetchERC20Balances(tokens, updateBalance)
-                ]);
-            }
-        } finally {
-            setRefreshing(false);
-        }
-    }, [tokens, ethereumWallet, loomWallet]);
-    return { refreshing, onRefresh };
-};
 
 const useTokenSorter = () => {
     const [sortedByName, setSortedByName] = useState(false);

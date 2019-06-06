@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 
-import BN from "bn.js";
+import { ethers } from "ethers";
 import ERC20Token from "../evm/ERC20Token";
-import { toBN } from "../utils/bn-utils";
+import { toBigNumber } from "../utils/big-number-utils";
 
 interface SavingsRecord {
-    id: BN;
-    interestRate: BN;
-    balance: BN;
-    principal: BN;
+    id: ethers.utils.BigNumber;
+    interestRate: ethers.utils.BigNumber;
+    balance: ethers.utils.BigNumber;
+    principal: ethers.utils.BigNumber;
     initialTimestamp: Date;
     lastTimestamp: Date;
 }
@@ -18,27 +18,27 @@ export const SavingsContext = React.createContext({
     setDecimals: (decimal: number) => {},
     asset: null as (ERC20Token | null),
     setAsset: (asset: ERC20Token) => {},
-    totalBalance: null as (BN | null),
-    setTotalBalance: (totalBalance: BN) => {},
-    apr: null as (BN | null),
-    setAPR: (mySavings: BN) => {},
+    totalBalance: null as (ethers.utils.BigNumber | null),
+    setTotalBalance: (totalBalance: ethers.utils.BigNumber) => {},
+    apr: null as (ethers.utils.BigNumber | null),
+    setAPR: (mySavings: ethers.utils.BigNumber) => {},
     myRecords: null as SavingsRecord[] | null,
     setMyRecords: (savingsRecords: SavingsRecord[]) => {},
-    myTotalPrincipal: null as BN | null,
-    myTotalBalance: null as BN | null
+    myTotalPrincipal: null as ethers.utils.BigNumber | null,
+    myTotalBalance: null as ethers.utils.BigNumber | null
 });
 
 export const SavingsProvider = ({ children }) => {
     const [decimals, setDecimals] = useState(0);
     const [asset, setAsset] = useState<ERC20Token | null>(null);
-    const [totalBalance, setTotalBalance] = useState<BN | null>(null);
-    const [apr, setAPR] = useState<BN | null>(null);
+    const [totalBalance, setTotalBalance] = useState<ethers.utils.BigNumber | null>(null);
+    const [apr, setAPR] = useState<ethers.utils.BigNumber | null>(null);
     const [myRecords, setMyRecords] = useState<SavingsRecord[] | null>(null);
     const myTotalPrincipal = myRecords
-        ? myRecords.reduce((previous, current) => previous.add(current.principal), toBN(0))
+        ? myRecords.reduce((previous, current) => previous.add(current.principal), toBigNumber(0))
         : null;
     const myTotalBalance = myRecords
-        ? myRecords.reduce((previous, current) => previous.add(current.balance), toBN(0))
+        ? myRecords.reduce((previous, current) => previous.add(current.balance), toBigNumber(0))
         : null;
     return (
         <SavingsContext.Provider

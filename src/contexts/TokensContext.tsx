@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from "react";
-import { ETHEREUM_CHAIN_ID, LOOM_CHAIN_ID } from "react-native-dotenv";
 
 import { LocalAddress } from "loom-js/dist";
 import { NULL_ADDRESS } from "../constants/token";
@@ -42,8 +41,8 @@ const ETH_COIN = new ERC20Token(
     "Ethereum",
     "ETH",
     18,
-    Address.fromString(ETHEREUM_CHAIN_ID + ":" + NULL_ADDRESS),
-    Address.fromString(LOOM_CHAIN_ID + ":" + NULL_ADDRESS)
+    Address.newLoomAddress(NULL_ADDRESS),
+    Address.newEthereumAddress(NULL_ADDRESS)
 );
 
 export const TokensConsumer = TokensContext.Consumer;

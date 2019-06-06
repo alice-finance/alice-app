@@ -8,14 +8,14 @@ import CaptionText from "../../../components/CaptionText";
 import HeadlineText from "../../../components/HeadlineText";
 import TitleText from "../../../components/TitleText";
 import { BalancesContext } from "../../../contexts/BalancesContext";
+import { ConnectorContext } from "../../../contexts/ConnectorContext";
 import { SavingsContext } from "../../../contexts/SavingsContext";
-import { WalletContext } from "../../../contexts/WalletContext";
 import preset from "../../../styles/preset";
-import { formatValue, toBN } from "../../../utils/bn-utils";
+import { formatValue, toBigNumber } from "../../../utils/big-number-utils";
 
 const NewSavingsScreen = () => {
     const { t } = useTranslation(["finance", "common"]);
-    const { loomWallet } = useContext(WalletContext);
+    const { loomConnector } = useContext(ConnectorContext);
     const { asset, decimals, apr } = useContext(SavingsContext);
     const { getBalance, updateBalance } = useContext(BalancesContext);
     const aprText = apr ? formatValue(apr, decimals, 2) + " %" : t("inquiring");
@@ -24,14 +24,14 @@ const NewSavingsScreen = () => {
     const onPress = () => {};
     useEffect(() => {
         const refresh = async () => {
-            if (loomWallet && asset) {
-                const erc20 = await loomWallet.ERC20.at(asset.loomAddress.toLocalAddressString());
-                const balance = await erc20.balanceOf(loomWallet.address.toLocalAddressString());
-                updateBalance(asset.loomAddress, toBN(balance));
+            if (loomConnector && asset) {
+                const erc20 = loomConnector.getERC20(asset.loomAddress.toLocalAddressString());
+                const balance = await erc20.balanceOf(loomConnector.address.toLocalAddressString());
+                updateBalance(asset.loomAddress, toBigNumber(balance));
             }
         };
         refresh();
-    }, [loomWallet, asset]);
+    }, [loomConnector, asset]);
     return (
         <Container>
             <TitleText aboveText={true}>{t("startSaving")}</TitleText>

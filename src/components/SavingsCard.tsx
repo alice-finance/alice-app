@@ -7,8 +7,8 @@ import { Body, Button, Card, CardItem, Icon, Left, Right, Text } from "native-ba
 import TokenIcon from "../components/TokenIcon";
 import { SavingsContext } from "../contexts/SavingsContext";
 import preset from "../styles/preset";
-import { toBN } from "../utils/bn-utils";
-import { formatValue } from "../utils/bn-utils";
+import { toBigNumber } from "../utils/big-number-utils";
+import { formatValue } from "../utils/big-number-utils";
 
 const SavingsCard = () => {
     const { t } = useTranslation("finance");
@@ -70,11 +70,11 @@ const SavingsCard = () => {
 const MySavingsSummaryText = () => {
     const { t } = useTranslation("finance");
     const { myTotalPrincipal, myTotalBalance } = useContext(SavingsContext);
-    let profit = toBN(0);
+    let profit = toBigNumber(0);
     if (myTotalPrincipal && myTotalBalance && !myTotalPrincipal.isZero()) {
         profit = myTotalBalance
             .sub(myTotalPrincipal)
-            .mul(toBN(10000))
+            .mul(toBigNumber(10000))
             .div(myTotalPrincipal);
     }
     const text =

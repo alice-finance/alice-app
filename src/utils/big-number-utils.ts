@@ -1,18 +1,29 @@
 import BN from "bn.js";
-import utils, { fromWei } from "web3-utils";
+import { ethers } from "ethers";
+import { fromWei } from "web3-utils";
 import { ERC20_MAX_PRECISION } from "../constants/token";
 
-export const toBN = utils.toBN;
+export const toBigNumber = (value: ethers.utils.BigNumberish | BN) => {
+    if (BN.isBN(value)) {
+        return new ethers.utils.BigNumber(BN.toString());
+    } else {
+        return ethers.utils.bigNumberify(value);
+    }
+};
 
-export const pow10 = (e: number) => toBN(10).pow(toBN(e));
+export const pow10 = (e: number) => toBigNumber(10).pow(toBigNumber(e));
 
-export const isZero = (value: string | BN) => toBN(value).toString() === "0";
+export const isZero = (value: string | ethers.utils.BigNumber) => toBigNumber(value).toString() === "0";
 
-export const formatValue = (value: string | BN, decimals: number, precision = ERC20_MAX_PRECISION) => {
+export const formatValue = (
+    value: string | ethers.utils.BigNumber,
+    decimals: number,
+    precision = ERC20_MAX_PRECISION
+) => {
     let formatted = fromWei(
-        toBN(value)
+        toBigNumber(value)
             .mul(pow10(18 - decimals))
-            .toString(10),
+            .toString(),
         "ether"
     );
     if (precision && precision > 0) {
@@ -52,7 +63,7 @@ export const parseValue = (value: string, decimals: number) => {
             value += "0";
         }
     }
-    return toBN(value);
+    return toBigNumber(value);
 };
 
 export const filterPrecision = (value: string) => {

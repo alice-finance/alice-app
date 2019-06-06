@@ -9,10 +9,10 @@ import platform from "../../../../native-base-theme/variables/platform";
 import CaptionText from "../../../components/CaptionText";
 import SavingsCard from "../../../components/SavingsCard";
 import TitleText from "../../../components/TitleText";
+import { ConnectorContext } from "../../../contexts/ConnectorContext";
 import { SavingsContext } from "../../../contexts/SavingsContext";
-import { WalletContext } from "../../../contexts/WalletContext";
 import preset from "../../../styles/preset";
-import { toBN } from "../../../utils/bn-utils";
+import { toBigNumber } from "../../../utils/big-number-utils";
 
 const FinanceScreen = () => {
     const { setParams } = useNavigation();
@@ -43,13 +43,13 @@ FinanceScreen.navigationOptions = ({ navigation }) => ({
 });
 
 const useScheduledUpdater = () => {
-    const { loomWallet } = useContext(WalletContext);
+    const { loomConnector } = useContext(ConnectorContext);
     const { totalBalance, setTotalBalance, apr, setAPR } = useContext(SavingsContext);
     useEffect(() => {
         const refresh = async () => {
-            const market = await loomWallet!.MoneyMarket.deployed();
-            setTotalBalance(toBN(await market.totalFunds()));
-            setAPR(toBN(await market.getAPR()).mul(toBN(100)));
+            const market = loomConnector!.getMoneyMarket();
+            setTotalBalance(toBigNumber(await market.totalFunds()));
+            setAPR(toBigNumber(await market.getAPR()).mul(toBigNumber(100)));
         };
         refresh();
         const handle = setInterval(() => refresh(), 60 * 1000);
@@ -59,12 +59,12 @@ const useScheduledUpdater = () => {
 };
 
 const useMySavingsUpdater = () => {
-    const { loomWallet } = useContext(WalletContext);
+    const { loomConnector } = useContext(ConnectorContext);
     const { myRecords, setMyRecords } = useContext(SavingsContext);
     useEffect(() => {
         const refresh = async () => {
-            const market = await loomWallet!.MoneyMarket.deployed();
-            const savingRecords = await market.getSavingsRecords(loomWallet!.address.toLocalAddressString());
+            const market = loomConnector!.getMoneyMarket();
+            const savingRecords = await market.getSavingsRecords(loomConnector!.address.toLocalAddressString());
             setMyRecords(savingRecords);
         };
         refresh();

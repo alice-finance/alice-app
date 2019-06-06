@@ -1,24 +1,25 @@
 import React, { useCallback, useState } from "react";
 
+import { ethers } from "ethers";
 import Address from "../evm/Address";
 
 export const PendingTransactionsContext = React.createContext({
-    getPendingDepositTransactions: (address: Address) => [] as string[],
-    addPendingDepositTransaction: (address: Address, hash: string) => {},
+    getPendingDepositTransactions: (address: Address) => [] as ethers.providers.TransactionResponse[],
+    addPendingDepositTransaction: (address: Address, tx: ethers.providers.TransactionResponse) => {},
     removePendingDepositTransaction: (address: Address, hash: string) => {},
     clearPendingDepositTransaction: (address: Address) => {},
-    getPendingWithdrawalTransactions: (address: Address) => [] as string[],
-    addPendingWithdrawalTransaction: (address: Address, hash: string) => {},
+    getPendingWithdrawalTransactions: (address: Address) => [] as ethers.providers.TransactionResponse[],
+    addPendingWithdrawalTransaction: (address: Address, tx: ethers.providers.TransactionResponse) => {},
     removePendingWithdrawalTransaction: (address: Address, hash: string) => {},
     clearPendingWithdrawalTransaction: (address: Address) => {}
 });
 
 export const PendingTransactionsProvider = ({ children }) => {
     const [pendingDepositTransactions, setPendingDepositTransactions] = useState({} as {
-        [addressString: string]: string[];
+        [addressString: string]: ethers.providers.TransactionResponse[];
     });
     const [pendingWithdrawalTransactions, setPendingWithdrawalTransactions] = useState({} as {
-        [addressString: string]: string[];
+        [addressString: string]: ethers.providers.TransactionResponse[];
     });
     const getPendingDepositTransactions = useCallback(
         (address: Address) => {
@@ -27,26 +28,26 @@ export const PendingTransactionsProvider = ({ children }) => {
         [pendingDepositTransactions]
     );
     const addPendingDepositTransaction = useCallback(
-        (address: Address, hash: string) => {
+        (address: Address, tx: ethers.providers.TransactionResponse) => {
             const transactions = pendingDepositTransactions[address.toString()] || [];
-            transactions.push(hash);
-            setPendingDepositTransactions({ ...pendingDepositTransactions, [address.toString()]: transactions });
+            transactions.push(tx);
+            setPendingDepositTransactions(oldState => ({ ...oldState, [address.toString()]: transactions }));
         },
         [pendingDepositTransactions]
     );
     const removePendingDepositTransaction = useCallback(
         (address: Address, hash: string) => {
             const transactions = pendingDepositTransactions[address.toString()] || [];
-            setPendingDepositTransactions({
-                ...pendingDepositTransactions,
-                [address.toString()]: transactions.filter(h => h !== hash)
-            });
+            setPendingDepositTransactions(oldState => ({
+                ...oldState,
+                [address.toString()]: transactions.filter(tx => tx.hash !== hash)
+            }));
         },
         [pendingDepositTransactions]
     );
     const clearPendingDepositTransaction = useCallback(
         (address: Address) => {
-            setPendingDepositTransactions({ ...pendingDepositTransactions, [address.toString()]: [] });
+            setPendingDepositTransactions(oldState => ({ ...oldState, [address.toString()]: [] }));
         },
         [pendingDepositTransactions]
     );
@@ -57,26 +58,26 @@ export const PendingTransactionsProvider = ({ children }) => {
         [pendingWithdrawalTransactions]
     );
     const addPendingWithdrawalTransaction = useCallback(
-        (address: Address, hash: string) => {
+        (address: Address, tx: ethers.providers.TransactionResponse) => {
             const transactions = pendingWithdrawalTransactions[address.toString()] || [];
-            transactions.push(hash);
-            setPendingWithdrawalTransactions({ ...pendingWithdrawalTransactions, [address.toString()]: transactions });
+            transactions.push(tx);
+            setPendingWithdrawalTransactions(oldState => ({ ...oldState, [address.toString()]: transactions }));
         },
         [pendingWithdrawalTransactions]
     );
     const removePendingWithdrawalTransaction = useCallback(
         (address: Address, hash: string) => {
             const transactions = pendingWithdrawalTransactions[address.toString()] || [];
-            setPendingWithdrawalTransactions({
-                ...pendingWithdrawalTransactions,
-                [address.toString()]: transactions.filter(h => h !== hash)
-            });
+            setPendingWithdrawalTransactions(oldState => ({
+                ...oldState,
+                [address.toString()]: transactions.filter(tx => tx.hash !== hash)
+            }));
         },
         [pendingWithdrawalTransactions]
     );
     const clearPendingWithdrawalTransaction = useCallback(
         (address: Address) => {
-            setPendingWithdrawalTransactions({ ...pendingWithdrawalTransactions, [address.toString()]: [] });
+            setPendingWithdrawalTransactions(oldState => ({ ...oldState, [address.toString()]: [] }));
         },
         [pendingWithdrawalTransactions]
     );

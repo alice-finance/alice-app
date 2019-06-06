@@ -2,15 +2,15 @@ import React from "react";
 
 import { BalancesConsumer, BalancesProvider } from "./BalancesContext";
 import { ConfigConsumer, ConfigProvider } from "./ConfigContext";
+import { ConnectorConsumer, ConnectorProvider } from "./ConnectorContext";
 import { PendingTransactionsConsumer, PendingTransactionsProvider } from "./PendingTransactionsContext";
 import { SavingsConsumer, SavingsProvider } from "./SavingsContext";
 import { TokensConsumer, TokensProvider } from "./TokensContext";
-import { WalletConsumer, WalletProvider } from "./WalletContext";
 
 export const ContextProvider = ({ children }) => {
     return (
         <TokensProvider>
-            <WalletProvider>
+            <ConnectorProvider>
                 <BalancesProvider>
                     <SavingsProvider>
                         <PendingTransactionsProvider>
@@ -18,7 +18,7 @@ export const ContextProvider = ({ children }) => {
                         </PendingTransactionsProvider>
                     </SavingsProvider>
                 </BalancesProvider>
-            </WalletProvider>
+            </ConnectorProvider>
         </TokensProvider>
     );
 };
@@ -27,7 +27,7 @@ export const ContextConsumer = ({ children }) => {
     return (
         <TokensConsumer>
             {tokensContext => (
-                <WalletConsumer>
+                <ConnectorConsumer>
                     {walletContext => (
                         <SavingsConsumer>
                             {savingsContext => (
@@ -54,7 +54,7 @@ export const ContextConsumer = ({ children }) => {
                             )}
                         </SavingsConsumer>
                     )}
-                </WalletConsumer>
+                </ConnectorConsumer>
             )}
         </TokensConsumer>
     );

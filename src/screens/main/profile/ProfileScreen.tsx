@@ -8,11 +8,11 @@ import app from "../../../../app.json";
 import platform from "../../../../native-base-theme/variables/platform";
 import TitleText from "../../../components/TitleText";
 import { Spacing } from "../../../constants/dimension";
-import { WalletContext } from "../../../contexts/WalletContext";
+import { ConnectorContext } from "../../../contexts/ConnectorContext";
 
 const ProfileScreen = () => {
     const { t } = useTranslation("profile");
-    const { mnemonic } = useContext(WalletContext);
+    const { mnemonic } = useContext(ConnectorContext);
     const [dialogOpen, setDialogOpen] = useState(false);
     const openDialog = useCallback(() => setDialogOpen(true), []);
     const closeDialog = useCallback(() => setDialogOpen(false), []);
@@ -37,19 +37,19 @@ const ProfileScreen = () => {
 
 const MyAddressItem = () => {
     const { t } = useTranslation("profile");
-    const { ethereumWallet } = useContext(WalletContext);
+    const { ethereumConnector } = useContext(ConnectorContext);
     const onPress = useCallback(() => {
-        if (ethereumWallet) {
-            Clipboard.setString(ethereumWallet.address.toLocalAddressString());
+        if (ethereumConnector) {
+            Clipboard.setString(ethereumConnector.address.toLocalAddressString());
             Toast.show({ text: t("addressCopiedToTheClipboard") });
         }
-    }, [ethereumWallet]);
+    }, [ethereumConnector]);
     return (
         <ListItem iconRight={true} button={true} style={{ height: 72 }} onPress={onPress}>
             <Body>
                 <Text style={{ fontSize: 20 }}>{t("myAddress")}</Text>
                 <Text note={true} ellipsizeMode="middle" numberOfLines={1}>
-                    {ethereumWallet ? ethereumWallet.address.toLocalAddressString() : "0x"}
+                    {ethereumConnector ? ethereumConnector.address.toLocalAddressString() : "0x"}
                 </Text>
             </Body>
             <Icon type="SimpleLineIcons" name="key" style={{ color: "black", marginRight: Spacing.normal }} />
@@ -88,7 +88,7 @@ const BackupSeedPhraseDialog = ({ visible, onCancel, onOk, mnemonic }) => {
                 <View style={{ flexDirection: "row" }}>
                     <Icon type="AntDesign" name="warning" style={{ color: platform.brandDanger, fontSize: 28 }} />
                     <Text style={{ color: platform.brandDanger, marginLeft: Spacing.small, fontSize: 20 }}>
-                        {t("warning")}
+                        {t("common:warning")}
                     </Text>
                 </View>
                 <Text style={{ color: platform.brandDanger, marginVertical: Spacing.normal }}>
@@ -108,10 +108,10 @@ const BackupSeedPhraseDialog = ({ visible, onCancel, onOk, mnemonic }) => {
                 </View>
             </Dialog.Content>
             <Dialog.Actions>
-                <Button primary={true} rounded={true} transparent={true} onPress={onCancel}>
+                <Button rounded={true} transparent={true} onPress={onCancel}>
                     <Text>{t("common:cancel")}</Text>
                 </Button>
-                <Button primary={true} rounded={true} transparent={true} onPress={onOk}>
+                <Button rounded={true} transparent={true} onPress={onOk}>
                     <Text>{t("common:copy")}</Text>
                 </Button>
             </Dialog.Actions>

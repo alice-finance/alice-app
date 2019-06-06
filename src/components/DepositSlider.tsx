@@ -8,7 +8,7 @@ import { BalancesContext } from "../contexts/BalancesContext";
 import { PendingTransactionsContext } from "../contexts/PendingTransactionsContext";
 import ERC20Token from "../evm/ERC20Token";
 import preset from "../styles/preset";
-import { formatValue, parseValue, pow10, toBN } from "../utils/bn-utils";
+import { formatValue, parseValue, pow10, toBigNumber } from "../utils/big-number-utils";
 import DepositAmountDialog from "./DepositAmountDialog";
 
 const DepositSlider = ({ token }: { token: ERC20Token }) => {
@@ -16,7 +16,7 @@ const DepositSlider = ({ token }: { token: ERC20Token }) => {
     const { getBalance } = useContext(BalancesContext);
     const { getPendingDepositTransactions, getPendingWithdrawalTransactions } = useContext(PendingTransactionsContext);
     const formatAmount = a =>
-        toBN(a)
+        toBigNumber(a)
             .mul(pow10(2))
             .div(pow10(token.decimals))
             .toNumber();
@@ -26,7 +26,7 @@ const DepositSlider = ({ token }: { token: ERC20Token }) => {
         .add(getBalance(token.ethereumAddress))
         .mul(pow10(2))
         .div(pow10(token.decimals));
-    const med = max.div(toBN(2));
+    const med = max.div(toBigNumber(2));
     const disabled =
         getPendingDepositTransactions(token.ethereumAddress).length > 0 ||
         getPendingWithdrawalTransactions(token.ethereumAddress).length > 0;
@@ -51,7 +51,7 @@ const DepositSlider = ({ token }: { token: ERC20Token }) => {
                     keyboardType="numeric"
                     onEndEditing={onEndEditing}
                     style={[preset.textAlignCenter, preset.marginRightSmall, { fontSize: 48 }]}>
-                    {formatValue(amount, 2, 2)}
+                    {formatValue(amount.toString(), 2, 2)}
                 </TextInput>
                 <Text style={[preset.alignFlexEnd, preset.marginBottomSmall, preset.fontSize24]}>{token.symbol}</Text>
             </View>

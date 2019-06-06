@@ -1,6 +1,7 @@
 /* tslint:disable:ordered-imports */
 import "node-libs-react-native/globals";
 import "./globals";
+import "ethers/dist/shims.js";
 import React from "react";
 import { Root, StyleProvider } from "native-base";
 import { I18nextProvider } from "react-i18next";
@@ -10,6 +11,9 @@ import AppContainer from "./src/AppContainer";
 import { ContextProvider } from "./src/contexts";
 import i18n from "./src/i18n";
 import { Portal } from "react-native-paper";
+import { ethers } from "ethers";
+
+ethers.errors.setLogLevel("error");
 
 export default class App extends React.Component {
     public render() {
