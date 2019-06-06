@@ -12,11 +12,10 @@ import Spinner from "./Spinner";
 const WithdrawalInProgress = ({ token }: { token: ERC20Token }) => {
     const { t } = useTranslation("asset");
     const { getPendingWithdrawalTransactions } = useContext(PendingTransactionsContext);
-    const pendingWithdrawalTransactions = getPendingWithdrawalTransactions(token.loomAddress.toLocalAddressString());
-    const onPress = useCallback(
-        () => openTx(pendingWithdrawalTransactions[pendingWithdrawalTransactions.length - 1].hash),
-        [pendingWithdrawalTransactions]
-    );
+    const pendingWithdrawalTransactions = getPendingWithdrawalTransactions(token.loomAddress);
+    const onPress = useCallback(() => openTx(pendingWithdrawalTransactions[pendingWithdrawalTransactions.length - 1]), [
+        pendingWithdrawalTransactions
+    ]);
     return pendingWithdrawalTransactions.length > 0 ? (
         <View>
             <Spinner compact={true} label={t("withdrawing") + ` (${pendingWithdrawalTransactions.length}/3)`} />

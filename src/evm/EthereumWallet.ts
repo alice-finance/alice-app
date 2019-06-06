@@ -7,6 +7,7 @@ import {
 
 import { mnemonicToSeed } from "bip39";
 import BN from "bn.js";
+import Tx from "ethereumjs-tx";
 import ethutil from "ethereumjs-util";
 import EthWallet from "ethereumjs-wallet";
 import EthHDKey from "ethereumjs-wallet/hdkey";
@@ -33,7 +34,7 @@ class EthereumWallet implements Wallet, IEthereumSigner {
         this.mnemonic = mnemonic;
         this.ethereumWallet = this.ethereumWalletFromMnemonic(mnemonic);
         this.address = new Address(
-            ETHEREUM_CHAIN_ID,
+            ETHEREUM_NETWORK_NAME,
             LocalAddress.fromHexString(this.ethereumWallet.getChecksumAddressString())
         );
         this.eventEmitter = new EventEmitter();
@@ -44,7 +45,7 @@ class EthereumWallet implements Wallet, IEthereumSigner {
         this.ERC20Gateway = new ContractFactory(this.web3, {
             abi: require("loom-js/dist/mainnet-contracts/ERC20Gateway.json"),
             networks: {
-                [ETHEREUM_NETWORK_NAME]: {
+                [ETHEREUM_CHAIN_ID]: {
                     address: ETHEREUM_ERC20_GATEWAY
                 }
             }
@@ -77,7 +78,7 @@ class EthereumWallet implements Wallet, IEthereumSigner {
     public removeEventListener = (event: "connected" | "disconnected", listener: (...args: any[]) => void) =>
         this.eventEmitter.removeListener(event, listener);
 
-    public getBalance = async () => {
+    public balanceOf = async () => {
         const balance = await this.web3.eth.getBalance(this.address.toLocalAddressString());
         return toBN(balance);
     };
@@ -88,7 +89,7 @@ class EthereumWallet implements Wallet, IEthereumSigner {
     ) => {
         const ethToken = tokens.find(token => token.ethereumAddress.isNull());
         if (ethToken) {
-            updateBalance(ethToken.ethereumAddress, await this.getBalance());
+            updateBalance(ethToken.ethereumAddress, await this.balanceOf());
         }
         await Promise.all(
             tokens
@@ -99,6 +100,14 @@ class EthereumWallet implements Wallet, IEthereumSigner {
                     updateBalance(token.ethereumAddress, balance);
                 })
         );
+    };
+
+    public send = (tx: object) => {
+        const transaction = new Tx(tx);
+        const privateKey = this.ethereumWallet.getPrivateKeyString().slice(2);
+        transaction.sign(new Buffer(privateKey, "hex"));
+        const serializedTx = transaction.serialize().toString("hex");
+        return this.web3.eth.sendSignedTransaction("0x" + serializedTx);
     };
 
     public async signAsync(msg: string): Promise<Uint8Array> {

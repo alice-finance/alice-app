@@ -9,7 +9,7 @@ interface Wallet {
 
     addEventListener: (event: "connected" | "disconnected", listener: (...args: any[]) => void) => void;
     removeEventListener: (event: "connected" | "disconnected", listener: (...args: any[]) => void) => void;
-    getBalance: () => Promise<BN>;
+    balanceOf: () => Promise<BN>;
 }
 
 export default Wallet;

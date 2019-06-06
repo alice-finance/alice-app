@@ -23,8 +23,8 @@ const ManageAssetScreen = () => {
     const { getParam } = useNavigation();
     const token: ERC20Token = getParam("token");
     const { getPendingDepositTransactions, getPendingWithdrawalTransactions } = useContext(PendingTransactionsContext);
-    const pendingDepositTransactions = getPendingDepositTransactions(token.loomAddress.toLocalAddressString());
-    const pendingWithdrawalTransactions = getPendingWithdrawalTransactions(token.loomAddress.toLocalAddressString());
+    const pendingDepositTransactions = getPendingDepositTransactions(token.ethereumAddress);
+    const pendingWithdrawalTransactions = getPendingWithdrawalTransactions(token.loomAddress);
     const inProgress = pendingDepositTransactions.length > 0 || pendingWithdrawalTransactions.length > 0;
     if (token) {
         return (

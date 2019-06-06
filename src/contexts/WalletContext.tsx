@@ -25,7 +25,3 @@ export const WalletProvider = ({ children }) => {
 };
 
 export const WalletConsumer = WalletContext.Consumer;
-
-export const useWalletContext = () => {
-
-};

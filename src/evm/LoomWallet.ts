@@ -1,10 +1,11 @@
-import { ETHEREUM_CHAIN_ID, LOOM_CHAIN_ID, LOOM_READ_URL, LOOM_WRITE_URL } from "react-native-dotenv";
+import { ETHEREUM_NETWORK_NAME, LOOM_NETWORK_NAME, LOOM_READ_URL, LOOM_WRITE_URL } from "react-native-dotenv";
 
 import { mnemonicToSeed } from "bip39";
 import BN from "bn.js";
 import EventEmitter from "events";
 import HDKey from "hdkey";
 import { Client, CryptoUtils, LocalAddress, LoomProvider, NonceTxMiddleware, SignedTxMiddleware } from "loom-js";
+import { EthCoin } from "loom-js/dist/contracts";
 import Web3 from "web3";
 import { toBN } from "../utils/bn-utils";
 import Address from "./Address";
@@ -27,10 +28,10 @@ class LoomWallet implements Wallet {
     constructor(mnemonic: string) {
         this.mnemonic = mnemonic;
         this.address = new Address(
-            LOOM_CHAIN_ID,
+            LOOM_NETWORK_NAME,
             LocalAddress.fromPublicKey(CryptoUtils.publicKeyFromPrivateKey(this.privateKeyFromMnemonic(mnemonic)))
         );
-        this.client = new Client(LOOM_CHAIN_ID, LOOM_WRITE_URL, LOOM_READ_URL);
+        this.client = new Client(LOOM_NETWORK_NAME, LOOM_WRITE_URL, LOOM_READ_URL);
         this.eventEmitter = new EventEmitter();
         this.web3 = this.createWeb3(mnemonic);
         this.ERC20 = new ContractFactory(this.web3, {
@@ -79,7 +80,7 @@ class LoomWallet implements Wallet {
     public removeEventListener = (event: "connected" | "disconnected", listener: (...args: any[]) => void) =>
         this.eventEmitter.removeListener(event, listener);
 
-    public getBalance = async () => {
+    public balanceOf = async () => {
         const balance = await this.web3.eth.getBalance(this.address.toLocalAddressString());
         return toBN(balance);
     };
@@ -92,8 +93,8 @@ class LoomWallet implements Wallet {
                     token.name,
                     token.symbol,
                     token.decimals,
-                    Address.fromString(LOOM_CHAIN_ID + ":" + token.localAddress),
-                    Address.fromString(ETHEREUM_CHAIN_ID + ":" + token.foreignAddress)
+                    Address.fromString(LOOM_NETWORK_NAME + ":" + token.localAddress),
+                    Address.fromString(ETHEREUM_NETWORK_NAME + ":" + token.foreignAddress)
                 )
         );
     };
@@ -104,7 +105,8 @@ class LoomWallet implements Wallet {
     ) => {
         const ethToken = tokens.find(token => token.loomAddress.isNull());
         if (ethToken) {
-            // TODO
+            const eth = await EthCoin.createAsync(this.client, this.address);
+            updateBalance(Address.fromString(eth.address.toString()), await eth.getBalanceOfAsync(this.address));
         }
         const addresses = tokens.filter(token => !token.loomAddress.isNull()).map(token => token.loomAddress);
         const erc20Proxy = await this.ERC20Proxy.deployed();
@@ -119,7 +121,7 @@ class LoomWallet implements Wallet {
 
     public fetchSavingsAssetAddress = async () => {
         const market = await this.MoneyMarket.deployed();
-        return Address.fromString(LOOM_CHAIN_ID + ":" + (await market.asset()));
+        return Address.fromString(LOOM_NETWORK_NAME + ":" + (await market.asset()));
     };
 
     private privateKeyFromMnemonic = (mnemonic: string) => {

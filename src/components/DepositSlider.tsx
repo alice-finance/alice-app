@@ -5,6 +5,7 @@ import { Slider, StyleSheet, TextInput, View } from "react-native";
 import { Button, Text } from "native-base";
 import platform from "../../native-base-theme/variables/platform";
 import { BalancesContext } from "../contexts/BalancesContext";
+import { PendingTransactionsContext } from "../contexts/PendingTransactionsContext";
 import ERC20Token from "../evm/ERC20Token";
 import preset from "../styles/preset";
 import { formatValue, parseValue, pow10, toBN } from "../utils/bn-utils";
@@ -13,14 +14,12 @@ import DepositAmountDialog from "./DepositAmountDialog";
 const DepositSlider = ({ token }: { token: ERC20Token }) => {
     const { t } = useTranslation("asset");
     const { getBalance } = useContext(BalancesContext);
-    const formatAmount = useCallback(
-        a =>
-            toBN(a)
-                .mul(pow10(2))
-                .div(pow10(token.decimals))
-                .toNumber(),
-        [token]
-    );
+    const { getPendingDepositTransactions, getPendingWithdrawalTransactions } = useContext(PendingTransactionsContext);
+    const formatAmount = a =>
+        toBN(a)
+            .mul(pow10(2))
+            .div(pow10(token.decimals))
+            .toNumber();
     const [amount, setAmount] = useState(formatAmount(getBalance(token.loomAddress)));
     const amountBN = parseValue(amount.toString(), token.decimals - 2);
     const max = getBalance(token.loomAddress)
@@ -28,7 +27,9 @@ const DepositSlider = ({ token }: { token: ERC20Token }) => {
         .mul(pow10(2))
         .div(pow10(token.decimals));
     const med = max.div(toBN(2));
-    const [inProgress, setInProgress] = useState(false); // TODO
+    const disabled =
+        getPendingDepositTransactions(token.ethereumAddress).length > 0 ||
+        getPendingWithdrawalTransactions(token.ethereumAddress).length > 0;
     const onEndEditing = useCallback(
         event => {
             let value = parseValue(event.nativeEvent.text, 2);
@@ -62,7 +63,7 @@ const DepositSlider = ({ token }: { token: ERC20Token }) => {
                     maximumTrackTintColor={platform.brandInfo}
                     thumbTintColor={platform.brandInfo}
                     onValueChange={setAmount}
-                    disabled={inProgress}
+                    disabled={disabled}
                 />
                 <View style={[preset.flexDirectionRow, preset.marginTopSmall]}>
                     <Text style={[styles.scaleText, preset.marginLeftNormal]}>0 {token.symbol}</Text>
@@ -77,7 +78,7 @@ const DepositSlider = ({ token }: { token: ERC20Token }) => {
             <Button
                 info={true}
                 block={true}
-                disabled={getBalance(token.loomAddress).eq(amountBN) || inProgress}
+                disabled={getBalance(token.loomAddress).eq(amountBN) || disabled}
                 style={[preset.marginBottomSmall, preset.marginTopLarge]}
                 onPress={openDialog}>
                 <Text>{t("setDepositAmount")}</Text>

@@ -12,8 +12,8 @@ import Spinner from "./Spinner";
 const DepositInProgress = ({ token }: { token: ERC20Token }) => {
     const { t } = useTranslation("asset");
     const { getPendingDepositTransactions } = useContext(PendingTransactionsContext);
-    const pendingDepositTransactions = getPendingDepositTransactions(token.loomAddress.toLocalAddressString());
-    const onPress = useCallback(() => openTx(pendingDepositTransactions[pendingDepositTransactions.length - 1].hash), [
+    const pendingDepositTransactions = getPendingDepositTransactions(token.loomAddress);
+    const onPress = useCallback(() => openTx(pendingDepositTransactions[pendingDepositTransactions.length - 1]), [
         pendingDepositTransactions
     ]);
     return pendingDepositTransactions.length > 0 ? (

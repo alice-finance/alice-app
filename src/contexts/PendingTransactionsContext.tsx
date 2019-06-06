@@ -1,74 +1,82 @@
 import React, { useCallback, useState } from "react";
 
-import Transaction from "../evm/Transaction";
+import Address from "../evm/Address";
 
 export const PendingTransactionsContext = React.createContext({
-    getPendingDepositTransactions: (assetAddress: string) => [] as Transaction[],
-    addPendingDepositTransaction: (assetAddress: string, tx: Transaction) => {},
-    removePendingDepositTransaction: (assetAddress: string, hash: string) => {},
-    getPendingWithdrawalTransactions: (assetAddress: string) => [] as Transaction[],
-    addPendingWithdrawalTransaction: (assetAddress: string, tx: Transaction) => {},
-    removePendingWithdrawalTransaction: (assetAddress: string, hash: string) => {}
+    getPendingDepositTransactions: (address: Address) => [] as string[],
+    addPendingDepositTransaction: (address: Address, hash: string) => {},
+    removePendingDepositTransaction: (address: Address, hash: string) => {},
+    clearPendingDepositTransaction: (address: Address) => {},
+    getPendingWithdrawalTransactions: (address: Address) => [] as string[],
+    addPendingWithdrawalTransaction: (address: Address, hash: string) => {},
+    removePendingWithdrawalTransaction: (address: Address, hash: string) => {},
+    clearPendingWithdrawalTransaction: (address: Address) => {}
 });
 
 export const PendingTransactionsProvider = ({ children }) => {
     const [pendingDepositTransactions, setPendingDepositTransactions] = useState({} as {
-        [addressString: string]: Transaction[];
+        [addressString: string]: string[];
     });
     const [pendingWithdrawalTransactions, setPendingWithdrawalTransactions] = useState({} as {
-        [addressString: string]: Transaction[];
+        [addressString: string]: string[];
     });
     const getPendingDepositTransactions = useCallback(
-        (assetAddress: string) => {
-            return pendingDepositTransactions[assetAddress] || [];
+        (address: Address) => {
+            return pendingDepositTransactions[address.toString()] || [];
         },
         [pendingDepositTransactions]
     );
     const addPendingDepositTransaction = useCallback(
-        (assetAddress: string, tx: Transaction) => {
-            const transactions = pendingDepositTransactions[assetAddress] || [];
-            transactions.push(tx);
-            setPendingDepositTransactions({
-                ...pendingDepositTransactions,
-                [assetAddress]: transactions
-            });
+        (address: Address, hash: string) => {
+            const transactions = pendingDepositTransactions[address.toString()] || [];
+            transactions.push(hash);
+            setPendingDepositTransactions({ ...pendingDepositTransactions, [address.toString()]: transactions });
         },
         [pendingDepositTransactions]
     );
     const removePendingDepositTransaction = useCallback(
-        (assetAddress: string, hash: string) => {
-            const transactions = pendingDepositTransactions[assetAddress] || [];
+        (address: Address, hash: string) => {
+            const transactions = pendingDepositTransactions[address.toString()] || [];
             setPendingDepositTransactions({
                 ...pendingDepositTransactions,
-                [assetAddress]: transactions.filter(tx => tx.hash !== hash)
+                [address.toString()]: transactions.filter(h => h !== hash)
             });
         },
         [pendingDepositTransactions]
     );
+    const clearPendingDepositTransaction = useCallback(
+        (address: Address) => {
+            setPendingDepositTransactions({ ...pendingDepositTransactions, [address.toString()]: [] });
+        },
+        [pendingDepositTransactions]
+    );
     const getPendingWithdrawalTransactions = useCallback(
-        (assetAddress: string) => {
-            return pendingWithdrawalTransactions[assetAddress] || [];
+        (address: Address) => {
+            return pendingWithdrawalTransactions[address.toString()] || [];
         },
         [pendingWithdrawalTransactions]
     );
     const addPendingWithdrawalTransaction = useCallback(
-        (assetAddress: string, tx: Transaction) => {
-            const transactions = pendingWithdrawalTransactions[assetAddress] || [];
-            transactions.push(tx);
-            setPendingWithdrawalTransactions({
-                ...pendingWithdrawalTransactions,
-                [assetAddress]: transactions
-            });
+        (address: Address, hash: string) => {
+            const transactions = pendingWithdrawalTransactions[address.toString()] || [];
+            transactions.push(hash);
+            setPendingWithdrawalTransactions({ ...pendingWithdrawalTransactions, [address.toString()]: transactions });
         },
         [pendingWithdrawalTransactions]
     );
     const removePendingWithdrawalTransaction = useCallback(
-        (assetAddress: string, hash: string) => {
-            const transactions = pendingWithdrawalTransactions[assetAddress] || [];
+        (address: Address, hash: string) => {
+            const transactions = pendingWithdrawalTransactions[address.toString()] || [];
             setPendingWithdrawalTransactions({
                 ...pendingWithdrawalTransactions,
-                [assetAddress]: transactions.filter(tx => tx.hash !== hash)
+                [address.toString()]: transactions.filter(h => h !== hash)
             });
+        },
+        [pendingWithdrawalTransactions]
+    );
+    const clearPendingWithdrawalTransaction = useCallback(
+        (address: Address) => {
+            setPendingWithdrawalTransactions({ ...pendingWithdrawalTransactions, [address.toString()]: [] });
         },
         [pendingWithdrawalTransactions]
     );
@@ -78,9 +86,11 @@ export const PendingTransactionsProvider = ({ children }) => {
                 getPendingDepositTransactions,
                 addPendingDepositTransaction,
                 removePendingDepositTransaction,
+                clearPendingDepositTransaction,
                 getPendingWithdrawalTransactions,
                 addPendingWithdrawalTransaction,
-                removePendingWithdrawalTransaction
+                removePendingWithdrawalTransaction,
+                clearPendingWithdrawalTransaction
             }}>
             {children}
         </PendingTransactionsContext.Provider>
