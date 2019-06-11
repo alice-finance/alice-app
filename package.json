@@ -17,7 +17,7 @@
     "expo": "^32.0.0",
     "i18next": "^15.1.2",
     "lodash": "^4.17.11",
-    "loom-js": "^1.53.0",
+    "loom-js": "^1.54.1",
     "native-base": "^2.12.1",
     "node-libs-react-native": "^1.0.3",
     "react": "16.8.6",
@@ -30,11 +30,13 @@
     "react-navigation-material-bottom-tabs": "^1.0.0",
     "react-navigation-transitions": "^1.0.10",
     "vm-browserify": "1.1.0",
-    "whatwg-url": "^7.0.0"
+    "whatwg-url": "^7.0.0",
+    "hdkey": "^1.1.1"
   },
   "devDependencies": {
     "@kevinwolf/expo-enable-hooks": "^1.0.0",
     "@types/expo": "^32.0.13",
+    "@types/hdkey": "^0.7.0",
     "@types/react": "16.8.12",
     "@types/react-native": "^0.57.53",
     "@types/whatwg-url": "^6.4.0",

@@ -3,13 +3,13 @@ import { View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
 import { Asset, Font, SecureStore, SplashScreen as ExpoSplashScreen } from "expo";
-import { EthersSigner, LocalAddress } from "loom-js/dist";
-import { AddressMapper } from "loom-js/dist/contracts";
+import { LocalAddress } from "loom-js/dist";
 import { ConnectorContext } from "../contexts/ConnectorContext";
 import { SavingsContext } from "../contexts/SavingsContext";
 import { TokensContext } from "../contexts/TokensContext";
 import EthereumConnector from "../evm/EthereumConnector";
 import LoomConnector from "../evm/LoomConnector";
+import { mapAccounts } from "../utils/loom-utils";
 
 const SplashScreen = () => {
     const { setMnemonic, setEthereumConnector, setLoomConnector } = useContext(ConnectorContext);
@@ -21,12 +21,11 @@ const SplashScreen = () => {
         const init = async () => {
             try {
                 await loadFonts();
-                await loadResources();
                 const mnemonic = await SecureStore.getItemAsync("mnemonic");
                 if (mnemonic) {
                     const ethereumConnector = new EthereumConnector(mnemonic);
                     const loomConnector = new LoomConnector(mnemonic);
-                    await addIdentityMapping(ethereumConnector, loomConnector);
+                    await mapAccounts(ethereumConnector, loomConnector);
 
                     const tokens = await loomConnector.fetchERC20Tokens();
                     const market = loomConnector.getMoneyMarket();
@@ -45,6 +44,7 @@ const SplashScreen = () => {
 
                     navigate("Main");
                 } else {
+                    await loadResources();
                     navigate("Start");
                 }
                 ExpoSplashScreen.hide();
@@ -72,21 +72,14 @@ const loadResources = (): Promise<void[]> => {
     const images = [
         require("../assets/main-bg.png"),
         require("../assets/icon-light.png"),
-        require("../assets/logo-light.png")
+        require("../assets/logo-light.png"),
+        require("../assets/rabbit.jpg")
     ];
     return Promise.all(
         images.map(image => {
             return Asset.fromModule(image).downloadAsync();
         })
     );
-};
-
-const addIdentityMapping = async (ethereumConnector: EthereumConnector, loomConnector: LoomConnector) => {
-    const addressMapper = await AddressMapper.createAsync(LoomConnector.CLIENT, loomConnector.address);
-    try {
-        const signer = new EthersSigner(ethereumConnector.wallet);
-        await addressMapper.addIdentityMappingAsync(loomConnector.address, ethereumConnector.address, signer);
-    } catch (e) {}
 };
 
 export default SplashScreen;
