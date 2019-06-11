@@ -36,7 +36,6 @@
   "devDependencies": {
     "@kevinwolf/expo-enable-hooks": "^1.0.0",
     "@types/expo": "^32.0.13",
-    "@types/hdkey": "^0.7.0",
     "@types/react": "16.8.12",
     "@types/react-native": "^0.57.53",
     "@types/whatwg-url": "^6.4.0",

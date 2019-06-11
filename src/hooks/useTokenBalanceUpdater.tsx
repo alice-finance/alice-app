@@ -13,8 +13,10 @@ const useTokenBalanceUpdater = () => {
         setUpdating(true);
         try {
             if (ethereumConnector && loomConnector) {
-                await ethereumConnector.fetchERC20Balances(tokens, updateBalance);
-                await loomConnector.fetchERC20Balances(tokens, updateBalance);
+                await Promise.all([
+                    ethereumConnector.fetchERC20Balances(tokens, updateBalance),
+                    loomConnector.fetchERC20Balances(tokens, updateBalance)
+                ]);
             }
         } finally {
             setUpdating(false);

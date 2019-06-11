@@ -19,7 +19,7 @@ const DepositInProgress = ({ token }: { token: ERC20Token }) => {
     return pendingDepositTransactions.length > 0 ? (
         <View>
             <Spinner compact={true} label={t("depositing") + ` (${pendingDepositTransactions.length}/2)`} />
-            <Text style={[preset.colorDanger, preset.marginLarge]}>{t("deposit.description")}</Text>
+            <Text style={[preset.marginLarge]}>{t("deposit.description")}</Text>
             {pendingDepositTransactions.length > 0 && (
                 <Button bordered={true} onPress={onPress} style={preset.alignCenter}>
                     <Text numberOfLines={1} ellipsizeMode="middle">
