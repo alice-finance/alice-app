@@ -108,7 +108,7 @@
         "withdrawal": "인출",
         "withdrawal.description": "인출 과정은 이더리움 네트워크의 혼잡도에 따라 1-2분 가량 소요될 수 있습니다.",
         "wouldYouChangeTheDepositAmount": "예치 금액을 아래와 같이 변경하시겠습니까?",
-        "depositChange": "변경되는 예치금",
+        "oldDepositAmount": "기존 예치금",
         "newDepositAmount": "새로운 예치금",
         "viewTransaction": "트랜잭션 보기",
         "depositing": "예치 중...",

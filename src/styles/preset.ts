@@ -10,6 +10,7 @@ const preset = StyleSheet.create({
     fontSize14: { fontSize: 14 },
     fontSize20: { fontSize: 20 },
     fontSize24: { fontSize: 24 },
+    fontWeightBold: { fontWeight: "bold" },
     alignCenter: { alignSelf: "center" },
     alignFlexEnd: { alignSelf: "flex-end" },
     textAlignCenter: { textAlign: "center" },
@@ -40,6 +41,9 @@ const preset = StyleSheet.create({
     marginNormal: { margin: Spacing.normal },
     marginLarge: { margin: Spacing.large },
     padding0: { padding: 0 },
-    paddingNormal: { padding: Spacing.normal }
+    paddingTiny: { padding: Spacing.tiny },
+    paddingSmall: { padding: Spacing.small },
+    paddingNormal: { padding: Spacing.normal },
+    paddingLarge: { padding: Spacing.large }
 });
 export default preset;

@@ -119,7 +119,7 @@
         "withdrawal": "Withdrawal",
         "withdrawal.description": "Withdrawal could take 1-2 minutes depending on the congestion level of Ethereum network.",
         "wouldYouChangeTheDepositAmount": "Would you change the deposit amount?",
-        "depositChange": "Deposit Change",
+        "oldDepositAmount": "Old Deposit Amount",
         "newDepositAmount": "New Deposit Amount",
         "viewTransaction": "View Transaction",
         "depositing": "Depositing...",

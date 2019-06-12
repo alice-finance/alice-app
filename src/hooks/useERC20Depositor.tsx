@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 
 import { ethers } from "ethers";
 import { Toast } from "native-base";
+import { BalancesContext } from "../contexts/BalancesContext";
 import { ConnectorContext } from "../contexts/ConnectorContext";
 import { PendingTransactionsContext } from "../contexts/PendingTransactionsContext";
 import ERC20Token from "../evm/ERC20Token";
@@ -11,6 +12,7 @@ const useERC20Depositor = (asset: ERC20Token) => {
     const { t } = useTranslation("asset");
     const { ethereumConnector } = useContext(ConnectorContext);
     const { addPendingDepositTransaction, clearPendingDepositTransaction } = useContext(PendingTransactionsContext);
+    const { getBalance, updateBalance } = useContext(BalancesContext);
     const deposit = useCallback(
         async (amount: ethers.utils.BigNumber) => {
             if (ethereumConnector) {
@@ -31,8 +33,11 @@ const useERC20Depositor = (asset: ERC20Token) => {
                         asset.ethereumAddress.toLocalAddressString()
                     );
                     addPendingDepositTransaction(assetAddress, depositTx);
-                    await depositTx.wait(1);
+                    await depositTx.wait();
                     clearPendingDepositTransaction(assetAddress);
+                    updateBalance(asset.ethereumAddress, getBalance(asset.ethereumAddress).sub(amount));
+                    updateBalance(asset.loomAddress, getBalance(asset.loomAddress).add(amount));
+                    Toast.show({ text: t("depositChangeSuccess") });
                 } catch (e) {
                     onError(e);
                 }
