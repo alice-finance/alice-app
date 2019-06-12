@@ -8,7 +8,9 @@ import { BalancesContext } from "../contexts/BalancesContext";
 import { PendingTransactionsContext } from "../contexts/PendingTransactionsContext";
 import ERC20Token from "../evm/ERC20Token";
 import useERC20Depositor from "../hooks/useERC20Depositor";
+import useERC20Withdrawer from "../hooks/useERC20Withdrawer";
 import useETHDepositor from "../hooks/useETHDepositor";
+import useETHWithdrawer from "../hooks/useETHWithdrawer";
 import preset from "../styles/preset";
 import { formatValue, parseValue, pow10, toBigNumber } from "../utils/big-number-utils";
 import DepositAmountDialog from "./DepositAmountDialog";
@@ -49,6 +51,8 @@ const DepositSlider = ({ token }: { token: ERC20Token }) => {
     const closeDialog = () => setDialogOpen(false);
     const { deposit: depositETH } = useETHDepositor();
     const { deposit: depositERC20 } = useERC20Depositor(token);
+    const { withdraw: withdrawETH } = useETHWithdrawer();
+    const { withdraw: withdrawERC20 } = useERC20Withdrawer(token);
     const onOk = useCallback(() => {
         closeDialog();
         setInProgress(true);
@@ -60,8 +64,11 @@ const DepositSlider = ({ token }: { token: ERC20Token }) => {
                 depositERC20(change);
             }
         } else {
-            const amountToWithdraw = change.mul(toBigNumber(-1));
-            // TODO: Withdraw
+            if (token.loomAddress.isNull()) {
+                withdrawETH(change.mul(toBigNumber(-1)));
+            } else {
+                withdrawERC20(change.mul(toBigNumber(-1)));
+            }
         }
         setInProgress(false);
     }, [amountBN, depositETH, depositERC20]);

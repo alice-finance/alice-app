@@ -11,10 +11,12 @@
     "@alice-finance/money-market": "^0.1.4",
     "@dnextco/alice-proxies": "^1.0.3",
     "@expo/vector-icons": "^9.0.0",
+    "bn.js": "^4.11.8",
     "color": "^3.1.1",
     "crypto-browserify": "3.12.0",
     "ethers": "^4.0.9",
     "expo": "^32.0.0",
+    "hdkey": "^1.1.1",
     "i18next": "^15.1.2",
     "lodash": "^4.17.11",
     "loom-js": "^1.54.1",
@@ -30,8 +32,7 @@
     "react-navigation-material-bottom-tabs": "^1.0.0",
     "react-navigation-transitions": "^1.0.10",
     "vm-browserify": "1.1.0",
-    "whatwg-url": "^7.0.0",
-    "hdkey": "^1.1.1"
+    "whatwg-url": "^7.0.0"
   },
   "devDependencies": {
     "@kevinwolf/expo-enable-hooks": "^1.0.0",

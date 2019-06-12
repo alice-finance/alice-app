@@ -8,8 +8,8 @@ export const PendingTransactionsContext = React.createContext({
     addPendingDepositTransaction: (address: Address, tx: ethers.providers.TransactionResponse) => {},
     removePendingDepositTransaction: (address: Address, hash: string) => {},
     clearPendingDepositTransaction: (address: Address) => {},
-    getPendingWithdrawalTransactions: (address: Address) => [] as ethers.providers.TransactionResponse[],
-    addPendingWithdrawalTransaction: (address: Address, tx: ethers.providers.TransactionResponse) => {},
+    getPendingWithdrawalTransactions: (address: Address) => [] as any[],
+    addPendingWithdrawalTransaction: (address: Address, tx: any) => {},
     removePendingWithdrawalTransaction: (address: Address, hash: string) => {},
     clearPendingWithdrawalTransaction: (address: Address) => {}
 });
@@ -58,7 +58,7 @@ export const PendingTransactionsProvider = ({ children }) => {
         [pendingWithdrawalTransactions]
     );
     const addPendingWithdrawalTransaction = useCallback(
-        (address: Address, tx: ethers.providers.TransactionResponse) => {
+        (address: Address, tx: any) => {
             const transactions = pendingWithdrawalTransactions[address.toString()] || [];
             transactions.push(tx);
             setPendingWithdrawalTransactions(oldState => ({ ...oldState, [address.toString()]: transactions }));
