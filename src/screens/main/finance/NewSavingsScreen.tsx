@@ -13,6 +13,7 @@ import TitleText from "../../../components/TitleText";
 import { BalancesContext } from "../../../contexts/BalancesContext";
 import { ConnectorContext } from "../../../contexts/ConnectorContext";
 import { SavingsContext } from "../../../contexts/SavingsContext";
+import useMySavingsUpdater from "../../../hooks/useMySavingsUpdater";
 import preset from "../../../styles/preset";
 import { formatValue, toBigNumber } from "../../../utils/big-number-utils";
 
@@ -27,6 +28,7 @@ const NewSavingsScreen = () => {
     const aprText = apr ? formatValue(apr, decimals, 2) + " %" : t("inquiring");
     const myBalance = getBalance(asset!.loomAddress);
     const myBalanceText = formatValue(myBalance, asset!.decimals, 2) + " " + asset!.symbol;
+    const { update } = useMySavingsUpdater();
     const onPress = useCallback(async () => {
         if (loomConnector && amount) {
             setInProgress(true);
@@ -38,6 +40,7 @@ const NewSavingsScreen = () => {
                 const depositTx = await market.deposit(amount, { gasLimit: 0 });
                 await depositTx.wait();
                 await loomConnector.fetchERC20Balances([asset!], updateBalance);
+                await update();
                 Toast.show({ text: t("aNewSavingsStartToday") });
                 pop();
             } finally {

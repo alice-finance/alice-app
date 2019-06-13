@@ -23,6 +23,9 @@ const FinanceScreen = () => {
     const { setParams } = useNavigation();
     const { t } = useTranslation(["finance", "common"]);
     const { myRecords } = useContext(SavingsContext);
+    const sortedMyRecords = myRecords
+        ? myRecords.sort((a, b) => b.initialTimestamp.getTime() - a.initialTimestamp.getTime())
+        : null;
     const onPress = useCallback(() => Linking.openURL(t("common:blogUrl")), []);
     const renderItem = useCallback(({ item }) => <SavingRecordCard record={item} />, []);
     const { update } = useMySavingsUpdater();
@@ -42,7 +45,7 @@ const FinanceScreen = () => {
                         {t("mySavings")}
                     </SubtitleText>
                     {myRecords ? (
-                        <FlatList data={myRecords} keyExtractor={defaultKeyExtractor} renderItem={renderItem} />
+                        <FlatList data={sortedMyRecords} keyExtractor={defaultKeyExtractor} renderItem={renderItem} />
                     ) : (
                         <Spinner compact={true} />
                     )}

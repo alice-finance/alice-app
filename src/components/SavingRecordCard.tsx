@@ -82,10 +82,12 @@ const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
 
 const WithdrawDialog = ({ visible, onCancel, onOk, record }) => {
     const { t } = useTranslation(["finance", "common"]);
-    const { asset } = useContext(SavingsContext);
+    const { asset, decimals, apr } = useContext(SavingsContext);
     const { loomConnector } = useContext(ConnectorContext);
     const [amount, setAmount] = useState<BigNumber | null>(toBigNumber(0));
     const [inProgress, setInProgress] = useState(false);
+    const aprText = apr ? formatValue(apr, decimals, 2) + " %" : t("inquiring");
+    const balanceText = formatValue(record.balance, asset!.decimals, 2) + " " + asset!.symbol;
     const { update } = useMySavingsUpdater();
     const onWithdraw = useCallback(async () => {
         if (loomConnector && amount) {
@@ -109,15 +111,19 @@ const WithdrawDialog = ({ visible, onCancel, onOk, record }) => {
                     <Text style={[preset.fontWeightBold, preset.fontSize20, preset.marginBottomSmall]}>
                         {t("amount")}
                     </Text>
+                    <Text style={[preset.fontSize14, preset.colorDarkGrey, preset.marginBottomSmall]}>
+                        {t("withdrawSavings.description")}
+                    </Text>
                     <AmountInput
                         asset={asset!}
                         max={record.balance}
                         disabled={!amount || inProgress}
                         onChangeAmount={setAmount}
                     />
-                    <Text style={[preset.fontSize14, preset.colorDarkGrey, preset.marginTopSmall]}>
-                        {t("withdrawSavings.description")}
-                    </Text>
+                    <View style={[preset.marginSmall]}>
+                        <Row label={t("apr")} value={aprText} />
+                        <Row label={t("myBalance")} value={balanceText} />
+                    </View>
                     {inProgress && <Spinner compact={true} />}
                 </Dialog.Content>
                 <Dialog.Actions>
@@ -133,5 +139,12 @@ const WithdrawDialog = ({ visible, onCancel, onOk, record }) => {
         </Portal>
     );
 };
+
+const Row = ({ label, value }) => (
+    <View style={[preset.flexDirectionRow, preset.marginTopTiny, preset.marginBottomTiny]}>
+        <Text style={[preset.flex0, preset.colorGrey, preset.fontSize14]}>{label}</Text>
+        <Text style={[preset.flex1, preset.textAlignRight, preset.fontSize14]}>{value}</Text>
+    </View>
+);
 
 export default SavingRecordCard;
