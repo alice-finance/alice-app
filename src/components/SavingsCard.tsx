@@ -9,6 +9,7 @@ import { SavingsContext } from "../contexts/SavingsContext";
 import preset from "../styles/preset";
 import { toBigNumber } from "../utils/big-number-utils";
 import { formatValue } from "../utils/big-number-utils";
+import BigNumberText from "./BigNumberText";
 
 const SavingsCard = () => {
     const { t } = useTranslation("finance");
@@ -22,7 +23,7 @@ const SavingsCard = () => {
                     <Left>
                         <TokenIcon address={asset!.ethereumAddress.toLocalAddressString()} width={56} height={56} />
                         <Body style={preset.marginLeftNormal}>
-                            <Text>{asset!.name}</Text>
+                            <Text style={{ fontWeight: "bold" }}>{asset!.name}</Text>
                             <MySavingsSummaryText />
                         </Body>
                     </Left>
@@ -33,7 +34,7 @@ const SavingsCard = () => {
                             <Text note={true} style={preset.marginLeft0}>
                                 {t("totalBalance")}
                             </Text>
-                            <BNText value={totalBalance} />
+                            <BigNumberText value={totalBalance} />
                         </View>
                     </Body>
                     <Body style={preset.marginLeftSmall}>
@@ -41,7 +42,7 @@ const SavingsCard = () => {
                             <Text note={true} style={preset.marginLeft0}>
                                 {t("mySavings")}
                             </Text>
-                            <BNText value={myTotalPrincipal} />
+                            <BigNumberText value={myTotalPrincipal} />
                         </View>
                     </Body>
                     <Body style={preset.marginLeftSmall}>
@@ -49,14 +50,14 @@ const SavingsCard = () => {
                             <Text note={true} style={preset.marginLeft0}>
                                 {t("apr")}
                             </Text>
-                            <BNText value={apr} suffix={"%"} />
+                            <BigNumberText value={apr} suffix={"%"} />
                         </View>
                     </Body>
                 </CardItem>
                 <CardItem style={preset.marginBottomSmall}>
                     <Left />
                     <Right>
-                        <Button primary={true} rounded={true} iconRight={true} onPress={onPress}>
+                        <Button primary={true} bordered={true} rounded={true} iconRight={true} onPress={onPress}>
                             <Text style={{ fontSize: 16, paddingRight: 8 }}>{t("startSaving")}</Text>
                             <Icon type="SimpleLineIcons" name="paper-plane" style={{ fontSize: 18 }} />
                         </Button>
@@ -78,18 +79,8 @@ const MySavingsSummaryText = () => {
             .div(myTotalPrincipal);
     }
     const text =
-        myTotalPrincipal && !myTotalPrincipal.isZero() ? "+" + formatValue(profit, 2, 2) : t("startSavingsNow");
-    return (
-        <Text note={true} style={profit.isZero() ? [] : preset.colorInfo}>
-            {text}
-        </Text>
-    );
-};
-
-const BNText = ({ value, suffix = "" }) => {
-    const { t } = useTranslation("finance");
-    const { asset, decimals } = useContext(SavingsContext);
-    return <Text>{value ? formatValue(value, decimals, 2) + " " + asset!.symbol + " " + suffix : t("inquiring")}</Text>;
+        myTotalPrincipal && !myTotalPrincipal.isZero() ? "+" + formatValue(profit, 2, 2) + "%" : t("startSavingsNow");
+    return <Text style={profit.isZero() ? [] : preset.colorInfo}>{text}</Text>;
 };
 
 export default SavingsCard;

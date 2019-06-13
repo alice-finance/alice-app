@@ -2,6 +2,7 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FlatList, StyleSheet, View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
+import { defaultKeyExtractor } from "../../../utils/react-native-utils";
 
 import { Body, Button, Container, Icon, ListItem, Text } from "native-base";
 import CaptionText from "../../../components/CaptionText";
@@ -31,7 +32,7 @@ const AssetsScreen = () => {
         <Container>
             <FlatList
                 data={sortedTokens()}
-                keyExtractor={useCallback((item, index) => index.toString(), [])}
+                keyExtractor={defaultKeyExtractor}
                 renderItem={renderItem}
                 refreshing={updating}
                 onRefresh={update}

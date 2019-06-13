@@ -2,16 +2,8 @@ import React, { useState } from "react";
 
 import { ethers } from "ethers";
 import ERC20Token from "../evm/ERC20Token";
+import SavingsRecord from "../evm/SavingsRecord";
 import { toBigNumber } from "../utils/big-number-utils";
-
-interface SavingsRecord {
-    id: ethers.utils.BigNumber;
-    interestRate: ethers.utils.BigNumber;
-    balance: ethers.utils.BigNumber;
-    principal: ethers.utils.BigNumber;
-    initialTimestamp: Date;
-    lastTimestamp: Date;
-}
 
 export const SavingsContext = React.createContext({
     decimals: 0,

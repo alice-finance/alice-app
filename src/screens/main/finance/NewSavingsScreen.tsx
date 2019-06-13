@@ -1,11 +1,14 @@
-import React, { useContext, useEffect } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
-import { TextInput } from "react-native-paper";
+import { useNavigation } from "react-navigation-hooks";
 
-import { Button, Container, Text } from "native-base";
+import { BigNumber } from "ethers/utils";
+import { Button, Container, Text, Toast } from "native-base";
+import AmountInput from "../../../components/AmountInput";
 import CaptionText from "../../../components/CaptionText";
 import HeadlineText from "../../../components/HeadlineText";
+import Spinner from "../../../components/Spinner";
 import TitleText from "../../../components/TitleText";
 import { BalancesContext } from "../../../contexts/BalancesContext";
 import { ConnectorContext } from "../../../contexts/ConnectorContext";
@@ -14,14 +17,34 @@ import preset from "../../../styles/preset";
 import { formatValue, toBigNumber } from "../../../utils/big-number-utils";
 
 const NewSavingsScreen = () => {
+    const { pop } = useNavigation();
     const { t } = useTranslation(["finance", "common"]);
     const { loomConnector } = useContext(ConnectorContext);
     const { asset, decimals, apr } = useContext(SavingsContext);
     const { getBalance, updateBalance } = useContext(BalancesContext);
+    const [amount, setAmount] = useState<BigNumber | null>(toBigNumber(0));
+    const [inProgress, setInProgress] = useState(false);
     const aprText = apr ? formatValue(apr, decimals, 2) + " %" : t("inquiring");
     const myBalance = getBalance(asset!.loomAddress);
     const myBalanceText = formatValue(myBalance, asset!.decimals, 2) + " " + asset!.symbol;
-    const onPress = () => {};
+    const onPress = useCallback(async () => {
+        if (loomConnector && amount) {
+            setInProgress(true);
+            try {
+                const market = loomConnector.getMoneyMarket();
+                const erc20 = loomConnector.getERC20(asset!.loomAddress.toLocalAddressString());
+                const approveTx = await erc20.approve(market.address, amount, { gasLimit: 0 });
+                await approveTx.wait();
+                const depositTx = await market.deposit(amount, { gasLimit: 0 });
+                await depositTx.wait();
+                await loomConnector.fetchERC20Balances([asset!], updateBalance);
+                Toast.show({ text: t("aNewSavingsStartToday") });
+                pop();
+            } finally {
+                setInProgress(false);
+            }
+        }
+    }, [loomConnector, asset, amount]);
     useEffect(() => {
         const refresh = async () => {
             if (loomConnector && asset) {
@@ -38,28 +61,30 @@ const NewSavingsScreen = () => {
             <CaptionText style={preset.marginBottomNormal}>{t("startSaving.description")}</CaptionText>
             <HeadlineText>{t("amount")}</HeadlineText>
             <View style={[preset.marginLeftNormal, preset.marginRightNormal]}>
-                <View>
-                    <TextInput
-                        mode="outlined"
-                        placeholder={asset!.symbol}
-                        style={[preset.marginLeftSmall, preset.marginRightSmall]}
-                    />
-                    <Button
-                        rounded={true}
-                        transparent={true}
-                        full={true}
-                        style={{ paddingRight: 0, position: "absolute", right: 4, bottom: 0, height: 54 }}
-                        onPress={onPress}>
-                        <Text style={{ fontSize: 12 }}>MAX</Text>
-                    </Button>
-                </View>
+                <AmountInput
+                    asset={asset!}
+                    max={myBalance}
+                    disabled={inProgress}
+                    style={[preset.marginLeftSmall, preset.marginRightSmall]}
+                    onChangeAmount={setAmount}
+                />
                 <View style={[preset.marginNormal]}>
                     <Row label={t("apr")} value={aprText} />
                     <Row label={t("myBalance")} value={myBalanceText} />
                 </View>
-                <Button primary={true} rounded={true} block={true} style={preset.marginSmall}>
-                    <Text>{t("common:start")}</Text>
-                </Button>
+                {inProgress ? (
+                    <Spinner compact={true} />
+                ) : (
+                    <Button
+                        primary={true}
+                        rounded={true}
+                        block={true}
+                        style={preset.marginSmall}
+                        disabled={!amount}
+                        onPress={onPress}>
+                        <Text>{t("common:start")}</Text>
+                    </Button>
+                )}
             </View>
         </Container>
     );

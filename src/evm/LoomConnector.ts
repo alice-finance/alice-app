@@ -3,53 +3,68 @@ import { LOOM_CHAIN_ID, LOOM_NETWORK_NAME, LOOM_READ_URL, LOOM_WRITE_URL } from 
 import { ethers } from "ethers";
 import { mnemonicToSeed } from "ethers/utils/hdnode";
 import HDKey from "hdkey";
-import { Client, CryptoUtils, LocalAddress, LoomProvider } from "loom-js/dist";
+import {
+    CachedNonceTxMiddleware,
+    Client,
+    CryptoUtils,
+    LocalAddress,
+    LoomProvider,
+    SignedTxMiddleware
+} from "loom-js/dist";
 import { EthCoin } from "loom-js/dist/contracts";
-import { createDefaultTxMiddleware } from "loom-js/dist/helpers";
+import { publicKeyFromPrivateKey } from "loom-js/dist/crypto-utils";
 import { toBigNumber } from "../utils/big-number-utils";
 import Address from "./Address";
 import Connector from "./Connector";
 import ERC20Token from "./ERC20Token";
+import UncheckedJsonRpcSigner from "./UncheckedJsonRpcSigner";
 
 class LoomConnector implements Connector {
     public address: Address;
     public client: Client;
-    public signer: ethers.Signer;
+    public provider: ethers.providers.JsonRpcProvider;
 
     constructor(mnemonic: string) {
         const privateKey = this.privateKeyFromMnemonic(mnemonic);
+        const publicKey = publicKeyFromPrivateKey(privateKey);
         this.address = Address.newLoomAddress(
             LocalAddress.fromPublicKey(CryptoUtils.publicKeyFromPrivateKey(privateKey)).toChecksumString()
         );
         this.client = new Client(LOOM_NETWORK_NAME, LOOM_WRITE_URL, LOOM_READ_URL);
-        this.client.txMiddleware = createDefaultTxMiddleware(this.client, privateKey);
-        const provider = new ethers.providers.Web3Provider(
+        this.client.txMiddleware = [
+            new CachedNonceTxMiddleware(publicKey, this.client),
+            new SignedTxMiddleware(privateKey)
+        ];
+        this.provider = new ethers.providers.Web3Provider(
             new LoomProvider(this.client, privateKey, () => this.client.txMiddleware)
         );
-        this.signer = provider.getSigner(0);
     }
 
-    public getERC20 = (address: string) => {
-        const abi = require("loom-js/dist/mainnet-contracts/ERC20.json");
-        return new ethers.Contract(address, abi, this.signer);
+    public getSigner = (unchecked = false) => {
+        return unchecked ? new UncheckedJsonRpcSigner(this.provider.getSigner()) : this.provider.getSigner();
     };
 
-    public getERC20Registry = () => {
+    public getERC20 = (address: string, unchecked = false) => {
+        const abi = require("loom-js/dist/mainnet-contracts/ERC20.json");
+        return new ethers.Contract(address, abi, this.getSigner(unchecked));
+    };
+
+    public getERC20Registry = (unchecked = false) => {
         const networks = require("@dnextco/alice-proxies/networks/ERC20Registry.json");
         const abi = require("@dnextco/alice-proxies/abis/ERC20Registry.json");
-        return new ethers.Contract(networks[LOOM_CHAIN_ID].address, abi, this.signer);
+        return new ethers.Contract(networks[LOOM_CHAIN_ID].address, abi, this.getSigner(unchecked));
     };
 
-    public getERC20Proxy = () => {
+    public getERC20Proxy = (unchecked = false) => {
         const networks = require("@dnextco/alice-proxies/networks/ERC20Proxy.json");
         const abi = require("@dnextco/alice-proxies/abis/ERC20Proxy.json");
-        return new ethers.Contract(networks[LOOM_CHAIN_ID].address, abi, this.signer);
+        return new ethers.Contract(networks[LOOM_CHAIN_ID].address, abi, this.getSigner(unchecked));
     };
 
-    public getMoneyMarket = () => {
+    public getMoneyMarket = (unchecked = false) => {
         const networks = require("@alice-finance/money-market/networks/MoneyMarket.json");
         const abi = require("@alice-finance/money-market/abis/MoneyMarket.json");
-        return new ethers.Contract(networks[LOOM_CHAIN_ID].address, abi, this.signer);
+        return new ethers.Contract(networks[LOOM_CHAIN_ID].address, abi, this.getSigner(unchecked));
     };
 
     public fetchERC20Tokens = async () => {

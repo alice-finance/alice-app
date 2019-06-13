@@ -35,7 +35,7 @@ const DepositSlider = ({ token }: { token: ERC20Token }) => {
     const pending =
         getPendingDepositTransactions(token.ethereumAddress).length > 0 ||
         getPendingWithdrawalTransactions(token.ethereumAddress).length > 0;
-    const onEndEditing = useCallback(
+    const onChange = useCallback(
         event => {
             let value = parseValue(event.nativeEvent.text, 2);
             if (value.gt(max)) {
@@ -78,7 +78,7 @@ const DepositSlider = ({ token }: { token: ERC20Token }) => {
                 <TextInput
                     selectTextOnFocus={true}
                     keyboardType="numeric"
-                    onEndEditing={onEndEditing}
+                    onChange={onChange}
                     style={[preset.textAlignCenter, preset.marginRightSmall, { fontSize: 48 }]}>
                     {formatValue(amount.toString(), 2, 2)}
                 </TextInput>

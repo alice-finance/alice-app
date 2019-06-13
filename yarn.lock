@@ -11,10 +11,10 @@
     deep-eql "^0.1.3"
     keypather "^1.10.2"
 
-"@alice-finance/money-market@^0.1.4":
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/@alice-finance/money-market/-/money-market-0.1.4.tgz#c110fa9838132e2d92d82f2b73a856597fb513e3"
-  integrity sha512-cMfYW70hnuRELJPPWPiPoJ3KNT16wGQkrhQK5zcxkjy0XdxRWwmG8SQDTgKEs8vjSmNbKoy2vR+h4HONUOMoTw==
+"@alice-finance/money-market@^0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@alice-finance/money-market/-/money-market-0.1.5.tgz#85bf358c7ce65ff28d3aa47c377bdb8989ba9338"
+  integrity sha512-KNgm7Tg+Vzo2I99W5+AnnONfqxM8nKkFeZ1MqjMlt0yu4ihCKAz6N7AnH+9YvmrN9QNfKLq111D+rJPg6wvh5A==
 
 "@babel/code-frame@^7.0.0":
   version "7.0.0"
@@ -3216,7 +3216,7 @@ ethereumjs-util@^5.0.0, ethereumjs-util@^5.2.0:
     safe-buffer "^5.1.1"
     secp256k1 "^3.0.1"
 
-ethers@^4.0.7:
+ethers@^4.0.30, ethers@^4.0.7:
   version "4.0.30"
   resolved "https://registry.yarnpkg.com/ethers/-/ethers-4.0.30.tgz#140653fd08adf2834bb2f3aceefa10d04205b47d"
   integrity sha512-1a39Y+q5zTfrXCLndV+CHsTHq+T5/TvAx5y0S/PKd700C0lfU70CJnU7q89bd+4pIuWp05TkrEsrTj2dXhkcSA==

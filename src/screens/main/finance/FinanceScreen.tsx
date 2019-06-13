@@ -1,35 +1,53 @@
 import React, { useCallback, useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { View } from "react-native";
+import { FlatList, View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
+import { defaultKeyExtractor } from "../../../utils/react-native-utils";
 
 import { Linking } from "expo";
-import { Button, Container, Icon } from "native-base";
+import { Button, Container, Content, Icon } from "native-base";
 import platform from "../../../../native-base-theme/variables/platform";
 import CaptionText from "../../../components/CaptionText";
+import SavingRecordCard from "../../../components/SavingRecordCard";
 import SavingsCard from "../../../components/SavingsCard";
+import Spinner from "../../../components/Spinner";
+import SubtitleText from "../../../components/SubtitleText";
 import TitleText from "../../../components/TitleText";
 import { ConnectorContext } from "../../../contexts/ConnectorContext";
 import { SavingsContext } from "../../../contexts/SavingsContext";
+import useMySavingsUpdater from "../../../hooks/useMySavingsUpdater";
 import preset from "../../../styles/preset";
 import { toBigNumber } from "../../../utils/big-number-utils";
 
 const FinanceScreen = () => {
     const { setParams } = useNavigation();
     const { t } = useTranslation(["finance", "common"]);
+    const { myRecords } = useContext(SavingsContext);
     const onPress = useCallback(() => Linking.openURL(t("common:blogUrl")), []);
+    const renderItem = useCallback(({ item }) => <SavingRecordCard record={item} />, []);
+    const { update } = useMySavingsUpdater();
     useScheduledUpdater();
-    useMySavingsUpdater();
     useEffect(() => {
         setParams({ onPress });
+        update();
     }, []);
     return (
         <Container>
-            <View>
-                <TitleText aboveText={true}>{t("savings")}</TitleText>
-                <CaptionText style={preset.marginBottomNormal}>{t("savings.description")}</CaptionText>
-                <SavingsCard />
-            </View>
+            <Content>
+                <View>
+                    <TitleText aboveText={true}>{t("savings")}</TitleText>
+                    <CaptionText style={preset.marginBottomNormal}>{t("savings.description")}</CaptionText>
+                    <SavingsCard />
+                    <SubtitleText aboveText={true} style={preset.marginTopNormal}>
+                        {t("mySavings")}
+                    </SubtitleText>
+                    {myRecords ? (
+                        <FlatList data={myRecords} keyExtractor={defaultKeyExtractor} renderItem={renderItem} />
+                    ) : (
+                        <Spinner compact={true} />
+                    )}
+                </View>
+            </Content>
         </Container>
     );
 };
@@ -56,20 +74,6 @@ const useScheduledUpdater = () => {
         return () => clearInterval(handle);
     }, []);
     return { apr, totalSavings: totalBalance };
-};
-
-const useMySavingsUpdater = () => {
-    const { loomConnector } = useContext(ConnectorContext);
-    const { myRecords, setMyRecords } = useContext(SavingsContext);
-    useEffect(() => {
-        const refresh = async () => {
-            const market = loomConnector!.getMoneyMarket();
-            const savingRecords = await market.getSavingsRecords(loomConnector!.address.toLocalAddressString());
-            setMyRecords(savingRecords);
-        };
-        refresh();
-    }, []);
-    return { mySavingsRecords: myRecords };
 };
 
 export default FinanceScreen;
