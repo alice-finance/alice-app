@@ -24,7 +24,7 @@ const useERC20Depositor = (asset: ERC20Token) => {
                 try {
                     clearPendingDepositTransaction(assetAddress);
                     const erc20 = ethereumConnector.getERC20(asset.ethereumAddress.toLocalAddressString());
-                    const gateway = ethereumConnector.getERC20Gateway();
+                    const gateway = ethereumConnector.getGateway();
                     const approveTx = await erc20.approve(gateway.address, amount);
                     addPendingDepositTransaction(assetAddress, approveTx);
                     await approveTx.wait();

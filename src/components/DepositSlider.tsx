@@ -56,7 +56,7 @@ const DepositSlider = ({ token }: { token: ERC20Token }) => {
     const onOk = useCallback(() => {
         closeDialog();
         setInProgress(true);
-        const change = amountBN.sub(getBalance(token.loomAddress));
+        let change = amountBN.sub(getBalance(token.loomAddress));
         if (change.gt(toBigNumber(0))) {
             if (token.ethereumAddress.isNull()) {
                 depositETH(change);
@@ -64,10 +64,11 @@ const DepositSlider = ({ token }: { token: ERC20Token }) => {
                 depositERC20(change);
             }
         } else {
+            change = change.mul(toBigNumber(-1));
             if (token.loomAddress.isNull()) {
-                withdrawETH(change.mul(toBigNumber(-1)));
+                withdrawETH(change);
             } else {
-                withdrawERC20(change.mul(toBigNumber(-1)));
+                withdrawERC20(change);
             }
         }
         setInProgress(false);
@@ -108,7 +109,7 @@ const DepositSlider = ({ token }: { token: ERC20Token }) => {
             <Button
                 info={true}
                 block={true}
-                disabled={getBalance(token.loomAddress).eq(toBigNumber(amount)) || pending || inProgress}
+                disabled={formatAmount(getBalance(token.loomAddress)) === amount || pending || inProgress}
                 style={[preset.marginBottomSmall, preset.marginTopLarge]}
                 onPress={openDialog}>
                 <Text>{t("setDepositAmount")}</Text>

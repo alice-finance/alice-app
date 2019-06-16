@@ -25,7 +25,7 @@ const useETHDepositor = () => {
                 };
                 try {
                     clearPendingDepositTransaction(ethereumAddress);
-                    const gateway = ethereumConnector.getERC20Gateway();
+                    const gateway = ethereumConnector.getGateway();
                     const tx = await ethereumConnector.wallet.sendTransaction({
                         to: gateway.address,
                         value: amount

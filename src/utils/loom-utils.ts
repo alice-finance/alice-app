@@ -7,7 +7,8 @@ export const mapAccounts = async (ethereumConnector: EthereumConnector, loomConn
     const addressMapper = await AddressMapper.createAsync(loomConnector.client, loomConnector.address);
     const hasMapping = await addressMapper.hasMappingAsync(ethereumConnector.address);
     if (!hasMapping) {
-        const signer = new EthersSigner(ethereumConnector.wallet);
+        // @ts-ignore
+        const signer = new EthersSigner(ethereumConnector.getSigner());
         await addressMapper.addIdentityMappingAsync(ethereumConnector.address, loomConnector.address, signer);
     }
 };

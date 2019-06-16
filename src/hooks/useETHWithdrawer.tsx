@@ -24,7 +24,6 @@ const useETHWithdrawer = () => {
                 const ethereumAddress = Address.newEthereumAddress(NULL_ADDRESS);
                 const loomAddress = Address.newLoomAddress(NULL_ADDRESS);
                 const onError = e => {
-                    console.warn(e);
                     clearPendingWithdrawalTransaction(loomAddress);
                     Toast.show({ text: t("depositChangeFailure") });
                 };
@@ -35,7 +34,7 @@ const useETHWithdrawer = () => {
                     const gateway = await TransferGateway.createAsync(loomConnector.client, loomConnector.address);
                     await eth.approveAsync(gateway.address, new BN(amount.toString()));
                     addPendingWithdrawalTransaction(loomAddress, { hash: "2" });
-                    const ethereumGateway = Address.newEthereumAddress(ethereumConnector.getERC20Gateway().address);
+                    const ethereumGateway = Address.newEthereumAddress(ethereumConnector.getGateway().address);
                     await gateway.withdrawETHAsync(new BN(amount.toString()), ethereumGateway);
                     clearPendingWithdrawalTransaction(loomAddress);
                     updateBalance(ethereumAddress, getBalance(ethereumAddress).sub(amount));
