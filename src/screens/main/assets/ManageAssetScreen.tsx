@@ -38,7 +38,7 @@ const ManageAssetScreen = () => {
     useEffect(() => {
         loadReceived();
         loadWithdrawn();
-    }, []);
+    }, [inProgress]);
     if (asset) {
         return (
             <Container>
@@ -102,14 +102,14 @@ const ItemView = ({ asset, item }: { asset: ERC20Token; item: any }) => {
                 <TypeBadge color={withdraw ? platform.brandDanger : platform.brandInfo} />
             </Left>
             <Body style={[preset.flex1, preset.marginLeftSmall]}>
+                <Text note={true} style={[preset.padding0, preset.marginLeftSmall]}>
+                    {withdraw ? t("withdrawal") : t("deposit")}
+                </Text>
                 <BigNumberText
                     value={item.amount || item.value}
                     style={[preset.marginLeftSmall, preset.fontSize20]}
                     suffix={" " + asset.symbol}
                 />
-                <Text note={true} style={[preset.padding0, preset.marginLeftSmall]}>
-                    {t("deposit")}
-                </Text>
             </Body>
         </ListItem>
     );

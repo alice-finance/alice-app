@@ -21,6 +21,7 @@ const useGatewayReceivedLoader = (assetAddress: Address) => {
         });
         setReceived(
             logs
+                .sort((l1, l2) => (l2.blockNumber || 0) - (l1.blockNumber || 0))
                 .map(log => event.decode(log.data))
                 .filter(
                     data =>
