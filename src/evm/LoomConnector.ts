@@ -17,7 +17,6 @@ import { toBigNumber } from "../utils/big-number-utils";
 import Address from "./Address";
 import Connector from "./Connector";
 import ERC20Token from "./ERC20Token";
-import UncheckedJsonRpcSigner from "./UncheckedJsonRpcSigner";
 
 class LoomConnector implements Connector {
     public address: Address;
@@ -40,31 +39,27 @@ class LoomConnector implements Connector {
         );
     }
 
-    public getSigner = (unchecked = false) => {
-        return unchecked ? new UncheckedJsonRpcSigner(this.provider.getSigner()) : this.provider.getSigner();
-    };
-
-    public getERC20 = (address: string, unchecked = false) => {
+    public getERC20 = (address: string) => {
         const abi = require("loom-js/dist/mainnet-contracts/ERC20.json");
-        return new ethers.Contract(address, abi, this.getSigner(unchecked));
+        return new ethers.Contract(address, abi, this.provider);
     };
 
-    public getERC20Registry = (unchecked = false) => {
+    public getERC20Registry = () => {
         const networks = require("@dnextco/alice-proxies/networks/ERC20Registry.json");
         const abi = require("@dnextco/alice-proxies/abis/ERC20Registry.json");
-        return new ethers.Contract(networks[LOOM_CHAIN_ID].address, abi, this.getSigner(unchecked));
+        return new ethers.Contract(networks[LOOM_CHAIN_ID].address, abi, this.provider.getSigner());
     };
 
-    public getERC20Proxy = (unchecked = false) => {
+    public getERC20Proxy = () => {
         const networks = require("@dnextco/alice-proxies/networks/ERC20Proxy.json");
         const abi = require("@dnextco/alice-proxies/abis/ERC20Proxy.json");
-        return new ethers.Contract(networks[LOOM_CHAIN_ID].address, abi, this.getSigner(unchecked));
+        return new ethers.Contract(networks[LOOM_CHAIN_ID].address, abi, this.provider.getSigner());
     };
 
-    public getMoneyMarket = (unchecked = false) => {
+    public getMoneyMarket = () => {
         const networks = require("@alice-finance/money-market/networks/MoneyMarket.json");
         const abi = require("@alice-finance/money-market/abis/MoneyMarket.json");
-        return new ethers.Contract(networks[LOOM_CHAIN_ID].address, abi, this.getSigner(unchecked));
+        return new ethers.Contract(networks[LOOM_CHAIN_ID].address, abi, this.provider.getSigner());
     };
 
     public fetchERC20Tokens = async () => {
@@ -95,16 +90,6 @@ class LoomConnector implements Connector {
         const erc20Proxy = this.getERC20Proxy();
         const balances = await erc20Proxy.getERC20Balances(addresses.map(address => address.toLocalAddressString()));
         addresses.forEach((address, index) => updateBalance(address, toBigNumber(balances[index])));
-    };
-
-    public fetchSavingsMultiplier = async () => {
-        const market = this.getMoneyMarket();
-        return toBigNumber(await market.MULTIPLIER());
-    };
-
-    public fetchSavingsAssetAddress = async () => {
-        const market = this.getMoneyMarket();
-        return Address.fromString(LOOM_NETWORK_NAME + ":" + (await market.asset()));
     };
 
     private privateKeyFromMnemonic = (mnemonic: string) => {

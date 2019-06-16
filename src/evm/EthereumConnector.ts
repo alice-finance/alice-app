@@ -5,7 +5,6 @@ import { toBigNumber } from "../utils/big-number-utils";
 import Address from "./Address";
 import Connector from "./Connector";
 import ERC20Token from "./ERC20Token";
-import UncheckedJsonRpcSigner from "./UncheckedJsonRpcSigner";
 
 class EthereumConnector implements Connector {
     public wallet: ethers.Wallet;
@@ -18,19 +17,15 @@ class EthereumConnector implements Connector {
         this.address = Address.newEthereumAddress(this.wallet.address);
     }
 
-    public getSigner = (unchecked = false) => {
-        return unchecked ? new UncheckedJsonRpcSigner(this.provider.getSigner()) : this.provider.getSigner();
-    };
-
-    public getERC20 = (address: string, unchecked = false) => {
+    public getERC20 = (address: string) => {
         const abi = require("loom-js/dist/mainnet-contracts/ERC20.json");
         // @ts-ignore
-        return new ethers.Contract(address, abi, this.getSigner(unchecked));
+        return new ethers.Contract(address, abi, this.wallet);
     };
 
-    public getGateway = (unchecked = false) => {
+    public getGateway = () => {
         const abi = require("loom-js/dist/mainnet-contracts/Gateway.json");
-        return new ethers.Contract(ETHEREUM_ERC20_GATEWAY, abi, this.getSigner(unchecked));
+        return new ethers.Contract(ETHEREUM_ERC20_GATEWAY, abi, this.wallet);
     };
 
     public fetchERC20Balances = async (
