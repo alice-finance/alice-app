@@ -20,10 +20,16 @@ const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
     const { t } = useTranslation("finance");
     const { asset, apr } = useContext(SavingsContext);
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [profit] = useState(
+        record.balance
+            .add(record.withdrawals.reduce((previous, current) => previous.add(current.amount), toBigNumber(0)))
+            .sub(record.principal)
+            .mul(toBigNumber(10000))
+            .div(record.principal)
+    );
     const openDialog = () => setDialogOpen(true);
     const closeDialog = () => setDialogOpen(false);
     const onPress = useCallback(() => openDialog(), [record]);
-    const duration = Math.floor((Date.now() - record.initialTimestamp.getTime()) / (24 * 60 * 60 * 1000));
     return (
         <View style={[preset.marginNormal]}>
             <Card>
@@ -50,9 +56,19 @@ const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
                     <Body style={preset.marginLeftSmall}>
                         <View>
                             <Text note={true} style={preset.marginLeft0}>
-                                {t("principal")}
+                                {t("profit")}
                             </Text>
-                            <BigNumberText value={record.principal} suffix={asset!.symbol} />
+                            <Text>{formatValue(profit, 2, 2) + "%"}</Text>
+                        </View>
+                    </Body>
+                    <Body style={preset.marginLeftSmall}>
+                        <View>
+                            <Text note={true} style={preset.marginLeft0}>
+                                {t("startedOn")}
+                            </Text>
+                            <Text style={preset.fontSize14}>
+                                {record.initialTimestamp.getMonth() + 1 + "/" + record.initialTimestamp.getDate()}
+                            </Text>
                         </View>
                     </Body>
                     <Body style={preset.marginLeftSmall}>
@@ -61,16 +77,6 @@ const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
                                 {t("apr")}
                             </Text>
                             <BigNumberText value={apr} suffix={"%"} />
-                        </View>
-                    </Body>
-                    <Body style={preset.marginLeftSmall}>
-                        <View>
-                            <Text note={true} style={preset.marginLeft0}>
-                                {t("duration")}
-                            </Text>
-                            <Text style={preset.fontSize14}>
-                                {duration} {t("days")}
-                            </Text>
                         </View>
                     </Body>
                 </CardItem>

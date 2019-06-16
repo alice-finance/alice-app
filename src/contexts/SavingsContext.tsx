@@ -17,7 +17,8 @@ export const SavingsContext = React.createContext({
     myRecords: null as SavingsRecord[] | null,
     setMyRecords: (savingsRecords: SavingsRecord[]) => {},
     myTotalPrincipal: null as ethers.utils.BigNumber | null,
-    myTotalBalance: null as ethers.utils.BigNumber | null
+    myTotalBalance: null as ethers.utils.BigNumber | null,
+    myTotalWithdrawal: null as ethers.utils.BigNumber | null
 });
 
 export const SavingsProvider = ({ children }) => {
@@ -31,6 +32,13 @@ export const SavingsProvider = ({ children }) => {
         : null;
     const myTotalBalance = myRecords
         ? myRecords.reduce((previous, current) => previous.add(current.balance), toBigNumber(0))
+        : null;
+    const myTotalWithdrawal = myRecords
+        ? myRecords.reduce(
+              (previous, current) =>
+                  previous.add(current.withdrawals.reduce((p, c) => p.add(c.amount), toBigNumber(0))),
+              toBigNumber(0)
+          )
         : null;
     return (
         <SavingsContext.Provider
@@ -46,7 +54,8 @@ export const SavingsProvider = ({ children }) => {
                 myRecords,
                 setMyRecords,
                 myTotalPrincipal,
-                myTotalBalance
+                myTotalBalance,
+                myTotalWithdrawal
             }}>
             {children}
         </SavingsContext.Provider>

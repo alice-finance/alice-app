@@ -14,7 +14,7 @@ import BigNumberText from "./BigNumberText";
 const SavingsCard = () => {
     const { t } = useTranslation("finance");
     const { push } = useNavigation();
-    const { asset, totalBalance, myTotalPrincipal, apr } = useContext(SavingsContext);
+    const { asset, totalBalance, myTotalBalance, apr } = useContext(SavingsContext);
     const onPress = useCallback(() => push("NewSavings"), []);
     return (
         <View style={[preset.marginNormal]}>
@@ -42,7 +42,7 @@ const SavingsCard = () => {
                             <Text note={true} style={preset.marginLeft0}>
                                 {t("mySavings")}
                             </Text>
-                            <BigNumberText value={myTotalPrincipal} />
+                            <BigNumberText value={myTotalBalance} />
                         </View>
                     </Body>
                     <Body style={preset.marginLeftSmall}>
@@ -70,10 +70,11 @@ const SavingsCard = () => {
 
 const MySavingsSummaryText = () => {
     const { t } = useTranslation("finance");
-    const { myTotalPrincipal, myTotalBalance } = useContext(SavingsContext);
+    const { myTotalPrincipal, myTotalBalance, myTotalWithdrawal } = useContext(SavingsContext);
     let profit = toBigNumber(0);
-    if (myTotalPrincipal && myTotalBalance && !myTotalPrincipal.isZero()) {
+    if (myTotalPrincipal && myTotalBalance && myTotalWithdrawal && !myTotalPrincipal.isZero()) {
         profit = myTotalBalance
+            .add(myTotalWithdrawal)
             .sub(myTotalPrincipal)
             .mul(toBigNumber(10000))
             .div(myTotalPrincipal);

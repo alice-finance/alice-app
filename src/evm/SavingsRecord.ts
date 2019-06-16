@@ -7,4 +7,11 @@ export default interface SavingsRecord {
     principal: ethers.utils.BigNumber;
     initialTimestamp: Date;
     lastTimestamp: Date;
+    withdrawals: SavingsWithdrawal[];
+}
+
+export interface SavingsWithdrawal {
+    recordId: ethers.utils.BigNumber;
+    amount: ethers.utils.BigNumber;
+    timestamp: Date;
 }
