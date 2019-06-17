@@ -80,15 +80,15 @@ const ManageAssetScreen = () => {
                     ) : (
                         <Spinner compact={true} />
                     )}
-                    <Fab
-                        active={true}
-                        containerStyle={{ borderRadius: 28, overflow: "hidden", elevation: 8 }}
-                        style={{ backgroundColor: platform.brandPrimary }}
-                        position="bottomRight"
-                        onPress={openDialog}>
-                        <Icon type="AntDesign" name="plus" />
-                    </Fab>
                 </Content>
+                <Fab
+                    active={true}
+                    containerStyle={{ borderRadius: 28, overflow: "hidden", elevation: 8 }}
+                    style={{ backgroundColor: platform.brandPrimary }}
+                    position="bottomRight"
+                    onPress={openDialog}>
+                    <Icon type="AntDesign" name="plus" />
+                </Fab>
                 <MyAddressDialog visible={dialogOpen} onCancel={closeDialog} onOk={onOk} address={myAddress} />
             </Container>
         );
@@ -162,9 +162,7 @@ const MyAddressDialog = ({ visible, onCancel, onOk, address }) => {
                 <Dialog.Content>
                     <HeadlineText>{t("myAddress")}</HeadlineText>
                     <CaptionText small={true}>{t("myAddress.description")}</CaptionText>
-                    <Text style={[preset.fontWeightBold, preset.textAlignCenter, preset.marginLarge, preset.colorInfo]}>
-                        {address}
-                    </Text>
+                    <Text style={[preset.textAlignCenter, preset.marginLarge, preset.colorInfo]}>{address}</Text>
                 </Dialog.Content>
                 <Dialog.Actions>
                     <Button rounded={true} transparent={true} onPress={onCancel}>
