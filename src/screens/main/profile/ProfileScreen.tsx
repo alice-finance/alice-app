@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Clipboard, View } from "react-native";
-import { Chip, Dialog } from "react-native-paper";
+import { Chip, Dialog, Portal } from "react-native-paper";
 
 import { Body, Button, Container, Header, Icon, ListItem, Text, Toast } from "native-base";
 import app from "../../../../app.json";
@@ -83,39 +83,41 @@ const Item = ({ title, iconName, onPress }) => {
 const BackupSeedPhraseDialog = ({ visible, onCancel, onOk, mnemonic }) => {
     const { t } = useTranslation(["profile", "common"]);
     return (
-        <Dialog visible={visible} onDismiss={onCancel}>
-            <Dialog.Content>
-                <View style={{ flexDirection: "row" }}>
-                    <Icon type="AntDesign" name="warning" style={{ color: platform.brandDanger, fontSize: 28 }} />
-                    <Text style={{ color: platform.brandDanger, marginLeft: Spacing.small, fontSize: 20 }}>
-                        {t("common:warning")}
+        <Portal>
+            <Dialog visible={visible} onDismiss={onCancel}>
+                <Dialog.Content>
+                    <View style={{ flexDirection: "row" }}>
+                        <Icon type="AntDesign" name="warning" style={{ color: platform.brandDanger, fontSize: 28 }} />
+                        <Text style={{ color: platform.brandDanger, marginLeft: Spacing.small, fontSize: 20 }}>
+                            {t("common:warning")}
+                        </Text>
+                    </View>
+                    <Text style={{ color: platform.brandDanger, marginVertical: Spacing.normal }}>
+                        {t("backupSeedPhrase.warning")}
                     </Text>
-                </View>
-                <Text style={{ color: platform.brandDanger, marginVertical: Spacing.normal }}>
-                    {t("backupSeedPhrase.warning")}
-                </Text>
-                <View
-                    style={{
-                        flexDirection: "row",
-                        flexWrap: "wrap",
-                        paddingHorizontal: 12
-                    }}>
-                    {mnemonic.split(" ").map((word, index) => (
-                        <Chip mode="outlined" key={index} style={{ margin: Spacing.tiny }}>
-                            {word}
-                        </Chip>
-                    ))}
-                </View>
-            </Dialog.Content>
-            <Dialog.Actions>
-                <Button rounded={true} transparent={true} onPress={onCancel}>
-                    <Text>{t("common:cancel")}</Text>
-                </Button>
-                <Button rounded={true} transparent={true} onPress={onOk}>
-                    <Text>{t("common:copy")}</Text>
-                </Button>
-            </Dialog.Actions>
-        </Dialog>
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            flexWrap: "wrap",
+                            paddingHorizontal: 12
+                        }}>
+                        {mnemonic.split(" ").map((word, index) => (
+                            <Chip mode="outlined" key={index} style={{ margin: Spacing.tiny }}>
+                                {word}
+                            </Chip>
+                        ))}
+                    </View>
+                </Dialog.Content>
+                <Dialog.Actions>
+                    <Button rounded={true} transparent={true} onPress={onCancel}>
+                        <Text>{t("common:cancel")}</Text>
+                    </Button>
+                    <Button rounded={true} transparent={true} onPress={onOk}>
+                        <Text>{t("common:copy")}</Text>
+                    </Button>
+                </Dialog.Actions>
+            </Dialog>
+        </Portal>
     );
 };
 
