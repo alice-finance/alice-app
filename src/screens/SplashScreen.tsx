@@ -64,6 +64,7 @@ const loadFonts = (): Promise<void> => {
         Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf"),
         SimpleLineIcons: require("@expo/vector-icons/fonts/SimpleLineIcons.ttf"),
         MaterialIcons: require("@expo/vector-icons/fonts/MaterialIcons.ttf"),
+        MaterialCommunityIcons: require("@expo/vector-icons/fonts/MaterialCommunityIcons.ttf"),
         AntDesign: require("@expo/vector-icons/fonts/AntDesign.ttf")
     });
 };

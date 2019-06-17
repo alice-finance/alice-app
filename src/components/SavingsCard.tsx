@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from "react";
+import React, { useCallback, useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
@@ -6,16 +6,23 @@ import { useNavigation } from "react-navigation-hooks";
 import { Body, Button, Card, CardItem, Icon, Left, Right, Text } from "native-base";
 import TokenIcon from "../components/TokenIcon";
 import { SavingsContext } from "../contexts/SavingsContext";
+import useTokenBalanceUpdater from "../hooks/useTokenBalanceUpdater";
 import preset from "../styles/preset";
 import { toBigNumber } from "../utils/big-number-utils";
 import { formatValue } from "../utils/big-number-utils";
 import BigNumberText from "./BigNumberText";
+import Spinner from "./Spinner";
 
 const SavingsCard = () => {
     const { t } = useTranslation("finance");
     const { push } = useNavigation();
     const { asset, totalBalance, myTotalBalance, apr } = useContext(SavingsContext);
     const onPress = useCallback(() => push("NewSavings"), []);
+    const { updating, update } = useTokenBalanceUpdater();
+    const refreshing = !asset || !totalBalance || !myTotalBalance || !apr || updating;
+    useEffect(() => {
+        update();
+    }, []);
     return (
         <View style={[preset.marginNormal]}>
             <Card>
@@ -54,15 +61,19 @@ const SavingsCard = () => {
                         </View>
                     </Body>
                 </CardItem>
-                <CardItem style={preset.marginBottomSmall}>
-                    <Left />
-                    <Right>
-                        <Button primary={true} bordered={true} rounded={true} iconRight={true} onPress={onPress}>
-                            <Text style={{ fontSize: 16, paddingRight: 8 }}>{t("startSaving")}</Text>
-                            <Icon type="SimpleLineIcons" name="paper-plane" style={{ fontSize: 18 }} />
-                        </Button>
-                    </Right>
-                </CardItem>
+                {refreshing ? (
+                    <Spinner compact={true} />
+                ) : (
+                    <CardItem style={preset.marginBottomSmall}>
+                        <Left />
+                        <Right>
+                            <Button primary={true} bordered={true} rounded={true} iconRight={true} onPress={onPress}>
+                                <Text style={{ fontSize: 16, paddingRight: 8 }}>{t("startSaving")}</Text>
+                                <Icon type="SimpleLineIcons" name="paper-plane" style={{ fontSize: 18 }} />
+                            </Button>
+                        </Right>
+                    </CardItem>
+                )}
             </Card>
         </View>
     );

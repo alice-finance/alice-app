@@ -1,10 +1,10 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { View } from "react-native";
+import { Text as NativeText, View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
 import { BigNumber } from "ethers/utils";
-import { Button, Container, Text, Toast } from "native-base";
+import { Button, Container, Icon, Text } from "native-base";
 import AmountInput from "../../../components/AmountInput";
 import CaptionText from "../../../components/CaptionText";
 import HeadlineText from "../../../components/HeadlineText";
@@ -13,41 +13,22 @@ import TitleText from "../../../components/TitleText";
 import { BalancesContext } from "../../../contexts/BalancesContext";
 import { ConnectorContext } from "../../../contexts/ConnectorContext";
 import { SavingsContext } from "../../../contexts/SavingsContext";
-import useMySavingsUpdater from "../../../hooks/useMySavingsUpdater";
+import useSavingsStarter from "../../../hooks/useSavingsStarter";
 import preset from "../../../styles/preset";
 import { formatValue, toBigNumber } from "../../../utils/big-number-utils";
 
 const NewSavingsScreen = () => {
-    const { pop } = useNavigation();
+    const { push } = useNavigation();
     const { t } = useTranslation(["finance", "common"]);
     const { loomConnector } = useContext(ConnectorContext);
     const { asset, decimals, apr } = useContext(SavingsContext);
     const { getBalance, updateBalance } = useContext(BalancesContext);
     const [amount, setAmount] = useState<BigNumber | null>(toBigNumber(0));
-    const [inProgress, setInProgress] = useState(false);
     const aprText = apr ? formatValue(apr, decimals, 2) + " %" : t("inquiring");
     const myBalance = getBalance(asset!.loomAddress);
     const myBalanceText = formatValue(myBalance, asset!.decimals, 2) + " " + asset!.symbol;
-    const { update } = useMySavingsUpdater();
-    const onPress = useCallback(async () => {
-        if (loomConnector && amount) {
-            setInProgress(true);
-            try {
-                const market = loomConnector.getMoneyMarket();
-                const erc20 = loomConnector.getERC20(asset!.loomAddress.toLocalAddressString());
-                const approveTx = await erc20.approve(market.address, amount, { gasLimit: 0 });
-                await approveTx.wait();
-                const depositTx = await market.deposit(amount, { gasLimit: 0 });
-                await depositTx.wait();
-                await loomConnector.fetchERC20Balances([asset!], updateBalance);
-                await update();
-                Toast.show({ text: t("aNewSavingsStartToday") });
-                pop();
-            } finally {
-                setInProgress(false);
-            }
-        }
-    }, [loomConnector, asset, amount]);
+    const { starting, start } = useSavingsStarter(asset, amount);
+    const onPressManageAsset = useCallback(() => push("ManageAsset", { token: asset }), []);
     useEffect(() => {
         const refresh = async () => {
             if (loomConnector && asset) {
@@ -67,16 +48,26 @@ const NewSavingsScreen = () => {
                 <AmountInput
                     asset={asset!}
                     max={myBalance}
-                    disabled={inProgress}
+                    disabled={starting}
                     style={[preset.marginLeftSmall, preset.marginRightSmall]}
                     onChangeAmount={setAmount}
                 />
-                <View style={[preset.marginNormal]}>
+                <View style={[preset.marginTopNormal, preset.marginLeftNormal, preset.marginRightNormal]}>
                     <Row label={t("apr")} value={aprText} />
                     <Row label={t("myBalance")} value={myBalanceText} />
                 </View>
-                {inProgress ? (
-                    <Spinner compact={true} />
+                <Button
+                    rounded={true}
+                    transparent={true}
+                    small={true}
+                    iconRight={true}
+                    onPress={onPressManageAsset}
+                    style={preset.alignFlexEnd}>
+                    <NativeText style={preset.colorPrimary}>{t("manageAsset")}</NativeText>
+                    <Icon type="MaterialCommunityIcons" name="chevron-right" style={preset.fontSize20} />
+                </Button>
+                {starting ? (
+                    <Spinner compact={true} label={t("startingSavings")} />
                 ) : (
                     <Button
                         primary={true}
@@ -84,7 +75,7 @@ const NewSavingsScreen = () => {
                         block={true}
                         style={preset.marginSmall}
                         disabled={!amount}
-                        onPress={onPress}>
+                        onPress={start}>
                         <Text>{t("common:start")}</Text>
                     </Button>
                 )}

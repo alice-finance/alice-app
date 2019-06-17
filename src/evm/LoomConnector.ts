@@ -41,7 +41,7 @@ class LoomConnector implements Connector {
 
     public getERC20 = (address: string) => {
         const abi = require("loom-js/dist/mainnet-contracts/ERC20.json");
-        return new ethers.Contract(address, abi, this.provider);
+        return new ethers.Contract(address, abi, this.provider.getSigner());
     };
 
     public getERC20Registry = () => {
