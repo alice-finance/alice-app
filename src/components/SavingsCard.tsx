@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
-import { Body, Button, Card, CardItem, Icon, Left, Right, Text } from "native-base";
+import { Body, Button, Card, CardItem, Left, Right, Text } from "native-base";
 import TokenIcon from "../components/TokenIcon";
 import { SavingsContext } from "../contexts/SavingsContext";
 import useTokenBalanceUpdater from "../hooks/useTokenBalanceUpdater";
@@ -67,9 +67,8 @@ const SavingsCard = () => {
                     <CardItem style={preset.marginBottomSmall}>
                         <Left />
                         <Right>
-                            <Button primary={true} bordered={true} rounded={true} iconRight={true} onPress={onPress}>
-                                <Text style={{ fontSize: 16, paddingRight: 8 }}>{t("startSaving")}</Text>
-                                <Icon type="SimpleLineIcons" name="paper-plane" style={{ fontSize: 18 }} />
+                            <Button primary={true} bordered={true} rounded={true} onPress={onPress}>
+                                <Text style={{ fontSize: 16 }}>{t("startSaving")}</Text>
                             </Button>
                         </Right>
                     </CardItem>

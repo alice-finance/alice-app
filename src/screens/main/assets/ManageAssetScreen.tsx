@@ -45,8 +45,8 @@ const ManageAssetScreen = () => {
             <Container>
                 <Content>
                     <TokenView token={asset} />
-                    <HeadlineText aboveText={true}>{t("depositAmount")}</HeadlineText>
-                    <CaptionText small={true}>{t("depositAmount.description")}</CaptionText>
+                    <HeadlineText aboveText={true}>{t("amountDeposited")}</HeadlineText>
+                    <CaptionText small={true}>{t("amountDeposited.description")}</CaptionText>
                     <View style={preset.marginNormal}>
                         {inProgress ? (
                             <View style={[preset.marginBottomLarge, preset.paddingNormal]}>

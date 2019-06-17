@@ -28,7 +28,7 @@
         "confirmSeedPhrase": "Confirm Seed Phrase",
         "confirmSeedPhrase.description": "Input seed phrase that was generated before. It consists of 12 words.",
         "complete": "Complete",
-        "complete.description": "Your wallet has been created. Start using Alice DEX by clicking the button below.",
+        "complete.description": "Your wallet has been created. Start using Alice by clicking the button below.",
         "importSeedPhrase": "Import Seed Phrase",
         "importSeedPhrase.description": "Input existing seed phrase. It consists of 12 words."
     },
@@ -111,8 +111,8 @@
         "ethereumWallet": "Ethereum wallet",
         "tradeWallet": "Trade wallet",
         "tradeWallet.description": "Deposit your assets into your trade wallet and start investing.",
-        "depositAmount": "Deposit amount",
-        "depositAmount.description": "Deposit your assets and start investing now.",
+        "amountDeposited": "Amount deposited",
+        "amountDeposited.description": "Deposit your assets and start investing now.",
         "setDepositAmount": "Update Deposit",
         "deposit": "Deposit",
         "deposit.description": "Deposit could take 1-2 minutes depending on the congestion level of Ethereum network.",
@@ -182,7 +182,7 @@
         "principal": "Principal",
         "withdrawSavings": "Withdraw",
         "withdrawSavings.description": "You can withdraw some or all amounts.",
-        "withdrawalComplete": "Your withdrawal is complete.",
+        "withdrawalComplete": "Your withdrawal has completed.",
         "loan": "Mortgage Loan",
         "loan.description": "Deposit tokens as collateral which you believe whose price will increase and you will get paid for your DAI stable coins."
     }

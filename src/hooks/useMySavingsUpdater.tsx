@@ -24,15 +24,17 @@ const useMySavingsUpdater = () => {
                 timestamp: new Date(data.timestamp.toNumber() * 1000)
             }));
         const savingRecords = await market.getSavingsRecords(loomConnector!.address.toLocalAddressString());
-        const myRecords = savingRecords.map(record => ({
-            id: record[0],
-            interestRate: record[2],
-            balance: record[3],
-            principal: record[4],
-            initialTimestamp: new Date(record[5].toNumber() * 1000),
-            lastTimestamp: new Date(record[6].toNumber() * 1000),
-            withdrawals: events.filter(e => e.recordId.eq(record[0]))
-        }));
+        const myRecords = savingRecords
+            .map(record => ({
+                id: record[0],
+                interestRate: record[2],
+                balance: record[3],
+                principal: record[4],
+                initialTimestamp: new Date(record[5].toNumber() * 1000),
+                lastTimestamp: new Date(record[6].toNumber() * 1000),
+                withdrawals: events.filter(e => e.recordId.eq(record[0]))
+            }))
+            .filter(r => !r.balance.isZero());
         setMyRecords(myRecords);
     };
     return { update };

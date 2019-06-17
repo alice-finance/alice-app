@@ -77,7 +77,7 @@ export default {
         return this.fontSizeBase * 0.8;
     },
     get borderRadiusLarge() {
-        return this.fontSizeBase * 3.8;
+        return this.fontSizeBase * 3.0;
     },
     get iconSizeLarge() {
         return this.iconFontSize * 1.5;
