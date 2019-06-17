@@ -10,6 +10,7 @@ import BigNumberText from "../../../components/BigNumberText";
 import CaptionText from "../../../components/CaptionText";
 import DepositInProgress from "../../../components/DepositInProgress";
 import DepositSlider from "../../../components/DepositSlider";
+import EmptyView from "../../../components/EmptyView";
 import HeadlineText from "../../../components/HeadlineText";
 import Spinner from "../../../components/Spinner";
 import SubtitleText from "../../../components/SubtitleText";
@@ -25,7 +26,7 @@ import preset from "../../../styles/preset";
 import { formatValue } from "../../../utils/big-number-utils";
 
 const ManageAssetScreen = () => {
-    const { t } = useTranslation("asset");
+    const { t } = useTranslation(["asset", "common"]);
     const { getParam } = useNavigation();
     const asset: ERC20Token = getParam("token");
     const { getPendingDepositTransactions, getPendingWithdrawalTransactions } = useContext(PendingTransactionsContext);
@@ -62,6 +63,7 @@ const ManageAssetScreen = () => {
                             data={[...received, ...withdrawn]}
                             keyExtractor={defaultKeyExtractor}
                             renderItem={renderItem}
+                            ListEmptyComponent={<EmptyView />}
                         />
                     ) : (
                         <Spinner compact={true} />

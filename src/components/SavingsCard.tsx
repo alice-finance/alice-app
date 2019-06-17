@@ -81,7 +81,7 @@ const MySavingsSummaryText = () => {
     }
     const text =
         myTotalPrincipal && !myTotalPrincipal.isZero() ? "+" + formatValue(profit, 2, 2) + "%" : t("startSavingsNow");
-    return <Text style={profit.isZero() ? [] : preset.colorInfo}>{text}</Text>;
+    return <Text style={profit.isZero() ? preset.colorGrey : preset.colorInfo}>{text}</Text>;
 };
 
 export default SavingsCard;

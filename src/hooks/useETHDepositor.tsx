@@ -18,13 +18,13 @@ const useETHDepositor = () => {
         async (amount: ethers.utils.BigNumber) => {
             if (ethereumConnector) {
                 const ethereumAddress = Address.newEthereumAddress(NULL_ADDRESS);
-                const loomAddress = Address.newLoomAddress(NULL_ADDRESS);
                 const onError = e => {
                     clearPendingDepositTransaction(ethereumAddress);
                     Toast.show({ text: t("depositChangeFailure") });
                 };
                 try {
                     clearPendingDepositTransaction(ethereumAddress);
+                    // Step 1: approve
                     const gateway = ethereumConnector.getGateway();
                     const tx = await ethereumConnector.wallet.sendTransaction({
                         to: gateway.address,
@@ -32,9 +32,9 @@ const useETHDepositor = () => {
                     });
                     addPendingDepositTransaction(ethereumAddress, tx);
                     await tx.wait();
+                    // Done
                     clearPendingDepositTransaction(ethereumAddress);
                     updateBalance(ethereumAddress, getBalance(ethereumAddress).sub(amount));
-                    updateBalance(loomAddress, getBalance(loomAddress).add(amount));
                     Toast.show({ text: t("depositChangeSuccess") });
                 } catch (e) {
                     onError(e);

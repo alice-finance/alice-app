@@ -10,9 +10,7 @@ const useGatewayTokenWithdrawnLoader = (assetAddress: Address) => {
     const [withdrawn, setWithdrawn] = useState<TokenWithdrawn[] | null>(null);
     const loadWithdrawn = async () => {
         const gateway = ethereumConnector!.getGateway();
-        const event = assetAddress.isNull()
-            ? gateway.interface.events.ETHReceived
-            : gateway.interface.events.ERC20Received;
+        const event = gateway.interface.events.TokenWithdrawn;
         const logs = await ethereumConnector!.provider.getLogs({
             address: gateway.address,
             topics: [event.topic],

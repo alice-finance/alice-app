@@ -53,22 +53,22 @@ const DepositSlider = ({ token }: { token: ERC20Token }) => {
     const { deposit: depositERC20 } = useERC20Depositor(token);
     const { withdraw: withdrawETH } = useETHWithdrawer();
     const { withdraw: withdrawERC20 } = useERC20Withdrawer(token);
-    const onOk = useCallback(() => {
+    const onOk = useCallback(async () => {
         closeDialog();
         setInProgress(true);
         let change = amountBN.sub(getBalance(token.loomAddress));
         if (change.gt(toBigNumber(0))) {
             if (token.ethereumAddress.isNull()) {
-                depositETH(change);
+                await depositETH(change);
             } else {
-                depositERC20(change);
+                await depositERC20(change);
             }
         } else {
             change = change.mul(toBigNumber(-1));
             if (token.loomAddress.isNull()) {
-                withdrawETH(change);
+                await withdrawETH(change);
             } else {
-                withdrawERC20(change);
+                await withdrawERC20(change);
             }
         }
         setInProgress(false);

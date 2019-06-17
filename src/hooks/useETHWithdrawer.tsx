@@ -10,6 +10,7 @@ import { BalancesContext } from "../contexts/BalancesContext";
 import { ConnectorContext } from "../contexts/ConnectorContext";
 import { PendingTransactionsContext } from "../contexts/PendingTransactionsContext";
 import Address from "../evm/Address";
+import { listenToTokenWithdrawal } from "../utils/loom-utils";
 
 const useETHWithdrawer = () => {
     const { t } = useTranslation("asset");
@@ -29,13 +30,28 @@ const useETHWithdrawer = () => {
                 };
                 try {
                     clearPendingWithdrawalTransaction(loomAddress);
+                    // Step 1: approve
                     addPendingWithdrawalTransaction(loomAddress, { hash: "1" });
                     const eth = await EthCoin.createAsync(loomConnector.client, loomConnector.address);
                     const gateway = await TransferGateway.createAsync(loomConnector.client, loomConnector.address);
                     await eth.approveAsync(gateway.address, new BN(amount.toString()));
+                    // Step 2: withdraw from loom network
                     addPendingWithdrawalTransaction(loomAddress, { hash: "2" });
-                    const ethereumGateway = Address.newEthereumAddress(ethereumConnector.getGateway().address);
-                    await gateway.withdrawETHAsync(new BN(amount.toString()), ethereumGateway);
+                    await gateway.withdrawETHAsync(
+                        new BN(amount.toString()),
+                        Address.newEthereumAddress(ethereumConnector.getGateway().address)
+                    );
+                    const signature = await listenToTokenWithdrawal(
+                        gateway,
+                        ethereumAddress,
+                        ethereumConnector.address
+                    );
+                    // Step 3: withdraw from ethereum network
+                    addPendingWithdrawalTransaction(loomAddress, { hash: "3" });
+                    const ethereumGateway = ethereumConnector.getGateway();
+                    const withdrawTx = await ethereumGateway.withdrawERC20(amount, signature, { gasLimit: 0 });
+                    await withdrawTx.wait();
+                    // Done
                     clearPendingWithdrawalTransaction(loomAddress);
                     updateBalance(ethereumAddress, getBalance(ethereumAddress).sub(amount));
                     updateBalance(loomAddress, getBalance(loomAddress).add(amount));

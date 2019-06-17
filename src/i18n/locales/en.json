@@ -126,6 +126,7 @@
         "withdrawing": "Withdrawing...",
         "depositChangeSuccess": "Your deposit has changed.",
         "depositChangeFailure": "Failure changing your deposit. Please try again.",
+        "insufficientFunds": "Insufficient ETH for transaction fee.",
         "depositWithdrawalHistory": "Deposit/Withdrawal History",
         "status": "Status",
         "success": "Success",

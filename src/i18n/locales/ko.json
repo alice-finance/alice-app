@@ -115,6 +115,7 @@
         "withdrawing": "인출 중...",
         "depositChangeSuccess": "예치금이 변경되었습니다.",
         "depositChangeFailure": "예치금 변경 실패. 다시 시도해 주세요.",
+        "insufficientFunds": "수수료로 사용할 ETH가 부족합니다.",
         "depositWithdrawalHistory": "예치/인출 내역",
         "status": "상태",
         "success": "완료",

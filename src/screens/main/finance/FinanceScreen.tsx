@@ -8,6 +8,7 @@ import { Linking } from "expo";
 import { Button, Container, Content, Icon } from "native-base";
 import platform from "../../../../native-base-theme/variables/platform";
 import CaptionText from "../../../components/CaptionText";
+import EmptyView from "../../../components/EmptyView";
 import SavingRecordCard from "../../../components/SavingRecordCard";
 import SavingsCard from "../../../components/SavingsCard";
 import Spinner from "../../../components/Spinner";
@@ -45,7 +46,12 @@ const FinanceScreen = () => {
                         {t("mySavings")}
                     </SubtitleText>
                     {myRecords ? (
-                        <FlatList data={sortedMyRecords} keyExtractor={defaultKeyExtractor} renderItem={renderItem} />
+                        <FlatList
+                            data={sortedMyRecords}
+                            keyExtractor={defaultKeyExtractor}
+                            renderItem={renderItem}
+                            ListEmptyComponent={<EmptyView />}
+                        />
                     ) : (
                         <Spinner compact={true} />
                     )}
