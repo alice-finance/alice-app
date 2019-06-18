@@ -19,7 +19,7 @@ const SavingsCard = () => {
     const { asset, totalBalance, myTotalBalance, apr } = useContext(SavingsContext);
     const onPress = useCallback(() => push("NewSavings"), []);
     const { updating, update } = useTokenBalanceUpdater();
-    const refreshing = !asset || !totalBalance || !myTotalBalance || !apr || updating;
+    const refreshing = !asset || !totalBalance || !apr || updating;
     useEffect(() => {
         update();
     }, []);

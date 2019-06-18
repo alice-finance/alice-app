@@ -23,7 +23,7 @@ import { toBigNumber } from "../../../utils/big-number-utils";
 const FinanceScreen = () => {
     const { setParams } = useNavigation();
     const { t } = useTranslation(["finance", "common"]);
-    const { myRecords } = useContext(SavingsContext);
+    const { totalBalance, myRecords } = useContext(SavingsContext);
     const sortedMyRecords = myRecords
         ? myRecords.sort((a, b) => b.initialTimestamp.getTime() - a.initialTimestamp.getTime())
         : null;
@@ -33,8 +33,10 @@ const FinanceScreen = () => {
     useScheduledUpdater();
     useEffect(() => {
         setParams({ onPress });
-        update();
-    }, []);
+        if (totalBalance) {
+            update();
+        }
+    }, [totalBalance]);
     return (
         <Container>
             <Content>
