@@ -19,24 +19,12 @@ import Connector from "./Connector";
 import ERC20Token from "./ERC20Token";
 
 class LoomConnector implements Connector {
-    public address: Address;
-    public client: Client;
-    public provider: ethers.providers.JsonRpcProvider;
+    public address!: Address;
+    public client!: Client;
+    public provider!: ethers.providers.JsonRpcProvider;
 
     constructor(mnemonic: string) {
-        const privateKey = this.privateKeyFromMnemonic(mnemonic);
-        const publicKey = publicKeyFromPrivateKey(privateKey);
-        this.address = Address.newLoomAddress(
-            LocalAddress.fromPublicKey(CryptoUtils.publicKeyFromPrivateKey(privateKey)).toChecksumString()
-        );
-        this.client = new Client(LOOM_NETWORK_NAME, LOOM_WRITE_URL, LOOM_READ_URL);
-        this.client.txMiddleware = [
-            new CachedNonceTxMiddleware(publicKey, this.client),
-            new SignedTxMiddleware(privateKey)
-        ];
-        this.provider = new ethers.providers.Web3Provider(
-            new LoomProvider(this.client, privateKey, () => this.client.txMiddleware)
-        );
+        this.init(mnemonic);
     }
 
     public getERC20 = (address: string) => {
@@ -90,6 +78,23 @@ class LoomConnector implements Connector {
         const erc20Proxy = this.getERC20Proxy();
         const balances = await erc20Proxy.getERC20Balances(addresses.map(address => address.toLocalAddressString()));
         addresses.forEach((address, index) => updateBalance(address, toBigNumber(balances[index])));
+    };
+
+    private init = (mnemonic: string) => {
+        const privateKey = this.privateKeyFromMnemonic(mnemonic);
+        const publicKey = publicKeyFromPrivateKey(privateKey);
+        this.address = Address.newLoomAddress(
+            LocalAddress.fromPublicKey(CryptoUtils.publicKeyFromPrivateKey(privateKey)).toChecksumString()
+        );
+        this.client = new Client(LOOM_NETWORK_NAME, LOOM_WRITE_URL, LOOM_READ_URL);
+        this.client.txMiddleware = [
+            new CachedNonceTxMiddleware(publicKey, this.client),
+            new SignedTxMiddleware(privateKey)
+        ];
+        this.provider = new ethers.providers.Web3Provider(
+            new LoomProvider(this.client, privateKey, () => this.client.txMiddleware)
+        );
+        this.provider.on("end", () => this.init(mnemonic));
     };
 
     private privateKeyFromMnemonic = (mnemonic: string) => {

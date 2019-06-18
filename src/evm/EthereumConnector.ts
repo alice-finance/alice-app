@@ -7,14 +7,12 @@ import Connector from "./Connector";
 import ERC20Token from "./ERC20Token";
 
 class EthereumConnector implements Connector {
-    public wallet: ethers.Wallet;
-    public provider: ethers.providers.JsonRpcProvider;
-    public address: Address;
+    public wallet!: ethers.Wallet;
+    public provider!: ethers.providers.JsonRpcProvider;
+    public address!: Address;
 
     constructor(mnemonic: string) {
-        this.provider = new ethers.providers.JsonRpcProvider(ETHEREUM_RPC_URL);
-        this.wallet = ethers.Wallet.fromMnemonic(mnemonic).connect(this.provider);
-        this.address = Address.newEthereumAddress(this.wallet.address);
+        this.init(mnemonic);
     }
 
     public getERC20 = (address: string) => {
@@ -46,6 +44,13 @@ class EthereumConnector implements Connector {
                 })
         );
     };
+
+    private init(mnemonic: string) {
+        this.provider = new ethers.providers.JsonRpcProvider(ETHEREUM_RPC_URL);
+        this.provider.on("end", () => this.init(mnemonic));
+        this.wallet = ethers.Wallet.fromMnemonic(mnemonic).connect(this.provider);
+        this.address = Address.newEthereumAddress(this.wallet.address);
+    }
 }
 
 export default EthereumConnector;
