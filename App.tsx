@@ -1,5 +1,6 @@
 /* tslint:disable:ordered-imports */
 import "node-libs-react-native/globals";
+import "./globals";
 import "ethers/dist/shims.js";
 import React from "react";
 import { Root, StyleProvider } from "native-base";

@@ -7,14 +7,17 @@ import { useNavigation, useNavigationParam } from "react-navigation-hooks";
 import * as SecureStore from "expo-secure-store";
 import { Button, Container, Text } from "native-base";
 import CaptionText from "../../components/CaptionText";
+import Spinner from "../../components/Spinner";
 import SubtitleText from "../../components/SubtitleText";
 import { Spacing } from "../../constants/dimension";
+import { ethereumPrivateKeyFromMnemonic, loomPrivateKeyFromMnemonic } from "../../utils/crypto-utils";
 
 const ConfirmMnemonicScreen = () => {
     const { t } = useTranslation(["common", "start"]);
     const { push } = useNavigation();
     const mnemonic = useNavigationParam("mnemonic");
     const [confirmed, setConfirmed] = useState(false);
+    const [encrypting, setEncrypting] = useState(false);
     const onChangeMnemonic = useCallback(
         m => {
             setConfirmed(mnemonic === m.trim());
@@ -23,8 +26,15 @@ const ConfirmMnemonicScreen = () => {
     );
     const onComplete = useCallback(async () => {
         if (confirmed) {
-            await SecureStore.setItemAsync("mnemonic", mnemonic);
-            push("Complete");
+            setEncrypting(true);
+            try {
+                await SecureStore.setItemAsync("mnemonic", mnemonic);
+                await SecureStore.setItemAsync("ethereumPrivateKey", ethereumPrivateKeyFromMnemonic(mnemonic));
+                await SecureStore.setItemAsync("loomPrivateKey", loomPrivateKeyFromMnemonic(mnemonic));
+                push("Complete");
+            } finally {
+                setEncrypting(false);
+            }
         }
     }, [confirmed, mnemonic]);
     return (
@@ -32,17 +42,23 @@ const ConfirmMnemonicScreen = () => {
             <SubtitleText aboveText={true}>{t("start:confirmSeedPhrase")}</SubtitleText>
             <CaptionText>{t("start:confirmSeedPhrase.description")}</CaptionText>
             <View style={styles.content}>
-                <TextInput
-                    mode="outlined"
-                    multiline={true}
-                    numberOfLines={0}
-                    placeholder={t("seedPhrase")}
-                    onChangeText={onChangeMnemonic}
-                    style={styles.input}
-                />
-                <Button block={true} disabled={!confirmed} style={styles.button} onPress={onComplete}>
-                    <Text>{t("next")}</Text>
-                </Button>
+                {encrypting ? (
+                    <Spinner compact={true} label={t("common:encrypting")} />
+                ) : (
+                    <>
+                        <TextInput
+                            mode="outlined"
+                            multiline={true}
+                            numberOfLines={0}
+                            placeholder={t("seedPhrase")}
+                            onChangeText={onChangeMnemonic}
+                            style={styles.input}
+                        />
+                        <Button block={true} disabled={!confirmed} style={styles.button} onPress={onComplete}>
+                            <Text>{t("next")}</Text>
+                        </Button>
+                    </>
+                )}
             </View>
         </Container>
     );

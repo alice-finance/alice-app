@@ -1,8 +1,6 @@
 import { LOOM_CHAIN_ID, LOOM_NETWORK_NAME, LOOM_READ_URL, LOOM_WRITE_URL } from "react-native-dotenv";
 
 import { ethers } from "ethers";
-import { mnemonicToSeed } from "ethers/utils/hdnode";
-import HDKey from "hdkey";
 import {
     CachedNonceTxMiddleware,
     Client,
@@ -12,7 +10,7 @@ import {
     SignedTxMiddleware
 } from "loom-js/dist";
 import { EthCoin } from "loom-js/dist/contracts";
-import { publicKeyFromPrivateKey } from "loom-js/dist/crypto-utils";
+import { B64ToUint8Array, publicKeyFromPrivateKey } from "loom-js/dist/crypto-utils";
 import { toBigNumber } from "../utils/big-number-utils";
 import Address from "./Address";
 import Connector from "./Connector";
@@ -23,8 +21,8 @@ class LoomConnector implements Connector {
     public client!: Client;
     public provider!: ethers.providers.JsonRpcProvider;
 
-    constructor(mnemonic: string) {
-        this.init(mnemonic);
+    constructor(privateKey: string) {
+        this.init(B64ToUint8Array(privateKey));
     }
 
     public getERC20 = (address: string) => {
@@ -80,8 +78,7 @@ class LoomConnector implements Connector {
         addresses.forEach((address, index) => updateBalance(address, toBigNumber(balances[index])));
     };
 
-    private init = (mnemonic: string) => {
-        const privateKey = this.privateKeyFromMnemonic(mnemonic);
+    private init = (privateKey: Uint8Array) => {
         const publicKey = publicKeyFromPrivateKey(privateKey);
         this.address = Address.newLoomAddress(
             LocalAddress.fromPublicKey(CryptoUtils.publicKeyFromPrivateKey(privateKey)).toChecksumString()
@@ -91,16 +88,11 @@ class LoomConnector implements Connector {
             new CachedNonceTxMiddleware(publicKey, this.client),
             new SignedTxMiddleware(privateKey)
         ];
+        this.client.on("end", () => this.init(privateKey));
+        this.client.on("error", () => {});
         this.provider = new ethers.providers.Web3Provider(
             new LoomProvider(this.client, privateKey, () => this.client.txMiddleware)
         );
-        this.provider.on("end", () => this.init(mnemonic));
-    };
-
-    private privateKeyFromMnemonic = (mnemonic: string) => {
-        const seed = mnemonicToSeed(mnemonic);
-        const hdkey = HDKey.fromMasterSeed(seed).derive("m/44'/148'/0'");
-        return CryptoUtils.generatePrivateKeyFromSeed(hdkey.privateKey);
     };
 }
 

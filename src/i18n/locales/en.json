@@ -18,6 +18,7 @@
         "next": "Next",
         "start": "Start",
         "seedPhrase": "Seed Phrase",
+        "encrypting": "Encrypting private key...",
         "blogUrl": "https://medium.com/alice-korean"
     },
     "start": {
