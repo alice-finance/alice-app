@@ -97,6 +97,8 @@
         "unsettled": "미체결"
     },
     "asset": {
+        "myAddress": "내 주소",
+        "send": "전송",
         "myAssets": "보유 자산",
         "myAssets.description": "이더리움 네트워크에서 Alice로 자산을 예치하고 편리한 금융을 이용해보세요!",
         "ethereumWallet": "이더리움 지갑",

@@ -15,6 +15,7 @@ import platform from "../native-base-theme/variables/platform";
 import TabBarIcon from "./components/TabBarIcon";
 import AssetsScreen from "./screens/main/assets/AssetsScreen";
 import ManageAssetScreen from "./screens/main/assets/ManageAssetScreen";
+import MyAddressScreen from "./screens/main/assets/MyAddressScreen";
 import FinanceScreen from "./screens/main/finance/FinanceScreen";
 import NewSavingsScreen from "./screens/main/finance/NewSavingsScreen";
 import ProfileScreen from "./screens/main/profile/ProfileScreen";
@@ -70,7 +71,8 @@ const tabs = {
     AssetsTab: {
         screen: createDefaultStackNavigator({
             Assets: AssetsScreen,
-            ManageAsset: ManageAssetScreen
+            ManageAsset: ManageAssetScreen,
+            MyAddress: MyAddressScreen
         }),
         navigationOptions: tabBarNavigationOptions("assets", "pie-chart")
     },

@@ -107,6 +107,8 @@
         "unsettled": "Unsettled"
     },
     "asset": {
+        "myAddress": "My Address",
+        "send": "Send",
         "savings": "Savings",
         "myAssets": "My Assets",
         "myAssets.description": "Deposit assets from Ethereum network and use financial services now!",
