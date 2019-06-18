@@ -4,6 +4,7 @@ import { ETHEREUM_FIRST_BLOCK } from "react-native-dotenv";
 import { ethers } from "ethers";
 import { ConnectorContext } from "../contexts/ConnectorContext";
 import Address from "../evm/Address";
+import { getLogs } from "../utils/ethers-utils";
 
 const useGatewayReceivedLoader = (assetAddress: Address) => {
     const { ethereumConnector } = useContext(ConnectorContext);
@@ -13,7 +14,7 @@ const useGatewayReceivedLoader = (assetAddress: Address) => {
         const event = assetAddress.isNull()
             ? gateway.interface.events.ETHReceived
             : gateway.interface.events.ERC20Received;
-        const logs = await ethereumConnector!.provider.getLogs({
+        const logs = await getLogs(ethereumConnector!.provider, {
             address: gateway.address,
             topics: [event.topic],
             fromBlock: Number(ETHEREUM_FIRST_BLOCK),

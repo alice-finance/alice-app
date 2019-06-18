@@ -4,6 +4,7 @@ import { ETHEREUM_FIRST_BLOCK } from "react-native-dotenv";
 import { ethers } from "ethers";
 import { ConnectorContext } from "../contexts/ConnectorContext";
 import Address from "../evm/Address";
+import { getLogs } from "../utils/ethers-utils";
 
 const useGatewayTokenWithdrawnLoader = (assetAddress: Address) => {
     const { ethereumConnector } = useContext(ConnectorContext);
@@ -11,7 +12,7 @@ const useGatewayTokenWithdrawnLoader = (assetAddress: Address) => {
     const loadWithdrawn = async () => {
         const gateway = ethereumConnector!.getGateway();
         const event = gateway.interface.events.TokenWithdrawn;
-        const logs = await ethereumConnector!.provider.getLogs({
+        const logs = await getLogs(ethereumConnector!.provider, {
             address: gateway.address,
             topics: [event.topic],
             fromBlock: Number(ETHEREUM_FIRST_BLOCK),

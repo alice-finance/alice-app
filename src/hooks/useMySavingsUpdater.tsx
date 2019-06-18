@@ -3,6 +3,7 @@ import { LOOM_FIRST_BLOCK } from "react-native-dotenv";
 
 import { ConnectorContext } from "../contexts/ConnectorContext";
 import { SavingsContext } from "../contexts/SavingsContext";
+import { getLogs } from "../utils/ethers-utils";
 
 const useMySavingsUpdater = () => {
     const { loomConnector } = useContext(ConnectorContext);
@@ -10,7 +11,7 @@ const useMySavingsUpdater = () => {
     const update = async () => {
         const market = loomConnector!.getMoneyMarket();
         const event = market.interface.events.SavingsWithdrawn;
-        const logs = await loomConnector!.provider.getLogs({
+        const logs = await getLogs(loomConnector!.provider, {
             address: market.address,
             topics: [event.topic],
             fromBlock: Number(LOOM_FIRST_BLOCK),
