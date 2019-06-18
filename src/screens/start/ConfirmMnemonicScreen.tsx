@@ -4,7 +4,7 @@ import { StyleSheet, View } from "react-native";
 import { TextInput } from "react-native-paper";
 import { useNavigation, useNavigationParam } from "react-navigation-hooks";
 
-import { SecureStore } from "expo";
+import * as SecureStore from "expo-secure-store";
 import { Button, Container, Text } from "native-base";
 import CaptionText from "../../components/CaptionText";
 import SubtitleText from "../../components/SubtitleText";

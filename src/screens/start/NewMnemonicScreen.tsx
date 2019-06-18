@@ -4,8 +4,7 @@ import { StyleSheet, View } from "react-native";
 import { Chip } from "react-native-paper";
 import { useNavigation } from "react-navigation-hooks";
 
-import { entropyToMnemonic } from "bip39";
-import { Constants } from "expo";
+import { generateMnemonic } from "bip39";
 import { Button, Container, Text } from "native-base";
 import CaptionText from "../../components/CaptionText";
 import Spinner from "../../components/Spinner";
@@ -19,8 +18,7 @@ const NewMnemonicScreen = () => {
     const [mnemonic, setMnemonic] = useState<string>("");
     const onPressConfirm = useCallback(() => push("ConfirmMnemonic", { mnemonic }), [mnemonic]);
     useEffect(() => {
-        const entropy = Buffer.from(Constants.sessionId.replace("-", ""), "hex");
-        setMnemonic(entropyToMnemonic(entropy.slice(0, 16)));
+        setMnemonic(generateMnemonic());
         setRefreshing(false);
     }, []);
     return (

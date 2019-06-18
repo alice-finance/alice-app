@@ -2,7 +2,11 @@ import React, { useContext, useEffect } from "react";
 import { View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
-import { Asset, Font, SecureStore, SplashScreen as ExpoSplashScreen } from "expo";
+import { AntDesign, MaterialCommunityIcons, MaterialIcons, SimpleLineIcons } from "@expo/vector-icons";
+import { SplashScreen as ExpoSplashScreen } from "expo";
+import { Asset } from "expo-asset";
+import * as Font from "expo-font";
+import * as SecureStore from "expo-secure-store";
 import { LocalAddress } from "loom-js/dist";
 import { ConnectorContext } from "../contexts/ConnectorContext";
 import { SavingsContext } from "../contexts/SavingsContext";
@@ -60,12 +64,12 @@ const SplashScreen = () => {
 
 const loadFonts = (): Promise<void> => {
     return Font.loadAsync({
-        Roboto: require("native-base/Fonts/Roboto.ttf"),
-        Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf"),
-        SimpleLineIcons: require("@expo/vector-icons/fonts/SimpleLineIcons.ttf"),
-        MaterialIcons: require("@expo/vector-icons/fonts/MaterialIcons.ttf"),
-        MaterialCommunityIcons: require("@expo/vector-icons/fonts/MaterialCommunityIcons.ttf"),
-        AntDesign: require("@expo/vector-icons/fonts/AntDesign.ttf")
+        Roboto: require("../assets/Roboto.ttf"),
+        Roboto_medium: require("../assets/Roboto_medium.ttf"),
+        ...SimpleLineIcons.font,
+        ...MaterialIcons.font,
+        ...MaterialCommunityIcons.font,
+        ...AntDesign.font
     });
 };
 
