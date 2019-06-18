@@ -4,7 +4,8 @@ import { StyleSheet, View } from "react-native";
 import { Chip } from "react-native-paper";
 import { useNavigation } from "react-navigation-hooks";
 
-import { generateMnemonic } from "bip39";
+import { entropyToMnemonic } from "bip39";
+import * as Random from "expo-random";
 import { Button, Container, Text } from "native-base";
 import CaptionText from "../../components/CaptionText";
 import Spinner from "../../components/Spinner";
@@ -18,8 +19,12 @@ const NewMnemonicScreen = () => {
     const [mnemonic, setMnemonic] = useState<string>("");
     const onPressConfirm = useCallback(() => push("ConfirmMnemonic", { mnemonic }), [mnemonic]);
     useEffect(() => {
-        setMnemonic(generateMnemonic());
-        setRefreshing(false);
+        Random.getRandomBytesAsync(16).then(entropy => {
+            if (entropy) {
+                setMnemonic(entropyToMnemonic(Buffer.from(entropy)));
+                setRefreshing(false);
+            }
+        });
     }, []);
     return (
         <Container style={styles.container}>
@@ -27,7 +32,7 @@ const NewMnemonicScreen = () => {
             <CaptionText>{t("start:newSeedPhrase.description")}</CaptionText>
             <View style={styles.content}>
                 {refreshing ? (
-                    <Spinner />
+                    <Spinner compact={true} label={t("common:generatingSeedPhrase")} />
                 ) : (
                     <View>
                         <View style={styles.mnemonic}>

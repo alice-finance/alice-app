@@ -1,9 +1,10 @@
-import { fromMnemonic, mnemonicToSeed } from "ethers/utils/hdnode";
+import { Wallet } from "ethers";
+import { mnemonicToSeed } from "ethers/utils/hdnode";
 import HDKey from "hdkey";
 import { CryptoUtils } from "loom-js/dist";
 
 export const ethereumPrivateKeyFromMnemonic = (mnemonic: string) => {
-    return fromMnemonic(mnemonic).privateKey;
+    return Wallet.fromMnemonic(mnemonic).privateKey;
 };
 
 export const loomPrivateKeyFromMnemonic = (mnemonic: string) => {
