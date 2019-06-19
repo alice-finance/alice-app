@@ -4,7 +4,7 @@ import { View } from "react-native";
 import { Dialog, Portal } from "react-native-paper";
 
 import { BigNumber } from "ethers/utils";
-import { Body, Button, Card, CardItem, Left, Right, Text, Toast } from "native-base";
+import { Button, Card, CardItem, Left, Right, Text, Toast } from "native-base";
 import { ConnectorContext } from "../contexts/ConnectorContext";
 import { SavingsContext } from "../contexts/SavingsContext";
 import SavingsRecord from "../evm/SavingsRecord";
@@ -14,7 +14,6 @@ import { formatValue, toBigNumber } from "../utils/big-number-utils";
 import AmountInput from "./AmountInput";
 import BigNumberText from "./BigNumberText";
 import Spinner from "./Spinner";
-import SubtitleText from "./SubtitleText";
 
 const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
     const { t } = useTranslation("finance");
@@ -29,56 +28,53 @@ const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
     );
     const openDialog = () => setDialogOpen(true);
     const closeDialog = () => setDialogOpen(false);
-    const onPress = useCallback(() => openDialog(), [record]);
+    const onWithdraw = useCallback(() => openDialog(), [record]);
     return (
         <View style={[preset.marginNormal]}>
             <Card>
                 <CardItem>
                     <Left>
-                        <SubtitleText aboveText={true}>
+                        <Text style={[preset.marginTopSmall, preset.fontSize24, preset.fontWeightBold]}>
                             {formatValue(record.balance, asset!.decimals, 2)} {asset!.symbol}
-                        </SubtitleText>
+                        </Text>
                     </Left>
+                </CardItem>
+                <CardItem>
+                    <View style={[preset.marginLeftSmall, preset.flex1]}>
+                        <Text note={true} style={preset.marginLeft0}>
+                            {t("startedOn")}
+                        </Text>
+                        <Text style={preset.fontSize20}>
+                            {record.initialTimestamp.getMonth() + 1 + "/" + record.initialTimestamp.getDate()}
+                        </Text>
+                    </View>
+                    <View style={[preset.marginLeftSmall, preset.flex1]}>
+                        <Text note={true} style={preset.marginLeft0}>
+                            {t("profit")}
+                        </Text>
+                        <BigNumberText value={profit} suffix={"%"} />
+                    </View>
+                    <View style={[preset.marginLeftSmall, preset.marginRightSmall, preset.flex0]}>
+                        <Text note={true} style={preset.marginLeft0}>
+                            {t("apr")}
+                        </Text>
+                        <BigNumberText value={apr} suffix={"%"} />
+                    </View>
+                </CardItem>
+                <CardItem>
+                    <Left />
                     <Right>
                         <Button
                             rounded={true}
                             transparent={true}
                             small={true}
                             style={preset.alignFlexEnd}
-                            onPress={onPress}>
-                            <Text style={[{ fontSize: 16, paddingRight: 8 }, preset.colorInfo]}>
+                            onPress={onWithdraw}>
+                            <Text style={[{ fontSize: 16, paddingRight: 8 }, preset.colorPrimary]}>
                                 {t("withdrawSavings")}
                             </Text>
                         </Button>
                     </Right>
-                </CardItem>
-                <CardItem style={preset.marginBottomSmall}>
-                    <Body style={preset.marginLeftSmall}>
-                        <View>
-                            <Text note={true} style={preset.marginLeft0}>
-                                {t("profit")}
-                            </Text>
-                            <Text>{formatValue(profit, 2, 2) + "%"}</Text>
-                        </View>
-                    </Body>
-                    <Body style={preset.marginLeftSmall}>
-                        <View>
-                            <Text note={true} style={preset.marginLeft0}>
-                                {t("startedOn")}
-                            </Text>
-                            <Text style={preset.fontSize14}>
-                                {record.initialTimestamp.getMonth() + 1 + "/" + record.initialTimestamp.getDate()}
-                            </Text>
-                        </View>
-                    </Body>
-                    <Body style={preset.marginLeftSmall}>
-                        <View>
-                            <Text note={true} style={preset.marginLeft0}>
-                                {t("apr")}
-                            </Text>
-                            <BigNumberText value={apr} suffix={"%"} />
-                        </View>
-                    </Body>
                 </CardItem>
             </Card>
             <WithdrawDialog visible={dialogOpen} onCancel={closeDialog} onOk={closeDialog} record={record} />
@@ -115,7 +111,7 @@ const WithdrawDialog = ({ visible, onCancel, onOk, record }) => {
             <Dialog visible={visible} onDismiss={onCancel}>
                 <Dialog.Content>
                     <Text style={[preset.fontWeightBold, preset.fontSize20, preset.marginBottomSmall]}>
-                        {t("amount")}
+                        {t("withdrawSavings")}
                     </Text>
                     <Text style={[preset.fontSize14, preset.colorDarkGrey, preset.marginBottomSmall]}>
                         {t("withdrawSavings.description")}
@@ -125,8 +121,9 @@ const WithdrawDialog = ({ visible, onCancel, onOk, record }) => {
                         max={record.balance}
                         disabled={!amount || inProgress}
                         onChangeAmount={setAmount}
+                        style={preset.marginTopNormal}
                     />
-                    <View style={[preset.marginSmall]}>
+                    <View style={[preset.marginSmall, preset.marginTopNormal]}>
                         <Row label={t("apr")} value={aprText} />
                         <Row label={t("myBalance")} value={balanceText} />
                     </View>

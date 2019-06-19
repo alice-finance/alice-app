@@ -7,7 +7,6 @@ import { BigNumber } from "ethers/utils";
 import { Button, Container, Icon, Text } from "native-base";
 import AmountInput from "../../../components/AmountInput";
 import CaptionText from "../../../components/CaptionText";
-import HeadlineText from "../../../components/HeadlineText";
 import Spinner from "../../../components/Spinner";
 import TitleText from "../../../components/TitleText";
 import { BalancesContext } from "../../../contexts/BalancesContext";
@@ -29,6 +28,13 @@ const NewSavingsScreen = () => {
     const myBalanceText = formatValue(myBalance, asset!.decimals, 2) + " " + asset!.symbol;
     const { starting, start } = useSavingsStarter(asset, amount);
     const onPressManageAsset = useCallback(() => push("ManageAsset", { token: asset }), []);
+    const onStart = useCallback(async () => {
+        try {
+            await start();
+        } finally {
+            setAmount(null);
+        }
+    }, []);
     useEffect(() => {
         const refresh = async () => {
             if (loomConnector && asset) {
@@ -43,7 +49,6 @@ const NewSavingsScreen = () => {
         <Container>
             <TitleText aboveText={true}>{t("startSaving")}</TitleText>
             <CaptionText style={preset.marginBottomNormal}>{t("startSaving.description")}</CaptionText>
-            <HeadlineText>{t("amount")}</HeadlineText>
             <View style={[preset.marginLeftNormal, preset.marginRightNormal]}>
                 <AmountInput
                     asset={asset!}
@@ -57,7 +62,7 @@ const NewSavingsScreen = () => {
                     <Row label={t("myBalance")} value={myBalanceText} />
                 </View>
                 {starting ? (
-                    <Spinner compact={true} label={t("startingSavings")} />
+                    <Spinner compact={true} label={t("starting")} />
                 ) : (
                     <>
                         <Button
@@ -66,7 +71,7 @@ const NewSavingsScreen = () => {
                             block={true}
                             style={preset.marginSmall}
                             disabled={!amount}
-                            onPress={start}>
+                            onPress={onStart}>
                             <Text>{t("common:start")}</Text>
                         </Button>
                         <Button

@@ -36,30 +36,24 @@ const SavingsCard = () => {
                     </Left>
                 </CardItem>
                 <CardItem>
-                    <Body style={preset.marginLeftSmall}>
-                        <View>
-                            <Text note={true} style={preset.marginLeft0}>
-                                {t("totalBalance")}
-                            </Text>
-                            <BigNumberText value={totalBalance} />
-                        </View>
-                    </Body>
-                    <Body style={preset.marginLeftSmall}>
-                        <View>
-                            <Text note={true} style={preset.marginLeft0}>
-                                {t("mySavings")}
-                            </Text>
-                            <BigNumberText value={myTotalBalance} />
-                        </View>
-                    </Body>
-                    <Body style={preset.marginLeftSmall}>
-                        <View>
-                            <Text note={true} style={preset.marginLeft0}>
-                                {t("apr")}
-                            </Text>
-                            <BigNumberText value={apr} suffix={"%"} />
-                        </View>
-                    </Body>
+                    <View style={[preset.marginLeftSmall, preset.flex1]}>
+                        <Text note={true} style={preset.marginLeft0}>
+                            {t("totalBalance")}
+                        </Text>
+                        <BigNumberText value={totalBalance} />
+                    </View>
+                    <View style={[preset.marginLeftSmall, preset.flex1]}>
+                        <Text note={true} style={preset.marginLeft0}>
+                            {t("mySavings")}
+                        </Text>
+                        <BigNumberText value={myTotalBalance} />
+                    </View>
+                    <View style={[preset.marginLeftSmall, preset.marginRightSmall, preset.flex0]}>
+                        <Text note={true} style={preset.marginLeft0}>
+                            {t("apr")}
+                        </Text>
+                        <BigNumberText value={apr} suffix={"%"} />
+                    </View>
                 </CardItem>
                 {refreshing ? (
                     <Spinner compact={true} />

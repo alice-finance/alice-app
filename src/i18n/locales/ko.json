@@ -164,6 +164,7 @@
         "inquiring": "조회 중",
         "startSaving": "저축 시작하기",
         "startSaving.description": "Alice의 저축은 원하는 시점에 언제든 출금할 수 있는 것이 보장된 스마트 계약 시스템입니다.",
+        "starting": "시작하는 중...",
         "amount": "금액",
         "myBalance": "보유 금액",
         "manageAsset": "자산 관리하기",
@@ -178,6 +179,7 @@
         "principal": "원금",
         "withdrawSavings": "출금하기",
         "withdrawSavings.description": "일부 혹은 전체 금액을 출금할 수 있습니다.",
+        "noWithdrawalHistory": "출금 내역이 없습니다.",
         "withdrawalComplete": "출금이 완료되었습니다.",
         "loan": "담보 대출",
         "loan.description": "가격이 오를 것으로 기대되는 암호화폐를 담보로 묶어놓고 DAI 스테이블 코인을 대출받으세요."
