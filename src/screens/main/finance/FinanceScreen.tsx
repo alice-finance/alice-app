@@ -52,7 +52,7 @@ const FinanceScreen = () => {
                             data={sortedMyRecords}
                             keyExtractor={defaultKeyExtractor}
                             renderItem={renderItem}
-                            ListEmptyComponent={<EmptyView />}
+                            ListEmptyComponent={<EmptyView text={t("noSavingsHistory")} />}
                         />
                     ) : (
                         <Spinner compact={true} />

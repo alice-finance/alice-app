@@ -157,7 +157,7 @@ const ItemView = ({ asset, item }: { asset: ERC20Token; item: any }) => {
             </Left>
             <Body style={[preset.flex1, preset.marginLeftSmall]}>
                 <Text note={true} style={[preset.padding0, preset.marginLeftSmall]}>
-                    {withdraw ? t("withdrawal") : t("deposit")}
+                    {withdraw ? t("withdrawal") : t("deposit")} {inProgress && "- " + t("pending")}
                 </Text>
                 <BigNumberText
                     value={item.amount || item.value}
