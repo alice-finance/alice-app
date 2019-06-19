@@ -11,6 +11,8 @@ const preset = StyleSheet.create({
     fontSize14: { fontSize: 14 },
     fontSize20: { fontSize: 20 },
     fontSize24: { fontSize: 24 },
+    fontSize36: { fontSize: 36 },
+    fontSize48: { fontSize: 48 },
     fontWeightBold: { fontWeight: "bold" },
     alignCenter: { alignSelf: "center" },
     alignFlexEnd: { alignSelf: "flex-end" },

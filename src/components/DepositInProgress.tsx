@@ -9,17 +9,17 @@ import preset from "../styles/preset";
 import { openTx } from "../utils/ether-scan-utils";
 import Spinner from "./Spinner";
 
-const DepositInProgress = ({ token }: { token: ERC20Token }) => {
+const DepositInProgress = ({ asset }: { asset: ERC20Token }) => {
     const { t } = useTranslation("asset");
     const { getPendingDepositTransactions } = useContext(PendingTransactionsContext);
-    const pendingDepositTransactions = getPendingDepositTransactions(token.ethereumAddress);
+    const pendingDepositTransactions = getPendingDepositTransactions(asset.ethereumAddress);
     const onPress = useCallback(() => openTx(pendingDepositTransactions[pendingDepositTransactions.length - 1].hash!), [
         pendingDepositTransactions
     ]);
-    return pendingDepositTransactions.length > 0 ? (
+    return (
         <View>
             <Spinner compact={true} label={t("depositing")} />
-            <Text style={[preset.marginLarge]}>{t("deposit.description")}</Text>
+            <Text style={[preset.marginLarge]}>{t("deposit.warning")}</Text>
             {pendingDepositTransactions.length > 0 && (
                 <Button bordered={true} onPress={onPress} style={preset.alignCenter}>
                     <Text numberOfLines={1} ellipsizeMode="middle">
@@ -28,8 +28,6 @@ const DepositInProgress = ({ token }: { token: ERC20Token }) => {
                 </Button>
             )}
         </View>
-    ) : (
-        <View />
     );
 };
 

@@ -30,7 +30,7 @@ const SavingsCard = () => {
                     <Left>
                         <TokenIcon address={asset!.ethereumAddress.toLocalAddressString()} width={56} height={56} />
                         <Body style={preset.marginLeftNormal}>
-                            <Text style={{ fontWeight: "bold" }}>{asset!.name}</Text>
+                            <Text style={[preset.fontSize24, preset.fontWeightBold]}>{asset!.name}</Text>
                             <MySavingsSummaryText />
                         </Body>
                     </Left>

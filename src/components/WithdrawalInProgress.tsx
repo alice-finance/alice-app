@@ -12,13 +12,11 @@ const WithdrawalInProgress = ({ token }: { token: ERC20Token }) => {
     const { t } = useTranslation("asset");
     const { getPendingWithdrawalTransactions } = useContext(PendingTransactionsContext);
     const pendingWithdrawalTransactions = getPendingWithdrawalTransactions(token.loomAddress);
-    return pendingWithdrawalTransactions.length > 0 ? (
+    return (
         <View>
             <Spinner compact={true} label={t("withdrawing")} />
             <Text style={[preset.marginLarge]}>{t("withdrawal.description")}</Text>
         </View>
-    ) : (
-        <View />
     );
 };
 

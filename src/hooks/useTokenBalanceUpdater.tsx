@@ -8,9 +8,8 @@ const useTokenBalanceUpdater = () => {
     const { tokens } = useContext(TokensContext);
     const { updateBalance } = useContext(BalancesContext);
     const { ethereumConnector, loomConnector } = useContext(ConnectorContext);
-    const [updating, setUpdating] = useState(false);
+    const [updating, setUpdating] = useState(true);
     const update = useCallback(async () => {
-        setUpdating(true);
         try {
             if (ethereumConnector && loomConnector) {
                 await Promise.all([

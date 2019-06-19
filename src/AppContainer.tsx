@@ -14,6 +14,7 @@ import { fromRight } from "react-navigation-transitions";
 import platform from "../native-base-theme/variables/platform";
 import TabBarIcon from "./components/TabBarIcon";
 import AssetsScreen from "./screens/main/assets/AssetsScreen";
+import DepositScreen from "./screens/main/assets/DepositScreen";
 import ManageAssetScreen from "./screens/main/assets/ManageAssetScreen";
 import MyAddressScreen from "./screens/main/assets/MyAddressScreen";
 import FinanceScreen from "./screens/main/finance/FinanceScreen";
@@ -72,7 +73,8 @@ const tabs = {
         screen: createDefaultStackNavigator({
             Assets: AssetsScreen,
             ManageAsset: ManageAssetScreen,
-            MyAddress: MyAddressScreen
+            MyAddress: MyAddressScreen,
+            Deposit: DepositScreen
         }),
         navigationOptions: tabBarNavigationOptions("assets", "pie-chart")
     },

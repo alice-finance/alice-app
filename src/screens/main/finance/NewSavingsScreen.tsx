@@ -52,32 +52,34 @@ const NewSavingsScreen = () => {
                     style={[preset.marginLeftSmall, preset.marginRightSmall]}
                     onChangeAmount={setAmount}
                 />
-                <View style={[preset.marginTopNormal, preset.marginLeftNormal, preset.marginRightNormal]}>
+                <View style={[preset.marginNormal]}>
                     <Row label={t("apr")} value={aprText} />
                     <Row label={t("myBalance")} value={myBalanceText} />
                 </View>
-                <Button
-                    rounded={true}
-                    transparent={true}
-                    small={true}
-                    iconRight={true}
-                    onPress={onPressManageAsset}
-                    style={preset.alignFlexEnd}>
-                    <NativeText style={preset.colorPrimary}>{t("manageAsset")}</NativeText>
-                    <Icon type="MaterialCommunityIcons" name="chevron-right" style={preset.fontSize20} />
-                </Button>
                 {starting ? (
                     <Spinner compact={true} label={t("startingSavings")} />
                 ) : (
-                    <Button
-                        primary={true}
-                        rounded={true}
-                        block={true}
-                        style={preset.marginSmall}
-                        disabled={!amount}
-                        onPress={start}>
-                        <Text>{t("common:start")}</Text>
-                    </Button>
+                    <>
+                        <Button
+                            primary={true}
+                            rounded={true}
+                            block={true}
+                            style={preset.marginSmall}
+                            disabled={!amount}
+                            onPress={start}>
+                            <Text>{t("common:start")}</Text>
+                        </Button>
+                        <Button
+                            rounded={true}
+                            transparent={true}
+                            small={true}
+                            iconRight={true}
+                            onPress={onPressManageAsset}
+                            style={preset.alignFlexEnd}>
+                            <NativeText style={[preset.fontSize14, preset.colorPrimary]}>{t("manageAsset")}</NativeText>
+                            <Icon type="MaterialCommunityIcons" name="chevron-right" style={preset.fontSize20} />
+                        </Button>
+                    </>
                 )}
             </View>
         </Container>
