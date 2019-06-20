@@ -139,7 +139,7 @@
         "depositWithdrawalHistory": "Deposit/Withdrawal History",
         "status": "Status",
         "success": "Success",
-        "pending": "Pending...",
+        "waiting": "Waiting...",
         "processing": "processing...",
         "transactions": "Transactions",
         "value": "Value",
@@ -148,9 +148,10 @@
         "sender": "Sender",
         "receiver": "Receiver",
         "transfer": "Transfer",
+        "transfer.confirm": "You requested to transfer {{amount}} {{symbol}} to {{address}}. Would you proceed?",
         "notAValidAddress": "Not a valid address.",
         "notAValidValue": "Not a valid value.",
-        "waitingForConfirmations": "Waiting for confirmations...",
+        "transferSuccess": "Successfully transferred!",
         "transferError": "Transfer Error"
     },
     "profile": {

@@ -27,7 +27,7 @@ const NewSavingsScreen = () => {
     const myBalance = getBalance(asset!.loomAddress);
     const myBalanceText = formatValue(myBalance, asset!.decimals, 2) + " " + asset!.symbol;
     const { starting, start } = useSavingsStarter(asset, amount);
-    const onPressManageAsset = useCallback(() => push("ManageAsset", { token: asset }), []);
+    const onPressManageAsset = useCallback(() => push("ManageAsset", { asset }), []);
     const onStart = useCallback(async () => {
         try {
             await start();

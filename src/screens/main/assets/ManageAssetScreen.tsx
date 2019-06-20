@@ -26,7 +26,7 @@ import { formatValue } from "../../../utils/big-number-utils";
 const ManageAssetScreen = () => {
     const { t } = useTranslation(["asset", "profile", "common"]);
     const { push, getParam } = useNavigation();
-    const asset: ERC20Token = getParam("token");
+    const asset: ERC20Token = getParam("asset");
     const { ethereumConnector } = useContext(ConnectorContext);
     const { getPendingDepositTransactions, getPendingWithdrawalTransactions } = useContext(PendingTransactionsContext);
     const { getBalance } = useContext(BalancesContext);
@@ -53,7 +53,7 @@ const ManageAssetScreen = () => {
         return (
             <Container>
                 <Content>
-                    <TokenView token={asset} />
+                    <TokenView asset={asset} />
                     <View style={[preset.flexDirectionRow, preset.marginNormal]}>
                         <Button
                             info={true}
@@ -64,7 +64,13 @@ const ManageAssetScreen = () => {
                             onPress={useCallback(() => push("MyAddress"), [])}>
                             <Text>{t("receive")}</Text>
                         </Button>
-                        <Button info={true} bordered={true} rounded={true} block={true} style={preset.flex1}>
+                        <Button
+                            info={true}
+                            bordered={true}
+                            rounded={true}
+                            block={true}
+                            style={preset.flex1}
+                            onPress={useCallback(() => push("TransferAsset", { asset }), [])}>
                             <Text>{t("send")}</Text>
                         </Button>
                     </View>
@@ -105,20 +111,20 @@ const ManageAssetScreen = () => {
     }
 };
 
-const TokenView = ({ token }: { token: ERC20Token }) => {
+const TokenView = ({ asset }: { asset: ERC20Token }) => {
     const { getBalance } = useContext(BalancesContext);
     return (
         <View style={{ alignItems: "center", margin: Spacing.normal }}>
             <TokenIcon
-                address={token.ethereumAddress.toLocalAddressString()}
+                address={asset.ethereumAddress.toLocalAddressString()}
                 width={72}
                 height={72}
                 style={{ marginLeft: Spacing.small, flex: 0 }}
             />
-            <SubtitleText aboveText={true}>{token.name}</SubtitleText>
+            <SubtitleText aboveText={true}>{asset.name}</SubtitleText>
             <CaptionText style={preset.fontSize20}>
-                {formatValue(getBalance(token.loomAddress).add(getBalance(token.ethereumAddress)), token.decimals, 2)}{" "}
-                {token.symbol}
+                {formatValue(getBalance(asset.loomAddress).add(getBalance(asset.ethereumAddress)), asset.decimals, 2)}{" "}
+                {asset.symbol}
             </CaptionText>
         </View>
     );
@@ -176,7 +182,7 @@ const ItemView = ({ asset, item, blockNumber }: { asset: ERC20Token; item: any; 
             </Left>
             <Body style={[preset.flex1, preset.marginLeftSmall]}>
                 <Text note={true} style={[preset.padding0, preset.marginLeftSmall]}>
-                    {withdraw ? t("withdrawal") : t("deposit")} {inProgress && "- " + t("pending")}
+                    {withdraw ? t("withdrawal") : t("deposit")} {inProgress && "- " + t("processing")}
                 </Text>
                 <BigNumberText
                     value={item.amount || item.value}

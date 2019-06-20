@@ -17,6 +17,7 @@ import AssetsScreen from "./screens/main/assets/AssetsScreen";
 import DepositScreen from "./screens/main/assets/DepositScreen";
 import ManageAssetScreen from "./screens/main/assets/ManageAssetScreen";
 import MyAddressScreen from "./screens/main/assets/MyAddressScreen";
+import TransferAssetScreen from "./screens/main/assets/TransferAssetScreen";
 import WithdrawalScreen from "./screens/main/assets/WithdrawalScreen";
 import FinanceScreen from "./screens/main/finance/FinanceScreen";
 import NewSavingsScreen from "./screens/main/finance/NewSavingsScreen";
@@ -75,6 +76,7 @@ const tabs = {
             Assets: AssetsScreen,
             ManageAsset: ManageAssetScreen,
             MyAddress: MyAddressScreen,
+            TransferAsset: TransferAssetScreen,
             Deposit: DepositScreen,
             Withdrawal: WithdrawalScreen
         }),

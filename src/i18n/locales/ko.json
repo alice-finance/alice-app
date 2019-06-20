@@ -128,7 +128,7 @@
         "depositWithdrawalHistory": "예치/인출 내역",
         "status": "상태",
         "success": "완료",
-        "pending": "대기 중...",
+        "waiting": "대기 중...",
         "processing": "처리 중...",
         "transactions": "트랜잭션 목록",
         "value": "금액",
@@ -137,9 +137,10 @@
         "sender": "보낸 주소",
         "receiver": "받는 주소",
         "transfer": "보내기",
+        "transfer.confirm": "{{address}}에게 {{amount}} {{symbol}}을 보내려고 합니다. 전송할까요?",
         "notAValidAddress": "유효한 주소가 아닙니다.",
         "notAValidValue": "유효한 금액이 아닙니다.",
-        "waitingForConfirmations": "승인을 기다리는 중입니다...",
+        "transferSuccess": "전송 성공!",
         "transferError": "전송 에러"
     },
     "profile": {

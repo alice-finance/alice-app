@@ -8,7 +8,7 @@ import ERC20Token from "./ERC20Token";
 
 class EthereumConnector implements Connector {
     public wallet!: ethers.Wallet;
-    public provider!: ethers.providers.BaseProvider;
+    public provider!: ethers.providers.JsonRpcProvider;
     public address!: Address;
 
     constructor(privateKey: string) {

@@ -27,7 +27,7 @@ const AssetsScreen = () => {
     const { loomConnector, ethereumConnector } = useContext(ConnectorContext);
     const { push, setParams } = useNavigation();
     const onSort = useCallback(() => setSortedByName(!sortedByName), [sortedByName]);
-    const onPress = useCallback((token: ERC20Token) => push("ManageAsset", { token }), []);
+    const onPress = useCallback((asset: ERC20Token) => push("ManageAsset", { asset }), []);
     const renderItem = useCallback(({ item }) => <TokenListItem token={item} onPress={onPress} />, []);
     useEffect(() => {
         setParams({ onSort });
