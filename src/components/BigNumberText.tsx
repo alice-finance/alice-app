@@ -11,7 +11,7 @@ const BigNumberText = ({ value, prefix = "", suffix = " ", style = {} }) => {
     const { asset, decimals } = useContext(SavingsContext);
     return (
         <Text style={[preset.fontSize20, style]}>
-            {value ? prefix + formatValue(value, decimals, 2) + suffix || asset!.symbol : t("inquiring")}
+            {value ? prefix + formatValue(value, decimals, 2) + suffix || asset!.symbol : t("loading")}
         </Text>
     );
 };

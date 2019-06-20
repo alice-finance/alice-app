@@ -23,7 +23,7 @@ const NewSavingsScreen = () => {
     const { asset, decimals, apr } = useContext(SavingsContext);
     const { getBalance, updateBalance } = useContext(BalancesContext);
     const [amount, setAmount] = useState<BigNumber | null>(toBigNumber(0));
-    const aprText = apr ? formatValue(apr, decimals, 2) + " %" : t("inquiring");
+    const aprText = apr ? formatValue(apr, decimals, 2) + " %" : t("loading");
     const myBalance = getBalance(asset!.loomAddress);
     const myBalanceText = formatValue(myBalance, asset!.decimals, 2) + " " + asset!.symbol;
     const { starting, start } = useSavingsStarter(asset, amount);

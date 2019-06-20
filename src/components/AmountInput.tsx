@@ -31,17 +31,23 @@ const AmountInput: FunctionComponent<AmountInputProps> = ({
     const { t } = useTranslation("finance");
     const [value, setValue] = useState("");
     const [error, setError] = useState("");
+    const onChangeValue = (newValue: string) => {
+        setValue(newValue);
+        const isError = parseValue(newValue, asset!.decimals).gt(max);
+        setError(isError ? t("amountGreaterThanBalance") : "");
+        onChangeAmount(isError ? null : parseValue(newValue, asset!.decimals));
+    };
     const onChange = useCallback(
         event => {
             const newValue = event.nativeEvent.text;
-            setValue(newValue);
-            const isError = parseValue(newValue, asset!.decimals).gt(max);
-            setError(isError ? t("amountGreaterThanBalance") : "");
-            onChangeAmount(isError ? null : parseValue(newValue, asset!.decimals));
+            onChangeValue(newValue);
         },
         [asset, max]
     );
-    const onPressMax = useCallback(() => setValue(formatValue(max, asset!.decimals, 2)), [asset, max]);
+    const onPressMax = useCallback(() => {
+        const newValue = formatValue(max, asset!.decimals, 2);
+        onChangeValue(newValue);
+    }, [asset, max]);
     return (
         <View style={[preset.flexDirectionColumn, style]}>
             <View>
@@ -67,7 +73,7 @@ const AmountInput: FunctionComponent<AmountInputProps> = ({
                     }}
                     disabled={disabled}
                     onPress={onPressMax}>
-                    <Text style={[preset.colorGrey, preset.fontSize20]}>MAX</Text>
+                    <Text style={[preset.colorInfo, preset.fontSize20]}>MAX</Text>
                 </Button>
             </View>
             {error.length > 0 && (

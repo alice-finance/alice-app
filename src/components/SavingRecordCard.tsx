@@ -88,7 +88,7 @@ const WithdrawDialog = ({ visible, onCancel, onOk, record }) => {
     const { loomConnector } = useContext(ConnectorContext);
     const [amount, setAmount] = useState<BigNumber | null>(toBigNumber(0));
     const [inProgress, setInProgress] = useState(false);
-    const aprText = apr ? formatValue(apr, decimals, 2) + " %" : t("inquiring");
+    const aprText = apr ? formatValue(apr, decimals, 2) + " %" : t("loading");
     const balanceText = formatValue(record.balance, asset!.decimals, 2) + " " + asset!.symbol;
     const { update } = useMySavingsUpdater();
     const onWithdraw = useCallback(async () => {
