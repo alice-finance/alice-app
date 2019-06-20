@@ -17,6 +17,7 @@ import AssetsScreen from "./screens/main/assets/AssetsScreen";
 import DepositScreen from "./screens/main/assets/DepositScreen";
 import ManageAssetScreen from "./screens/main/assets/ManageAssetScreen";
 import MyAddressScreen from "./screens/main/assets/MyAddressScreen";
+import WithdrawalScreen from "./screens/main/assets/WithdrawalScreen";
 import FinanceScreen from "./screens/main/finance/FinanceScreen";
 import NewSavingsScreen from "./screens/main/finance/NewSavingsScreen";
 import ProfileScreen from "./screens/main/profile/ProfileScreen";
@@ -74,7 +75,8 @@ const tabs = {
             Assets: AssetsScreen,
             ManageAsset: ManageAssetScreen,
             MyAddress: MyAddressScreen,
-            Deposit: DepositScreen
+            Deposit: DepositScreen,
+            Withdrawal: WithdrawalScreen
         }),
         navigationOptions: tabBarNavigationOptions("assets", "pie-chart")
     },

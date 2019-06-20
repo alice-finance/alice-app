@@ -22,7 +22,7 @@ class EthereumConnector implements Connector {
     };
 
     public getGateway = () => {
-        const abi = require("loom-js/dist/mainnet-contracts/Gateway.json");
+        const abi = require("./Gateway.json");
         return new ethers.Contract(ETHEREUM_ERC20_GATEWAY, abi, this.wallet);
     };
 

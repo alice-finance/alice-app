@@ -7,11 +7,11 @@ export const PendingTransactionsContext = React.createContext({
     getPendingDepositTransactions: (address: Address) => [] as ethers.providers.TransactionResponse[],
     addPendingDepositTransaction: (address: Address, tx: ethers.providers.TransactionResponse) => {},
     removePendingDepositTransaction: (address: Address, hash: string) => {},
-    clearPendingDepositTransaction: (address: Address) => {},
+    clearPendingDepositTransactions: (address: Address) => {},
     getPendingWithdrawalTransactions: (address: Address) => [] as any[],
     addPendingWithdrawalTransaction: (address: Address, tx: any) => {},
     removePendingWithdrawalTransaction: (address: Address, hash: string) => {},
-    clearPendingWithdrawalTransaction: (address: Address) => {}
+    clearPendingWithdrawalTransactions: (address: Address) => {}
 });
 
 export const PendingTransactionsProvider = ({ children }) => {
@@ -45,7 +45,7 @@ export const PendingTransactionsProvider = ({ children }) => {
         },
         [pendingDepositTransactions]
     );
-    const clearPendingDepositTransaction = useCallback(
+    const clearPendingDepositTransactions = useCallback(
         (address: Address) => {
             setPendingDepositTransactions(oldState => ({ ...oldState, [address.toString()]: [] }));
         },
@@ -75,7 +75,7 @@ export const PendingTransactionsProvider = ({ children }) => {
         },
         [pendingWithdrawalTransactions]
     );
-    const clearPendingWithdrawalTransaction = useCallback(
+    const clearPendingWithdrawalTransactions = useCallback(
         (address: Address) => {
             setPendingWithdrawalTransactions(oldState => ({ ...oldState, [address.toString()]: [] }));
         },
@@ -87,11 +87,11 @@ export const PendingTransactionsProvider = ({ children }) => {
                 getPendingDepositTransactions,
                 addPendingDepositTransaction,
                 removePendingDepositTransaction,
-                clearPendingDepositTransaction,
+                clearPendingDepositTransactions,
                 getPendingWithdrawalTransactions,
                 addPendingWithdrawalTransaction,
                 removePendingWithdrawalTransaction,
-                clearPendingWithdrawalTransaction
+                clearPendingWithdrawalTransactions
             }}>
             {children}
         </PendingTransactionsContext.Provider>

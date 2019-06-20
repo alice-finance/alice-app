@@ -12,21 +12,21 @@ const useGatewayTokenWithdrawnLoader = (assetAddress: Address) => {
     const loadWithdrawn = async () => {
         const gateway = ethereumConnector!.getGateway();
         const event = gateway.interface.events.TokenWithdrawn;
+        const toBlock = Number(await ethereumConnector!.provider.getBlockNumber());
         const logs = await getLogs(ethereumConnector!.provider, {
             address: gateway.address,
-            topics: [event.topic],
+            topics: [event.topic, event.encodeTopics([ethereumConnector!.address.toLocalAddressString()])],
             fromBlock: Number(ETHEREUM_FIRST_BLOCK),
-            toBlock: "latest"
+            toBlock
         });
         setWithdrawn(
             logs
                 .sort((l1, l2) => (l2.blockNumber || 0) - (l1.blockNumber || 0))
-                .map(log => event.decode(log.data))
-                .filter(
-                    data =>
-                        data.owner === ethereumConnector!.address.toLocalAddressString() &&
-                        (assetAddress.isNull() || data.contractAddress === assetAddress.toLocalAddressString())
-                )
+                .map(log => ({
+                    ...event.decode(log.data),
+                    blockNumber: log.blockNumber
+                }))
+                .filter(data => Address.newEthereumAddress(data.contractAddress).equals(assetAddress))
         );
     };
     return { loadWithdrawn, withdrawn };
@@ -37,6 +37,7 @@ export interface TokenWithdrawn {
     kind: string;
     contractAddress: string;
     value: ethers.utils.BigNumber;
+    blockNumber: number;
 }
 
 export default useGatewayTokenWithdrawnLoader;

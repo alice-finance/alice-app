@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { ETHEREUM_FIRST_BLOCK } from "react-native-dotenv";
 
 import { ethers } from "ethers";
+import { NULL_ADDRESS } from "../constants/token";
 import { ConnectorContext } from "../contexts/ConnectorContext";
 import Address from "../evm/Address";
 import { getLogs } from "../utils/ethers-utils";
@@ -26,12 +27,12 @@ const useGatewayReceivedLoader = (assetAddress: Address) => {
                 .sort((l1, l2) => (l2.blockNumber || 0) - (l1.blockNumber || 0))
                 .map(log => ({
                     ...event.decode(log.data),
-                    inProgress: log.blockNumber && toBlock - log.blockNumber <= 10
+                    blockNumber: log.blockNumber
                 }))
                 .filter(
                     data =>
-                        data.from === ethereumConnector!.address.toLocalAddressString() &&
-                        (assetAddress.isNull() || data.contractAddress === assetAddress.toLocalAddressString())
+                        Address.newEthereumAddress(data.from || NULL_ADDRESS).equals(ethereumConnector!.address) &&
+                        Address.newEthereumAddress(data.contractAddress || NULL_ADDRESS).equals(assetAddress)
                 )
         );
     };
@@ -41,14 +42,14 @@ const useGatewayReceivedLoader = (assetAddress: Address) => {
 export interface ETHReceived {
     from: string;
     amount: ethers.utils.BigNumber;
-    inProgress: boolean;
+    blockNumber: number;
 }
 
 export interface ERC20Received {
     from: string;
     amount: ethers.utils.BigNumber;
     contractAddress: string;
-    inProgress: boolean;
+    blockNumber: number;
 }
 
 export default useGatewayReceivedLoader;

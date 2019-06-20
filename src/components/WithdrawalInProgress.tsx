@@ -8,14 +8,14 @@ import ERC20Token from "../evm/ERC20Token";
 import preset from "../styles/preset";
 import Spinner from "./Spinner";
 
-const WithdrawalInProgress = ({ token }: { token: ERC20Token }) => {
+const WithdrawalInProgress = ({ asset }: { asset: ERC20Token }) => {
     const { t } = useTranslation("asset");
     const { getPendingWithdrawalTransactions } = useContext(PendingTransactionsContext);
-    const pendingWithdrawalTransactions = getPendingWithdrawalTransactions(token.loomAddress);
+    const pendingWithdrawalTransactions = getPendingWithdrawalTransactions(asset.ethereumAddress);
     return (
         <View>
             <Spinner compact={true} label={t("withdrawing")} />
-            <Text style={[preset.marginLarge]}>{t("withdrawal.description")}</Text>
+            <Text style={[preset.marginLarge]}>{t("withdrawal.warning")}</Text>
         </View>
     );
 };

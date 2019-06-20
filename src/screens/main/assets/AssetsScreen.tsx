@@ -14,6 +14,7 @@ import { BalancesContext } from "../../../contexts/BalancesContext";
 import { ConnectorContext } from "../../../contexts/ConnectorContext";
 import { TokensContext } from "../../../contexts/TokensContext";
 import ERC20Token from "../../../evm/ERC20Token";
+import usePendingWithdrawalHandler from "../../../hooks/usePendingWithdrawalHandler";
 import useTokenBalanceUpdater from "../../../hooks/useTokenBalanceUpdater";
 import preset from "../../../styles/preset";
 import { formatValue, pow10 } from "../../../utils/big-number-utils";
@@ -22,6 +23,7 @@ import { mapAccounts } from "../../../utils/loom-utils";
 const AssetsScreen = () => {
     const { updating, update } = useTokenBalanceUpdater();
     const { sortedByName, setSortedByName, sortedTokens } = useTokenSorter();
+    const { handlePendingWithdrawal } = usePendingWithdrawalHandler();
     const { loomConnector, ethereumConnector } = useContext(ConnectorContext);
     const { push, setParams } = useNavigation();
     const onSort = useCallback(() => setSortedByName(!sortedByName), [sortedByName]);
@@ -29,7 +31,7 @@ const AssetsScreen = () => {
     const renderItem = useCallback(({ item }) => <TokenListItem token={item} onPress={onPress} />, []);
     useEffect(() => {
         setParams({ onSort });
-        Promise.all([mapAccounts(ethereumConnector!, loomConnector!), update()]);
+        Promise.all([mapAccounts(ethereumConnector!, loomConnector!), update(), handlePendingWithdrawal()]);
     }, []);
     return (
         <Container>

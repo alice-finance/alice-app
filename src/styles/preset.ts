@@ -8,6 +8,8 @@ const preset = StyleSheet.create({
     flex1: { flex: 1 },
     flexDirectionRow: { flexDirection: "row" },
     flexDirectionColumn: { flexDirection: "column" },
+    justifyContentCenter: { justifyContent: "center" },
+    alignItemsCenter: { alignItems: "center" },
     fontSize14: { fontSize: 14 },
     fontSize20: { fontSize: 20 },
     fontSize24: { fontSize: 24 },

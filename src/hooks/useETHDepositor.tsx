@@ -1,29 +1,22 @@
 import React, { useCallback, useContext } from "react";
-import { useTranslation } from "react-i18next";
 
 import { ethers } from "ethers";
-import { Toast } from "native-base";
 import { NULL_ADDRESS } from "../constants/token";
-import { BalancesContext } from "../contexts/BalancesContext";
 import { ConnectorContext } from "../contexts/ConnectorContext";
 import { PendingTransactionsContext } from "../contexts/PendingTransactionsContext";
 import Address from "../evm/Address";
+import useTokenBalanceUpdater from "./useTokenBalanceUpdater";
 
 const useETHDepositor = () => {
-    const { t } = useTranslation("asset");
     const { ethereumConnector } = useContext(ConnectorContext);
-    const { addPendingDepositTransaction, clearPendingDepositTransaction } = useContext(PendingTransactionsContext);
-    const { getBalance, updateBalance } = useContext(BalancesContext);
+    const { addPendingDepositTransaction, clearPendingDepositTransactions } = useContext(PendingTransactionsContext);
+    const { update } = useTokenBalanceUpdater();
     const deposit = useCallback(
         async (amount: ethers.utils.BigNumber) => {
             if (ethereumConnector) {
                 const ethereumAddress = Address.newEthereumAddress(NULL_ADDRESS);
-                const onError = e => {
-                    clearPendingDepositTransaction(ethereumAddress);
-                    Toast.show({ text: t("depositChangeFailure") });
-                };
                 try {
-                    clearPendingDepositTransaction(ethereumAddress);
+                    clearPendingDepositTransactions(ethereumAddress);
                     // Step 1: approve
                     const gateway = ethereumConnector.getGateway();
                     const tx = await ethereumConnector.wallet.sendTransaction({
@@ -33,15 +26,15 @@ const useETHDepositor = () => {
                     addPendingDepositTransaction(ethereumAddress, tx);
                     await tx.wait();
                     // Done
-                    clearPendingDepositTransaction(ethereumAddress);
-                    updateBalance(ethereumAddress, getBalance(ethereumAddress).sub(amount));
-                    Toast.show({ text: t("depositChangeSuccess") });
+                    await update();
+                    clearPendingDepositTransactions(ethereumAddress);
                 } catch (e) {
-                    onError(e);
+                    clearPendingDepositTransactions(ethereumAddress);
+                    throw e;
                 }
             }
         },
-        [ethereumConnector, addPendingDepositTransaction, clearPendingDepositTransaction]
+        [ethereumConnector, addPendingDepositTransaction, clearPendingDepositTransactions]
     );
     return { deposit };
 };
