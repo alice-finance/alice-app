@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { FlatList, View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
@@ -16,39 +16,32 @@ import TokenIcon from "../../../components/TokenIcon";
 import { Spacing } from "../../../constants/dimension";
 import { BalancesContext } from "../../../contexts/BalancesContext";
 import { ConnectorContext } from "../../../contexts/ConnectorContext";
-import { PendingTransactionsContext } from "../../../contexts/PendingTransactionsContext";
 import ERC20Token from "../../../evm/ERC20Token";
+import useEthereumBlockNumberListener from "../../../hooks/useEthereumBlockNumberListener";
 import useGatewayReceivedLoader from "../../../hooks/useGatewayReceivedLoader";
 import useGatewayTokenWithdrawnLoader from "../../../hooks/useGatewayTokenWithdrawnLoader";
+import useTokenBalanceUpdater from "../../../hooks/useTokenBalanceUpdater";
 import preset from "../../../styles/preset";
 import { formatValue } from "../../../utils/big-number-utils";
+import { openTx } from "../../../utils/ether-scan-utils";
 
 const ManageAssetScreen = () => {
     const { t } = useTranslation(["asset", "profile", "common"]);
     const { push, getParam } = useNavigation();
     const asset: ERC20Token = getParam("asset");
     const { ethereumConnector } = useContext(ConnectorContext);
-    const { getPendingDepositTransactions, getPendingWithdrawalTransactions } = useContext(PendingTransactionsContext);
     const { getBalance } = useContext(BalancesContext);
     const { loadReceived, received } = useGatewayReceivedLoader(asset.ethereumAddress);
     const { loadWithdrawn, withdrawn } = useGatewayTokenWithdrawnLoader(asset.ethereumAddress);
-    const [blockNumber, setBlockNumber] = useState(0);
+    const { blockNumber } = useEthereumBlockNumberListener();
+    const { update } = useTokenBalanceUpdater();
     const loomBalance = getBalance(asset.loomAddress);
     const ethereumBalance = getBalance(asset.ethereumAddress);
-    const pendingDepositTransactions = getPendingDepositTransactions(asset.ethereumAddress);
-    const pendingWithdrawalTransactions = getPendingWithdrawalTransactions(asset.ethereumAddress);
-    const inProgress = pendingDepositTransactions.length > 0 || pendingWithdrawalTransactions.length > 0;
     const renderItem = ({ item }) => <ItemView asset={asset} item={item} blockNumber={blockNumber} />;
     useEffect(() => {
-        const refresh = async () => {
-            setBlockNumber(await ethereumConnector!.provider.getBlockNumber());
-            await Promise.all([loadReceived(), loadWithdrawn()]);
-        };
-        refresh();
-        return () => {
-            refresh();
-        };
-    }, [ethereumConnector, inProgress]);
+        Promise.all([loadReceived(), loadWithdrawn()]);
+        update();
+    }, [ethereumConnector, blockNumber]);
     if (asset) {
         return (
             <Container>
@@ -170,13 +163,13 @@ const BalanceCard = ({ title, description, balance, asset, buttonText, onPressBu
     );
 };
 
-const ItemView = ({ asset, item, blockNumber }: { asset: ERC20Token; item: any; blockNumber: number }) => {
+const ItemView = ({ asset, item, blockNumber }: { asset: ERC20Token; item: any; blockNumber: number | null }) => {
     const { t } = useTranslation("asset");
     const withdraw = !!item.value;
-    const inProgress = !withdraw && item.blockNumber && blockNumber - item.blockNumber <= 10;
+    const inProgress = !withdraw && blockNumber && item.blockNumber && blockNumber - item.blockNumber <= 10;
     const color = inProgress ? platform.brandWarning : withdraw ? platform.brandDanger : platform.brandInfo;
     return (
-        <ListItem noBorder={true}>
+        <ListItem noBorder={true} onPress={useCallback(() => openTx(item.transactionHash), [])}>
             <Left style={[preset.flex0]}>
                 <TypeBadge inProgress={inProgress} color={color} withdraw={withdraw} />
             </Left>
@@ -207,7 +200,7 @@ const TypeBadge = ({ color, inProgress, withdraw }) => {
             }}>
             <Icon
                 type="AntDesign"
-                name={inProgress ? "timer" : withdraw ? "arrowleft" : "arrowright"}
+                name={inProgress ? "hourglass" : withdraw ? "arrowleft" : "arrowright"}
                 style={[preset.fontSize20, preset.alignCenter, { color }]}
             />
         </View>

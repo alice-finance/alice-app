@@ -24,7 +24,8 @@ const useGatewayTokenWithdrawnLoader = (assetAddress: Address) => {
                 .sort((l1, l2) => (l2.blockNumber || 0) - (l1.blockNumber || 0))
                 .map(log => ({
                     ...event.decode(log.data),
-                    blockNumber: log.blockNumber
+                    blockNumber: log.blockNumber,
+                    transactionHash: log.transactionHash
                 }))
                 .filter(data => Address.newEthereumAddress(data.contractAddress).equals(assetAddress))
         );
@@ -38,6 +39,7 @@ export interface TokenWithdrawn {
     contractAddress: string;
     value: ethers.utils.BigNumber;
     blockNumber: number;
+    transactionHash: string;
 }
 
 export default useGatewayTokenWithdrawnLoader;

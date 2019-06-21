@@ -27,7 +27,8 @@ const useGatewayReceivedLoader = (assetAddress: Address) => {
                 .sort((l1, l2) => (l2.blockNumber || 0) - (l1.blockNumber || 0))
                 .map(log => ({
                     ...event.decode(log.data),
-                    blockNumber: log.blockNumber
+                    blockNumber: log.blockNumber,
+                    transactionHash: log.transactionHash
                 }))
                 .filter(
                     data =>
@@ -43,6 +44,7 @@ export interface ETHReceived {
     from: string;
     amount: ethers.utils.BigNumber;
     blockNumber: number;
+    transactionHash: string;
 }
 
 export interface ERC20Received {
@@ -50,6 +52,7 @@ export interface ERC20Received {
     amount: ethers.utils.BigNumber;
     contractAddress: string;
     blockNumber: number;
+    transactionHash: string;
 }
 
 export default useGatewayReceivedLoader;
