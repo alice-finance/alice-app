@@ -12,9 +12,11 @@ import { ContextProvider } from "./src/contexts";
 import i18n from "./src/i18n";
 import { Portal } from "react-native-paper";
 import { ethers } from "ethers";
+import { YellowBox } from "react-native";
 
-// tslint:disable-next-line
-console.ignoredYellowBox = [ "Setting a timer" ];
+YellowBox.ignoreWarnings([
+    "Setting a timer"
+]);
 ethers.errors.setLogLevel("error");
 
 export default class App extends React.Component {
