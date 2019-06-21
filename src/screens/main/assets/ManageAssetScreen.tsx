@@ -4,7 +4,7 @@ import { FlatList, View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 import { defaultKeyExtractor } from "../../../utils/react-native-utils";
 
-import { Body, Button, Card, CardItem, Container, Content, Icon, Left, ListItem, Text } from "native-base";
+import { Body, Button, Card, CardItem, Container, Content, Icon, Left, ListItem, Right, Text } from "native-base";
 import platform from "../../../../native-base-theme/variables/platform";
 import BigNumberText from "../../../components/BigNumberText";
 import CaptionText from "../../../components/CaptionText";
@@ -135,16 +135,13 @@ const BalanceCard = ({ title, description, balance, asset, buttonText, onPressBu
                                 style={[preset.flex1, preset.marginLeftSmall, preset.marginTopSmall]}>
                                 {title}
                             </HeadlineText>
-                            <Button transparent={true} rounded={true} small={true} onPress={onPressButton}>
-                                <Text style={[preset.marginTopSmall, preset.colorPrimary]}>{buttonText}</Text>
-                            </Button>
                         </View>
                         <CaptionText small={true} style={preset.marginLeftSmall}>
                             {description}
                         </CaptionText>
                     </View>
                 </CardItem>
-                <CardItem style={preset.marginBottomSmall}>
+                <CardItem>
                     <View
                         style={[
                             preset.flex1,
@@ -157,6 +154,14 @@ const BalanceCard = ({ title, description, balance, asset, buttonText, onPressBu
                         </Text>
                         <Text style={[preset.fontSize24]}>{asset.symbol}</Text>
                     </View>
+                </CardItem>
+                <CardItem>
+                    <Left />
+                    <Right>
+                        <Button transparent={true} rounded={true} small={true} onPress={onPressButton}>
+                            <Text style={[preset.marginTopSmall, preset.colorPrimary]}>{buttonText}</Text>
+                        </Button>
+                    </Right>
                 </CardItem>
             </Card>
         </View>
