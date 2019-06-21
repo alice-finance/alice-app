@@ -28,13 +28,6 @@ const NewSavingsScreen = () => {
     const myBalanceText = formatValue(myBalance, asset!.decimals, 2) + " " + asset!.symbol;
     const { starting, start } = useSavingsStarter(asset, amount);
     const onPressManageAsset = useCallback(() => push("ManageAsset", { asset }), []);
-    const onStart = useCallback(async () => {
-        try {
-            await start();
-        } finally {
-            setAmount(null);
-        }
-    }, []);
     useEffect(() => {
         const refresh = async () => {
             if (loomConnector && asset) {
@@ -71,7 +64,7 @@ const NewSavingsScreen = () => {
                             block={true}
                             style={preset.marginSmall}
                             disabled={!amount || amount.isZero()}
-                            onPress={onStart}>
+                            onPress={start}>
                             <Text>{t("common:start")}</Text>
                         </Button>
                         <Button

@@ -4,18 +4,18 @@ import { useNavigation } from "react-navigation-hooks";
 
 import { ethers } from "ethers";
 import { Toast } from "native-base";
-import { BalancesContext } from "../contexts/BalancesContext";
 import { ConnectorContext } from "../contexts/ConnectorContext";
 import ERC20Token from "../evm/ERC20Token";
 import useMySavingsUpdater from "./useMySavingsUpdater";
+import useTokenBalanceUpdater from "./useTokenBalanceUpdater";
 
 const useSavingsStarter = (asset: ERC20Token | null, amount: ethers.utils.BigNumber | null) => {
     const { pop } = useNavigation();
     const { t } = useTranslation("finance");
     const { loomConnector } = useContext(ConnectorContext);
-    const { updateBalance } = useContext(BalancesContext);
     const [starting, setStarting] = useState(false);
-    const { update } = useMySavingsUpdater();
+    const { update: updateTokenBalances } = useTokenBalanceUpdater();
+    const { update: updateMySavings } = useMySavingsUpdater();
     const start = async () => {
         if (loomConnector && asset && amount) {
             setStarting(true);
@@ -26,8 +26,8 @@ const useSavingsStarter = (asset: ERC20Token | null, amount: ethers.utils.BigNum
                 await approveTx.wait();
                 const depositTx = await market.deposit(amount, { gasLimit: 0 });
                 await depositTx.wait();
-                await loomConnector.fetchERC20Balances([asset!], updateBalance);
-                await update();
+                await updateTokenBalances();
+                await updateMySavings();
                 Toast.show({ text: t("aNewSavingsStartToday") });
                 pop();
             } catch (e) {
