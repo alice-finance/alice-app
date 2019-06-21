@@ -18,7 +18,7 @@ const DepositInProgress = ({ asset }: { asset: ERC20Token }) => {
     ]);
     return (
         <View>
-            <Spinner compact={true} label={t("depositing")} />
+            <Spinner compact={true} label={t("transferring")} />
             <Text style={[preset.marginLarge]}>{t("deposit.warning")}</Text>
             {pendingDepositTransactions.length > 0 && (
                 <Button bordered={true} onPress={onPress} style={preset.alignCenter}>

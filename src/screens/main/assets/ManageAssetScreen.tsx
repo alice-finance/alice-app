@@ -90,7 +90,7 @@ const ManageAssetScreen = () => {
                         buttonText={t("withdrawal")}
                         onPressButton={useCallback(() => push("Withdrawal", { asset }), [])}
                     />
-                    <HeadlineText aboveText={true}>{t("depositWithdrawalHistory")}</HeadlineText>
+                    <HeadlineText aboveText={true}>{t("transferHistory")}</HeadlineText>
                     {received && withdrawn ? (
                         <>
                             {receipt && <PendingWithdrawalItemView asset={asset} receipt={receipt} />}

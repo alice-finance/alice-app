@@ -14,7 +14,7 @@ const WithdrawalInProgress = ({ asset }: { asset: ERC20Token }) => {
     const pendingWithdrawalTransactions = getPendingWithdrawalTransactions(asset.ethereumAddress);
     return (
         <View>
-            <Spinner compact={true} label={t("withdrawing")} />
+            <Spinner compact={true} label={t("transferring")} />
             <Text style={[preset.marginLarge]}>{t("withdrawal.warning")}</Text>
         </View>
     );
