@@ -62,9 +62,13 @@ const loadFonts = (): Promise<void> => {
         Roboto: require("../assets/Roboto.ttf"),
         Roboto_medium: require("../assets/Roboto_medium.ttf"),
         SimpleLineIcons: require("../assets/SimpleLineIcons.ttf"),
+        'simple-line-icons': require("../assets/SimpleLineIcons.ttf"),
         MaterialIcons: require("../assets/MaterialIcons.ttf"),
+        'Material Icons': require("../assets/MaterialIcons.ttf"),
         MaterialCommunityIcons: require("../assets/MaterialCommunityIcons.ttf"),
-        AntDesign: require("../assets/AntDesign.ttf")
+        'Material Design Icons': require("../assets/MaterialCommunityIcons.ttf"),
+        AntDesign: require("../assets/AntDesign.ttf"),
+        'anticon': require("../assets/AntDesign.ttf")
     });
 };
 
