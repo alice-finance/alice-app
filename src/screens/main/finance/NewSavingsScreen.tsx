@@ -70,7 +70,7 @@ const NewSavingsScreen = () => {
                             rounded={true}
                             block={true}
                             style={preset.marginSmall}
-                            disabled={!amount}
+                            disabled={!amount || amount.isZero()}
                             onPress={onStart}>
                             <Text>{t("common:start")}</Text>
                         </Button>
