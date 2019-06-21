@@ -20,24 +20,35 @@ const NewSavingsScreen = () => {
     const { push } = useNavigation();
     const { t } = useTranslation(["finance", "common"]);
     const { loomConnector } = useContext(ConnectorContext);
-    const { asset, decimals, apr } = useContext(SavingsContext);
+    const { asset, decimals } = useContext(SavingsContext);
     const { getBalance, updateBalance } = useContext(BalancesContext);
     const [amount, setAmount] = useState<BigNumber | null>(toBigNumber(0));
-    const aprText = apr ? formatValue(apr, decimals, 2) + " %" : t("loading");
+    const [aprText, setAprText] = useState(t("loading"));
+    const [loadingAPR, setLoadingAPR] = useState(false);
     const myBalance = getBalance(asset!.loomAddress);
     const myBalanceText = formatValue(myBalance, asset!.decimals, 2) + " " + asset!.symbol;
     const { starting, start } = useSavingsStarter(asset, amount);
     const onPressManageAsset = useCallback(() => push("ManageAsset", { asset }), []);
     useEffect(() => {
         const refresh = async () => {
-            if (loomConnector && asset) {
-                const erc20 = loomConnector.getERC20(asset.loomAddress.toLocalAddressString());
-                const balance = await erc20.balanceOf(loomConnector.address.toLocalAddressString());
-                updateBalance(asset.loomAddress, toBigNumber(balance));
-            }
+            const erc20 = loomConnector!.getERC20(asset!.loomAddress.toLocalAddressString());
+            const balance = await erc20.balanceOf(loomConnector!.address.toLocalAddressString());
+            updateBalance(asset!.loomAddress, toBigNumber(balance));
         };
         refresh();
-    }, [loomConnector, asset]);
+    }, []);
+    useEffect(() => {
+        if (amount) {
+            const load = async () => {
+                setLoadingAPR(true);
+                const market = loomConnector!.getMoneyMarket();
+                const expected = await market.getExpectedSavingsAPR(amount.toString());
+                setAprText(formatValue(toBigNumber(expected).mul(100), decimals, 2) + " %");
+                setLoadingAPR(false);
+            };
+            load();
+        }
+    }, [amount]);
     return (
         <Container>
             <TitleText aboveText={true}>{t("startSaving")}</TitleText>
@@ -50,34 +61,32 @@ const NewSavingsScreen = () => {
                     style={[preset.marginLeftSmall, preset.marginRightSmall]}
                     onChangeAmount={setAmount}
                 />
-                <View style={[preset.marginNormal]}>
-                    <Row label={t("apr")} value={aprText} />
+                <View style={[preset.marginLeftNormal, preset.marginTopNormal, preset.marginRightNormal]}>
+                    <Row label={t("apr")} value={loadingAPR ? t("loading") : aprText} />
                     <Row label={t("myBalance")} value={myBalanceText} />
                 </View>
+                <Button
+                    rounded={true}
+                    transparent={true}
+                    small={true}
+                    iconRight={true}
+                    onPress={onPressManageAsset}
+                    style={preset.alignFlexEnd}>
+                    <NativeText style={[preset.fontSize16, preset.colorPrimary]}>{t("manageAsset")}</NativeText>
+                    <Icon type="MaterialCommunityIcons" name="chevron-right" style={preset.fontSize20} />
+                </Button>
                 {starting ? (
                     <Spinner compact={true} label={t("starting")} />
                 ) : (
-                    <>
-                        <Button
-                            primary={true}
-                            rounded={true}
-                            block={true}
-                            style={preset.marginSmall}
-                            disabled={!amount || amount.isZero()}
-                            onPress={start}>
-                            <Text>{t("common:start")}</Text>
-                        </Button>
-                        <Button
-                            rounded={true}
-                            transparent={true}
-                            small={true}
-                            iconRight={true}
-                            onPress={onPressManageAsset}
-                            style={preset.alignFlexEnd}>
-                            <NativeText style={[preset.fontSize14, preset.colorPrimary]}>{t("manageAsset")}</NativeText>
-                            <Icon type="MaterialCommunityIcons" name="chevron-right" style={preset.fontSize20} />
-                        </Button>
-                    </>
+                    <Button
+                        primary={true}
+                        rounded={true}
+                        block={true}
+                        style={preset.marginSmall}
+                        disabled={!amount || amount.isZero() || loadingAPR}
+                        onPress={start}>
+                        <Text>{t("common:start")}</Text>
+                    </Button>
                 )}
             </View>
         </Container>
@@ -86,8 +95,8 @@ const NewSavingsScreen = () => {
 
 const Row = ({ label, value }) => (
     <View style={[preset.flexDirectionRow, preset.marginTopTiny, preset.marginBottomTiny]}>
-        <Text style={[preset.flex0, preset.colorGrey, preset.fontSize14]}>{label}</Text>
-        <Text style={[preset.flex1, preset.textAlignRight, preset.fontSize14]}>{value}</Text>
+        <Text style={[preset.flex0, preset.colorGrey, preset.fontSize16]}>{label}</Text>
+        <Text style={[preset.flex1, preset.textAlignRight, preset.fontSize16]}>{value}</Text>
     </View>
 );
 
