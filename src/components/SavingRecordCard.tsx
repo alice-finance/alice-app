@@ -53,7 +53,7 @@ const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
                 <CardItem>
                     <View style={[preset.marginLeftSmall, preset.flex1]}>
                         <Text note={true} style={preset.marginLeft0}>
-                            {t("startedOn")}
+                            {t("elapsed")}
                         </Text>
                         <AgoText date={record.initialTimestamp} />
                     </View>
