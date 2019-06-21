@@ -7,14 +7,15 @@ import { NULL_ADDRESS } from "../constants/token";
 import { ConnectorContext } from "../contexts/ConnectorContext";
 import { PendingTransactionsContext } from "../contexts/PendingTransactionsContext";
 import Address from "../evm/Address";
-import usePendingWithdrawalHandler from "./usePendingWithdrawalHandler";
+import { listenToTokenWithdrawal } from "../utils/loom-utils";
+import useTokenBalanceUpdater from "./useTokenBalanceUpdater";
 
 const useETHWithdrawer = () => {
     const { loomConnector, ethereumConnector } = useContext(ConnectorContext);
     const { addPendingWithdrawalTransaction, clearPendingWithdrawalTransactions } = useContext(
         PendingTransactionsContext
     );
-    const { handlePendingWithdrawal } = usePendingWithdrawalHandler();
+    const { update } = useTokenBalanceUpdater();
     const withdraw = useCallback(
         async (amount: ethers.utils.BigNumber) => {
             if (loomConnector && ethereumConnector) {
@@ -32,8 +33,18 @@ const useETHWithdrawer = () => {
                         new BN(amount.toString()),
                         Address.newEthereumAddress(ethereumConnector.getGateway().address)
                     );
-                    // Step 3: withdraw from ethereum network
-                    await handlePendingWithdrawal();
+                    // Step 3: listen to token withdrawal event
+                    const ethereumGateway = ethereumConnector!.getGateway();
+                    const signature = await listenToTokenWithdrawal(
+                        gateway,
+                        Address.newEthereumAddress(ethereumGateway.address),
+                        ethereumConnector!.address
+                    );
+                    // Step 4: withdraw from ethereum network
+                    const withdrawTx = await ethereumGateway.withdrawETH(amount.toString(), signature);
+                    addPendingWithdrawalTransaction(ethereumAddress, withdrawTx);
+                    await withdrawTx.wait();
+                    await update();
                 } catch (e) {
                     clearPendingWithdrawalTransactions(ethereumAddress);
                     throw e;

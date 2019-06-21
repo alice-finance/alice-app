@@ -4,6 +4,7 @@ import { FlatList, View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 import { defaultKeyExtractor } from "../../../utils/react-native-utils";
 
+import { IWithdrawalReceipt } from "loom-js/dist/contracts/transfer-gateway";
 import { Body, Button, Card, CardItem, Container, Content, Icon, Left, ListItem, Right, Text } from "native-base";
 import platform from "../../../../native-base-theme/variables/platform";
 import BigNumberText from "../../../components/BigNumberText";
@@ -15,33 +16,39 @@ import SubtitleText from "../../../components/SubtitleText";
 import TokenIcon from "../../../components/TokenIcon";
 import { Spacing } from "../../../constants/dimension";
 import { BalancesContext } from "../../../contexts/BalancesContext";
-import { ConnectorContext } from "../../../contexts/ConnectorContext";
 import ERC20Token from "../../../evm/ERC20Token";
 import useEthereumBlockNumberListener from "../../../hooks/useEthereumBlockNumberListener";
 import useGatewayReceivedLoader from "../../../hooks/useGatewayReceivedLoader";
 import useGatewayTokenWithdrawnLoader from "../../../hooks/useGatewayTokenWithdrawnLoader";
+import usePendingWithdrawalListener from "../../../hooks/usePendingWithdrawalListener";
 import useTokenBalanceUpdater from "../../../hooks/useTokenBalanceUpdater";
 import preset from "../../../styles/preset";
-import { formatValue } from "../../../utils/big-number-utils";
+import { formatValue, toBigNumber } from "../../../utils/big-number-utils";
 import { openTx } from "../../../utils/ether-scan-utils";
 
 const ManageAssetScreen = () => {
     const { t } = useTranslation(["asset", "profile", "common"]);
     const { push, getParam } = useNavigation();
     const asset: ERC20Token = getParam("asset");
-    const { ethereumConnector } = useContext(ConnectorContext);
     const { getBalance } = useContext(BalancesContext);
     const { loadReceived, received } = useGatewayReceivedLoader(asset.ethereumAddress);
     const { loadWithdrawn, withdrawn } = useGatewayTokenWithdrawnLoader(asset.ethereumAddress);
     const { blockNumber } = useEthereumBlockNumberListener();
     const { update } = useTokenBalanceUpdater();
+    const { receipt } = usePendingWithdrawalListener(asset);
     const loomBalance = getBalance(asset.loomAddress);
     const ethereumBalance = getBalance(asset.ethereumAddress);
     const renderItem = ({ item }) => <ItemView asset={asset} item={item} blockNumber={blockNumber} />;
+    const items = [...(received || []), ...(withdrawn || [])].sort(
+        (l1, l2) => (l2.blockNumber || 0) - (l1.blockNumber || 0)
+    );
     useEffect(() => {
-        Promise.all([loadReceived(), loadWithdrawn()]);
-        update();
-    }, [ethereumConnector, blockNumber]);
+        const refresh = async () => {
+            await Promise.all([loadReceived(), loadWithdrawn()]);
+            await update();
+        };
+        refresh();
+    }, [blockNumber]);
     if (asset) {
         return (
             <Container>
@@ -85,14 +92,15 @@ const ManageAssetScreen = () => {
                     />
                     <HeadlineText aboveText={true}>{t("depositWithdrawalHistory")}</HeadlineText>
                     {received && withdrawn ? (
-                        <FlatList
-                            data={[...received, ...withdrawn].sort(
-                                (l1, l2) => (l2.blockNumber || 0) - (l1.blockNumber || 0)
-                            )}
-                            keyExtractor={defaultKeyExtractor}
-                            renderItem={renderItem}
-                            ListEmptyComponent={<EmptyView />}
-                        />
+                        <>
+                            {receipt && <PendingWithdrawalItemView asset={asset} receipt={receipt} />}
+                            <FlatList
+                                data={items}
+                                keyExtractor={defaultKeyExtractor}
+                                renderItem={renderItem}
+                                ListEmptyComponent={<EmptyView />}
+                            />
+                        </>
                     ) : (
                         <Spinner compact={true} />
                     )}
@@ -168,10 +176,32 @@ const BalanceCard = ({ title, description, balance, asset, buttonText, onPressBu
     );
 };
 
+const PendingWithdrawalItemView = ({ asset, receipt }: { asset: ERC20Token; receipt: IWithdrawalReceipt }) => {
+    const { t } = useTranslation("asset");
+    const color = platform.brandWarning;
+    return (
+        <ListItem noBorder={true}>
+            <Left style={[preset.flex0]}>
+                <TypeBadge inProgress={true} color={color} withdraw={true} />
+            </Left>
+            <Body style={[preset.flex1, preset.marginLeftSmall]}>
+                <Text note={true} style={[preset.padding0, preset.marginLeftSmall]}>
+                    {t("withdrawal")} ({t("processing")})
+                </Text>
+                <BigNumberText
+                    value={toBigNumber(receipt.tokenAmount.toString())}
+                    style={[preset.marginLeftSmall, preset.fontSize20]}
+                    suffix={" " + asset.symbol}
+                />
+            </Body>
+        </ListItem>
+    );
+};
+
 const ItemView = ({ asset, item, blockNumber }: { asset: ERC20Token; item: any; blockNumber: number | null }) => {
     const { t } = useTranslation("asset");
     const withdraw = !!item.value;
-    const inProgress = !withdraw && blockNumber && item.blockNumber && blockNumber - item.blockNumber <= 10;
+    const inProgress = !withdraw && blockNumber && item.blockNumber && blockNumber - item.blockNumber <= 15;
     const color = inProgress ? platform.brandWarning : withdraw ? platform.brandDanger : platform.brandInfo;
     return (
         <ListItem noBorder={true} onPress={useCallback(() => openTx(item.transactionHash), [])}>
@@ -180,7 +210,7 @@ const ItemView = ({ asset, item, blockNumber }: { asset: ERC20Token; item: any; 
             </Left>
             <Body style={[preset.flex1, preset.marginLeftSmall]}>
                 <Text note={true} style={[preset.padding0, preset.marginLeftSmall]}>
-                    {withdraw ? t("withdrawal") : t("deposit")} {inProgress && "- " + t("processing")}
+                    {withdraw ? t("withdrawal") : t("deposit")} {inProgress && " (" + t("processing") + ")"}
                 </Text>
                 <BigNumberText
                     value={item.amount || item.value}
