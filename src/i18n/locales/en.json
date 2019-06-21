@@ -18,9 +18,9 @@
         "next": "Next",
         "start": "Start",
         "seedPhrase": "Seed Phrase",
-        "generatingSeedPhrase": "Generating seed phrase...",
-        "encrypting": "Encrypting private key...",
-        "blogUrl": "https://medium.com/alice-korean"
+        "generatingSeedPhrase": "Generating Seed Phrase...",
+        "encrypting": "Encrypting Your Private Key...",
+        "blogUrl": "https://medium.com/alice-finance"
     },
     "start": {
         "createNewWallet": "Create New Wallet",
