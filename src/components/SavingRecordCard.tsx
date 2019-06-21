@@ -1,7 +1,8 @@
 import React, { useCallback, useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
-import { Dialog, Portal } from "react-native-paper";
+import { Portal } from "react-native-paper";
+import Dialog from "../react-native-paper/Dialog/Dialog";
 
 import { BigNumber } from "ethers/utils";
 import { Button, Card, CardItem, Left, Right, Text, Toast } from "native-base";
