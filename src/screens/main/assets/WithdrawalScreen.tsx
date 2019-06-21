@@ -91,7 +91,7 @@ const WithdrawalScreen = () => {
                                 disabled={!amount || amount.isZero()}
                                 style={preset.marginTopNormal}
                                 onPress={onPressWithdrawal}>
-                                <Text>{t("withdraw")}</Text>
+                                <Text>{t("transfer")}</Text>
                             </Button>
                         </>
                     )}

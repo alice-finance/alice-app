@@ -87,7 +87,7 @@ const ManageAssetScreen = () => {
                         description={t("aliceWallet.description")}
                         balance={loomBalance}
                         asset={asset}
-                        buttonText={t("withdraw")}
+                        buttonText={t("withdrawal")}
                         onPressButton={useCallback(() => push("Withdrawal", { asset }), [])}
                     />
                     <HeadlineText aboveText={true}>{t("depositWithdrawalHistory")}</HeadlineText>

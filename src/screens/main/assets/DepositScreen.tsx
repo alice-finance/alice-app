@@ -91,7 +91,7 @@ const DepositScreen = () => {
                                 disabled={!amount || amount.isZero()}
                                 style={preset.marginTopNormal}
                                 onPress={onPressDeposit}>
-                                <Text>{t("deposit")}</Text>
+                                <Text>{t("transfer")}</Text>
                             </Button>
                         </>
                     )}
