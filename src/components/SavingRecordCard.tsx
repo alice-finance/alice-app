@@ -108,7 +108,7 @@ const WithdrawDialog = ({ visible, onCancel, onOk, record }) => {
     }, [loomConnector, amount]);
     return (
         <Portal>
-            <Dialog visible={visible} onDismiss={onCancel}>
+            <Dialog dismissable={false} visible={visible} onDismiss={onCancel}>
                 <Dialog.Content>
                     <Text style={[preset.fontWeightBold, preset.fontSize20, preset.marginBottomSmall]}>
                         {t("withdrawSavings")}
