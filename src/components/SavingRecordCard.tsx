@@ -84,7 +84,7 @@ const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
 
 const WithdrawDialog = ({ visible, onCancel, onOk, record }) => {
     const { t } = useTranslation(["finance", "common"]);
-    const { asset, decimals, apr } = useContext(SavingsContext);
+    const { asset, decimals, setTotalBalance, apr, setAPR } = useContext(SavingsContext);
     const { loomConnector } = useContext(ConnectorContext);
     const [amount, setAmount] = useState<BigNumber | null>(toBigNumber(0));
     const [inProgress, setInProgress] = useState(false);
@@ -98,6 +98,8 @@ const WithdrawDialog = ({ visible, onCancel, onOk, record }) => {
                 const market = loomConnector.getMoneyMarket();
                 const tx = await market.withdraw(record.id, amount, { gasLimit: 0 });
                 await tx.wait();
+                setTotalBalance(toBigNumber(await market.totalFunds()));
+                setAPR(toBigNumber(await market.getAPR()).mul(toBigNumber(100)));
                 await update();
                 Toast.show({ text: t("withdrawalComplete") });
                 onOk();
