@@ -17,7 +17,7 @@ import Spinner from "./Spinner";
 
 const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
     const { t } = useTranslation("finance");
-    const { asset, apr } = useContext(SavingsContext);
+    const { asset, decimals } = useContext(SavingsContext);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [profit] = useState(
         record.balance
@@ -26,6 +26,15 @@ const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
             .mul(toBigNumber(10000))
             .div(record.principal)
     );
+    const [apr] = useState(() => {
+        const multiplier = toBigNumber(10).pow(decimals);
+        const rate = record.interestRate.add(multiplier);
+        let value = multiplier.mul(100);
+        for (let i = 0; i < 365; i++) {
+            value = value.mul(rate).div(multiplier);
+        }
+        return value.sub(multiplier.mul(100));
+    });
     const openDialog = () => setDialogOpen(true);
     const closeDialog = () => setDialogOpen(false);
     const onWithdraw = useCallback(() => openDialog(), [record]);
