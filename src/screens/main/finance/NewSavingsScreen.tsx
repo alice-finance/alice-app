@@ -65,28 +65,30 @@ const NewSavingsScreen = () => {
                     <Row label={t("apr")} value={loadingAPR ? t("loading") : aprText} />
                     <Row label={t("myBalance")} value={myBalanceText} />
                 </View>
-                <Button
-                    rounded={true}
-                    transparent={true}
-                    small={true}
-                    iconRight={true}
-                    onPress={onPressManageAsset}
-                    style={preset.alignFlexEnd}>
-                    <NativeText style={[preset.fontSize16, preset.colorPrimary]}>{t("manageAsset")}</NativeText>
-                    <Icon type="MaterialCommunityIcons" name="chevron-right" style={preset.fontSize20} />
-                </Button>
                 {starting ? (
                     <Spinner compact={true} label={t("starting")} />
                 ) : (
-                    <Button
-                        primary={true}
-                        rounded={true}
-                        block={true}
-                        style={preset.marginSmall}
-                        disabled={!amount || amount.isZero() || loadingAPR}
-                        onPress={start}>
-                        <Text>{t("common:start")}</Text>
-                    </Button>
+                    <>
+                        <Button
+                            rounded={true}
+                            transparent={true}
+                            small={true}
+                            iconRight={true}
+                            onPress={onPressManageAsset}
+                            style={preset.alignFlexEnd}>
+                            <NativeText style={[preset.fontSize16, preset.colorPrimary]}>{t("manageAsset")}</NativeText>
+                            <Icon type="MaterialCommunityIcons" name="chevron-right" style={preset.fontSize20} />
+                        </Button>
+                        <Button
+                            primary={true}
+                            rounded={true}
+                            block={true}
+                            style={preset.marginSmall}
+                            disabled={!amount || amount.isZero() || loadingAPR}
+                            onPress={start}>
+                            <Text>{t("common:start")}</Text>
+                        </Button>
+                    </>
                 )}
             </View>
         </Container>
