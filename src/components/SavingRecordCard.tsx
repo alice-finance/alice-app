@@ -12,6 +12,7 @@ import SavingsRecord from "../evm/SavingsRecord";
 import useMySavingsUpdater from "../hooks/useMySavingsUpdater";
 import preset from "../styles/preset";
 import { formatValue, toBigNumber } from "../utils/big-number-utils";
+import AgoText from "./AgoText";
 import AmountInput from "./AmountInput";
 import BigNumberText from "./BigNumberText";
 import Spinner from "./Spinner";
@@ -54,9 +55,7 @@ const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
                         <Text note={true} style={preset.marginLeft0}>
                             {t("startedOn")}
                         </Text>
-                        <Text style={preset.fontSize20}>
-                            {record.initialTimestamp.getMonth() + 1 + "/" + record.initialTimestamp.getDate()}
-                        </Text>
+                        <AgoText date={record.initialTimestamp} />
                     </View>
                     <View style={[preset.marginLeftSmall, preset.flex1]}>
                         <Text note={true} style={preset.marginLeft0}>
