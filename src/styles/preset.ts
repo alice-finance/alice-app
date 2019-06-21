@@ -11,6 +11,7 @@ const preset = StyleSheet.create({
     justifyContentCenter: { justifyContent: "center" },
     alignItemsCenter: { alignItems: "center" },
     fontSize14: { fontSize: 14 },
+    fontSize16: { fontSize: 16 },
     fontSize20: { fontSize: 20 },
     fontSize24: { fontSize: 24 },
     fontSize36: { fontSize: 36 },

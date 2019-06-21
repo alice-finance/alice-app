@@ -99,7 +99,7 @@ const WithdrawDialog = ({ visible, onCancel, onOk, record }) => {
                 const tx = await market.withdraw(record.id, amount, { gasLimit: 0 });
                 await tx.wait();
                 setTotalBalance(toBigNumber(await market.totalFunds()));
-                setAPR(toBigNumber(await market.getAPR()).mul(toBigNumber(100)));
+                setAPR(toBigNumber(await market.getCurrentSavingsAPR()).mul(toBigNumber(100)));
                 await update();
                 Toast.show({ text: t("withdrawalComplete") });
                 onOk();
@@ -147,8 +147,8 @@ const WithdrawDialog = ({ visible, onCancel, onOk, record }) => {
 
 const Row = ({ label, value }) => (
     <View style={[preset.flexDirectionRow, preset.marginTopTiny, preset.marginBottomTiny]}>
-        <Text style={[preset.flex0, preset.colorGrey, preset.fontSize14]}>{label}</Text>
-        <Text style={[preset.flex1, preset.textAlignRight, preset.fontSize14]}>{value}</Text>
+        <Text style={[preset.flex0, preset.colorGrey, preset.fontSize16]}>{label}</Text>
+        <Text style={[preset.flex1, preset.textAlignRight, preset.fontSize16]}>{value}</Text>
     </View>
 );
 

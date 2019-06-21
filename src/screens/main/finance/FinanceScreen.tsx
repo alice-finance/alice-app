@@ -78,7 +78,7 @@ const useScheduledUpdater = () => {
         const refresh = async () => {
             const market = loomConnector!.getMoneyMarket();
             setTotalBalance(toBigNumber(await market.totalFunds()));
-            setAPR(toBigNumber(await market.getAPR()).mul(toBigNumber(100)));
+            setAPR(toBigNumber(await market.getCurrentSavingsAPR()).mul(toBigNumber(100)));
         };
         refresh();
         const handle = setInterval(() => refresh(), 60 * 1000);

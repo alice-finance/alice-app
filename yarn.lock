@@ -11,10 +11,10 @@
     deep-eql "^0.1.3"
     keypather "^1.10.2"
 
-"@alice-finance/money-market@^0.1.5":
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@alice-finance/money-market/-/money-market-0.1.5.tgz#85bf358c7ce65ff28d3aa47c377bdb8989ba9338"
-  integrity sha512-KNgm7Tg+Vzo2I99W5+AnnONfqxM8nKkFeZ1MqjMlt0yu4ihCKAz6N7AnH+9YvmrN9QNfKLq111D+rJPg6wvh5A==
+"@alice-finance/money-market@^0.1.7":
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/@alice-finance/money-market/-/money-market-0.1.7.tgz#85a42f205f2ea11140fc63ade5161e1bad3bc669"
+  integrity sha512-ssij+w8bd8wywhAyWVePCf+KQ9yclHV+gdZXQ6n9+l94BA3znKZSemNtBcAxZTIBOPtxdsHbKw6Ohxrjl8/8Bw==
 
 "@babel/code-frame@^7.0.0":
   version "7.0.0"

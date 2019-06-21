@@ -7,7 +7,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
-    "@alice-finance/money-market": "^0.1.5",
+    "@alice-finance/money-market": "^0.1.7",
     "@dnextco/alice-proxies": "^1.0.3",
     "@expo/vector-icons": "^9.0.0",
     "bip39": "^3.0.2",
