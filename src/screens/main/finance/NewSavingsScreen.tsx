@@ -7,6 +7,7 @@ import { BigNumber } from "ethers/utils";
 import { Button, Container, Icon, Text } from "native-base";
 import AmountInput from "../../../components/AmountInput";
 import CaptionText from "../../../components/CaptionText";
+import Row from "../../../components/Row";
 import Spinner from "../../../components/Spinner";
 import TitleText from "../../../components/TitleText";
 import { BalancesContext } from "../../../contexts/BalancesContext";
@@ -94,12 +95,5 @@ const NewSavingsScreen = () => {
         </Container>
     );
 };
-
-const Row = ({ label, value }) => (
-    <View style={[preset.flexDirectionRow, preset.marginTopTiny, preset.marginBottomTiny]}>
-        <Text style={[preset.flex0, preset.colorGrey, preset.fontSize16]}>{label}</Text>
-        <Text style={[preset.flex1, preset.textAlignRight, preset.fontSize16]}>{value}</Text>
-    </View>
-);
 
 export default NewSavingsScreen;

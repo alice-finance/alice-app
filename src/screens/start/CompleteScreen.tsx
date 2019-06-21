@@ -32,6 +32,7 @@ const CompleteScreen = () => {
                     <Button
                         info={true}
                         block={true}
+                        rounded={true}
                         large={true}
                         style={{ marginTop: Spacing.normal }}
                         onPress={onComplete}>

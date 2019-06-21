@@ -10,6 +10,7 @@ import platform from "../../../../native-base-theme/variables/platform";
 import AmountInput from "../../../components/AmountInput";
 import CaptionText from "../../../components/CaptionText";
 import DepositInProgress from "../../../components/DepositInProgress";
+import Row from "../../../components/Row";
 import TitleText from "../../../components/TitleText";
 import { BalancesContext } from "../../../contexts/BalancesContext";
 import { PendingTransactionsContext } from "../../../contexts/PendingTransactionsContext";
@@ -84,6 +85,12 @@ const DepositScreen = () => {
                                 onChangeAmount={setAmount}
                                 style={preset.marginSmall}
                             />
+                            <View style={[preset.marginLeftNormal, preset.marginRightNormal]}>
+                                <Row
+                                    label={t("available")}
+                                    value={formatValue(ethereumBalance, asset!.decimals, 2) + " " + asset!.symbol}
+                                />
+                            </View>
                             <Button
                                 primary={true}
                                 rounded={true}

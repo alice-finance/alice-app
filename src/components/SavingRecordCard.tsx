@@ -15,6 +15,7 @@ import { formatValue, toBigNumber } from "../utils/big-number-utils";
 import AgoText from "./AgoText";
 import AmountInput from "./AmountInput";
 import BigNumberText from "./BigNumberText";
+import Row from "./Row";
 import Spinner from "./Spinner";
 
 const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
@@ -153,12 +154,5 @@ const WithdrawDialog = ({ visible, onCancel, onOk, record }) => {
         </Portal>
     );
 };
-
-const Row = ({ label, value }) => (
-    <View style={[preset.flexDirectionRow, preset.marginTopTiny, preset.marginBottomTiny]}>
-        <Text style={[preset.flex0, preset.colorGrey, preset.fontSize16]}>{label}</Text>
-        <Text style={[preset.flex1, preset.textAlignRight, preset.fontSize16]}>{value}</Text>
-    </View>
-);
 
 export default SavingRecordCard;

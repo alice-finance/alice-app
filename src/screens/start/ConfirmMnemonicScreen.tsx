@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
 import { TextInput } from "react-native-paper";
 import { useNavigation, useNavigationParam } from "react-navigation-hooks";
 
@@ -9,7 +9,7 @@ import { Button, Container, Text } from "native-base";
 import CaptionText from "../../components/CaptionText";
 import Spinner from "../../components/Spinner";
 import SubtitleText from "../../components/SubtitleText";
-import { Spacing } from "../../constants/dimension";
+import preset from "../../styles/preset";
 import { ethereumPrivateKeyFromMnemonic, loomPrivateKeyFromMnemonic } from "../../utils/crypto-utils";
 
 const ConfirmMnemonicScreen = () => {
@@ -38,10 +38,10 @@ const ConfirmMnemonicScreen = () => {
         }
     }, [confirmed, mnemonic]);
     return (
-        <Container style={styles.container}>
+        <Container>
             <SubtitleText aboveText={true}>{t("start:confirmSeedPhrase")}</SubtitleText>
             <CaptionText>{t("start:confirmSeedPhrase.description")}</CaptionText>
-            <View style={styles.content}>
+            <View style={preset.marginNormal}>
                 {encrypting ? (
                     <Spinner compact={true} label={t("common:encrypting")} />
                 ) : (
@@ -52,9 +52,14 @@ const ConfirmMnemonicScreen = () => {
                             numberOfLines={0}
                             placeholder={t("seedPhrase")}
                             onChangeText={onChangeMnemonic}
-                            style={styles.input}
+                            style={preset.marginTopNormal}
                         />
-                        <Button block={true} disabled={!confirmed} style={styles.button} onPress={onComplete}>
+                        <Button
+                            block={true}
+                            rounded={true}
+                            disabled={!confirmed}
+                            style={preset.marginTopNormal}
+                            onPress={onComplete}>
                             <Text>{t("next")}</Text>
                         </Button>
                     </>
@@ -63,12 +68,5 @@ const ConfirmMnemonicScreen = () => {
         </Container>
     );
 };
-
-const styles = StyleSheet.create({
-    container: { flex: 1 },
-    content: { flex: 1, margin: Spacing.normal },
-    input: { marginTop: Spacing.normal },
-    button: { marginTop: Spacing.normal }
-});
 
 export default ConfirmMnemonicScreen;

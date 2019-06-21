@@ -9,6 +9,7 @@ import { Button, Container, Content, Icon, Text, Toast } from "native-base";
 import platform from "../../../../native-base-theme/variables/platform";
 import AmountInput from "../../../components/AmountInput";
 import CaptionText from "../../../components/CaptionText";
+import Row from "../../../components/Row";
 import TitleText from "../../../components/TitleText";
 import WithdrawalInProgress from "../../../components/WithdrawalInProgress";
 import { BalancesContext } from "../../../contexts/BalancesContext";
@@ -84,6 +85,12 @@ const WithdrawalScreen = () => {
                                 onChangeAmount={setAmount}
                                 style={preset.marginSmall}
                             />
+                            <View style={[preset.marginLeftNormal, preset.marginRightNormal]}>
+                                <Row
+                                    label={t("available")}
+                                    value={formatValue(loomBalance, asset!.decimals, 2) + " " + asset!.symbol}
+                                />
+                            </View>
                             <Button
                                 primary={true}
                                 rounded={true}

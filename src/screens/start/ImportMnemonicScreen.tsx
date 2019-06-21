@@ -10,7 +10,7 @@ import { Button, Container, Text } from "native-base";
 import CaptionText from "../../components/CaptionText";
 import Spinner from "../../components/Spinner";
 import SubtitleText from "../../components/SubtitleText";
-import { Spacing } from "../../constants/dimension";
+import preset from "../../styles/preset";
 import { ethereumPrivateKeyFromMnemonic, loomPrivateKeyFromMnemonic } from "../../utils/crypto-utils";
 
 const ImportMnemonicScreen = () => {
@@ -41,10 +41,10 @@ const ImportMnemonicScreen = () => {
         }
     }, [mnemonic]);
     return (
-        <Container style={{ flex: 1 }}>
+        <Container>
             <SubtitleText aboveText={true}>{t("importSeedPhrase")}</SubtitleText>
             <CaptionText>{t("importSeedPhrase.description")}</CaptionText>
-            <View style={{ flex: 1, margin: Spacing.normal }}>
+            <View style={preset.marginNormal}>
                 {encrypting ? (
                     <Spinner compact={true} label={t("common:encrypting")} />
                 ) : (
@@ -55,13 +55,13 @@ const ImportMnemonicScreen = () => {
                             numberOfLines={0}
                             placeholder={t("common:seedPhrase")}
                             onChangeText={onChangeMnemonic}
-                            disabled={encrypting}
-                            style={{ marginTop: Spacing.normal }}
+                            style={preset.marginTopNormal}
                         />
                         <Button
                             block={true}
+                            rounded={true}
                             disabled={!confirmed}
-                            style={{ marginTop: Spacing.normal }}
+                            style={preset.marginTopNormal}
                             onPress={onComplete}>
                             <Text>{t("common:next")}</Text>
                         </Button>
