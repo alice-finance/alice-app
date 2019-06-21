@@ -2,7 +2,7 @@ import React, { useCallback, useContext } from "react";
 
 import { BN } from "bn.js";
 import { ethers } from "ethers";
-import { EthCoin, TransferGateway } from "loom-js/dist/contracts";
+import { EthCoin } from "loom-js/dist/contracts";
 import { NULL_ADDRESS } from "../constants/token";
 import { ConnectorContext } from "../contexts/ConnectorContext";
 import { PendingTransactionsContext } from "../contexts/PendingTransactionsContext";
@@ -11,7 +11,7 @@ import { listenToTokenWithdrawal } from "../utils/loom-utils";
 import useTokenBalanceUpdater from "./useTokenBalanceUpdater";
 
 const useETHWithdrawer = () => {
-    const { loomConnector, ethereumConnector } = useContext(ConnectorContext);
+    const { loomConnector, ethereumConnector, transferGateway } = useContext(ConnectorContext);
     const { addPendingWithdrawalTransaction, clearPendingWithdrawalTransactions } = useContext(
         PendingTransactionsContext
     );
@@ -23,20 +23,19 @@ const useETHWithdrawer = () => {
                 try {
                     clearPendingWithdrawalTransactions(ethereumAddress);
                     const eth = await EthCoin.createAsync(loomConnector.client, loomConnector.address);
-                    const gateway = await TransferGateway.createAsync(loomConnector.client, loomConnector.address);
                     // Step 1: approve
                     addPendingWithdrawalTransaction(ethereumAddress, { hash: "1" });
-                    await eth.approveAsync(gateway.address, new BN(amount.toString()));
+                    await eth.approveAsync(transferGateway!.address, new BN(amount.toString()));
                     // Step 2: withdraw from loom network
                     addPendingWithdrawalTransaction(ethereumAddress, { hash: "2" });
-                    await gateway.withdrawETHAsync(
+                    await transferGateway!.withdrawETHAsync(
                         new BN(amount.toString()),
                         Address.newEthereumAddress(ethereumConnector.getGateway().address)
                     );
                     // Step 3: listen to token withdrawal event
                     const ethereumGateway = ethereumConnector!.getGateway();
                     const signature = await listenToTokenWithdrawal(
-                        gateway,
+                        transferGateway!,
                         Address.newEthereumAddress(ethereumGateway.address),
                         ethereumConnector!.address
                     );

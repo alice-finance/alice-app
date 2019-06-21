@@ -1,6 +1,5 @@
 import React, { useCallback, useContext } from "react";
 
-import { TransferGateway } from "loom-js/dist/contracts";
 import { bytesToHexAddr } from "loom-js/dist/crypto-utils";
 import { TransferGatewayTokenKind } from "loom-js/dist/proto/transfer_gateway_pb";
 import { NULL_ADDRESS } from "../constants/token";
@@ -13,15 +12,14 @@ import useTokenBalanceUpdater from "./useTokenBalanceUpdater";
 
 const usePendingWithdrawalHandler = () => {
     const { tokens } = useContext(TokensContext);
-    const { loomConnector, ethereumConnector } = useContext(ConnectorContext);
+    const { loomConnector, ethereumConnector, transferGateway: loomGateway } = useContext(ConnectorContext);
     const { addPendingWithdrawalTransaction, clearPendingWithdrawalTransactions } = useContext(
         PendingTransactionsContext
     );
     const { update } = useTokenBalanceUpdater();
     const handlePendingWithdrawal = useCallback(async () => {
         const ethereumGateway = ethereumConnector!.getGateway();
-        const loomGateway = await TransferGateway.createAsync(loomConnector!.client, loomConnector!.address);
-        const receipt = await loomGateway.withdrawalReceiptAsync(loomConnector!.address);
+        const receipt = await loomGateway!.withdrawalReceiptAsync(loomConnector!.address);
         if (receipt) {
             const ethereumNonce = await ethereumGateway.nonces(ethereumConnector!.address.toLocalAddressString());
             const loomNonce = receipt.withdrawalNonce.toString();

@@ -6,6 +6,7 @@ import { Asset } from "expo-asset";
 import * as Font from "expo-font";
 import * as SecureStore from "expo-secure-store";
 import { LocalAddress } from "loom-js/dist";
+import { TransferGateway } from "loom-js/dist/contracts";
 import { ConnectorContext } from "../contexts/ConnectorContext";
 import { SavingsContext } from "../contexts/SavingsContext";
 import { TokensContext } from "../contexts/TokensContext";
@@ -18,7 +19,7 @@ const SplashScreen = () => {
 };
 
 const useLoader = () => {
-    const { setMnemonic, setEthereumConnector, setLoomConnector } = useContext(ConnectorContext);
+    const { setMnemonic, setEthereumConnector, setLoomConnector, setTransferGateway } = useContext(ConnectorContext);
     const { setTokens } = useContext(TokensContext);
     const { setDecimals, setAsset } = useContext(SavingsContext);
     const { navigate } = useNavigation();
@@ -31,6 +32,7 @@ const useLoader = () => {
         if (mnemonic && ethereumPrivateKey && loomPrivateKey) {
             const ethereumConnector = new EthereumConnector(ethereumPrivateKey);
             const loomConnector = new LoomConnector(loomPrivateKey);
+            const transferGateway = await TransferGateway.createAsync(loomConnector.client, loomConnector.address);
             const tokens = await loomConnector.fetchERC20Tokens();
             const market = loomConnector.getMoneyMarket();
             const assetAddress = await market.asset();
@@ -42,6 +44,7 @@ const useLoader = () => {
             setMnemonic(mnemonic);
             setEthereumConnector(ethereumConnector);
             setLoomConnector(loomConnector);
+            setTransferGateway(transferGateway);
             setTokens(tokens);
             setAsset(asset);
             setDecimals(decimals);
@@ -62,13 +65,13 @@ const loadFonts = (): Promise<void> => {
         Roboto: require("../assets/Roboto.ttf"),
         Roboto_medium: require("../assets/Roboto_medium.ttf"),
         SimpleLineIcons: require("../assets/SimpleLineIcons.ttf"),
-        'simple-line-icons': require("../assets/SimpleLineIcons.ttf"),
+        "simple-line-icons": require("../assets/SimpleLineIcons.ttf"),
         MaterialIcons: require("../assets/MaterialIcons.ttf"),
-        'Material Icons': require("../assets/MaterialIcons.ttf"),
+        "Material Icons": require("../assets/MaterialIcons.ttf"),
         MaterialCommunityIcons: require("../assets/MaterialCommunityIcons.ttf"),
-        'Material Design Icons': require("../assets/MaterialCommunityIcons.ttf"),
+        "Material Design Icons": require("../assets/MaterialCommunityIcons.ttf"),
         AntDesign: require("../assets/AntDesign.ttf"),
-        'anticon': require("../assets/AntDesign.ttf")
+        anticon: require("../assets/AntDesign.ttf")
     });
 };
 
