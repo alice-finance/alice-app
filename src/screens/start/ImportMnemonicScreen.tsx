@@ -12,6 +12,7 @@ import Spinner from "../../components/Spinner";
 import SubtitleText from "../../components/SubtitleText";
 import preset from "../../styles/preset";
 import { ethereumPrivateKeyFromMnemonic, loomPrivateKeyFromMnemonic } from "../../utils/crypto-utils";
+import Analytics from "../../helpers/Analytics";
 
 const ImportMnemonicScreen = () => {
     const { t } = useTranslation(["start", "common"]);
@@ -34,6 +35,7 @@ const ImportMnemonicScreen = () => {
                 await SecureStore.setItemAsync("mnemonic", mnemonic);
                 await SecureStore.setItemAsync("ethereumPrivateKey", ethereumPrivateKeyFromMnemonic(mnemonic));
                 await SecureStore.setItemAsync("loomPrivateKey", loomPrivateKeyFromMnemonic(mnemonic));
+                Analytics.track(Analytics.events.KEY_IMPORTED);
                 push("Complete");
             } finally {
                 setEncrypting(false);

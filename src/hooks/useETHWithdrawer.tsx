@@ -9,6 +9,7 @@ import { PendingTransactionsContext } from "../contexts/PendingTransactionsConte
 import Address from "../evm/Address";
 import { listenToTokenWithdrawal } from "../utils/loom-utils";
 import useTokenBalanceUpdater from "./useTokenBalanceUpdater";
+import Analytics from "../helpers/Analytics";
 
 const useETHWithdrawer = () => {
     const { loomConnector, ethereumConnector, transferGateway } = useContext(ConnectorContext);
@@ -43,6 +44,7 @@ const useETHWithdrawer = () => {
                     const withdrawTx = await ethereumGateway.withdrawETH(amount.toString(), signature);
                     addPendingWithdrawalTransaction(ethereumAddress, withdrawTx);
                     await withdrawTx.wait();
+                    Analytics.track(Analytics.events.ASSET_WITHDRAWN);
                     await update();
                 } catch (e) {
                     clearPendingWithdrawalTransactions(ethereumAddress);

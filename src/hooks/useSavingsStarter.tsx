@@ -8,6 +8,7 @@ import { ConnectorContext } from "../contexts/ConnectorContext";
 import ERC20Token from "../evm/ERC20Token";
 import useMySavingsUpdater from "./useMySavingsUpdater";
 import useTokenBalanceUpdater from "./useTokenBalanceUpdater";
+import Analytics from "../helpers/Analytics";
 
 const useSavingsStarter = (asset: ERC20Token | null, amount: ethers.utils.BigNumber | null) => {
     const { pop } = useNavigation();
@@ -29,6 +30,7 @@ const useSavingsStarter = (asset: ERC20Token | null, amount: ethers.utils.BigNum
                 await updateTokenBalances();
                 await updateMySavings();
                 Toast.show({ text: t("aNewSavingsStartToday") });
+                Analytics.track(Analytics.events.SAVINGS_DEPOSITED);
                 pop();
             } catch (e) {
                 Toast.show({ text: t("savingsFailure") });

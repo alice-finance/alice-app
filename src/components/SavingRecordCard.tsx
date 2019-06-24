@@ -17,6 +17,7 @@ import AmountInput from "./AmountInput";
 import BigNumberText from "./BigNumberText";
 import Row from "./Row";
 import Spinner from "./Spinner";
+import Analytics from "../helpers/Analytics";
 
 const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
     const { t } = useTranslation("finance");
@@ -112,6 +113,7 @@ const WithdrawDialog = ({ visible, onCancel, onOk, record }) => {
                 setAPR(toBigNumber(await market.getCurrentSavingsAPR()).mul(toBigNumber(100)));
                 await update();
                 Toast.show({ text: t("withdrawalComplete") });
+                Analytics.track(Analytics.events.SAVINGS_WITHDRAWN);
                 onOk();
             } finally {
                 setInProgress(false);

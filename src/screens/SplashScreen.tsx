@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { useNavigation } from "react-navigation-hooks";
 
 import { AppLoading, SplashScreen as ExpoSplashScreen } from "expo";
+import * as Analytics from "../helpers/Analytics";
 import { Asset } from "expo-asset";
 import * as Font from "expo-font";
 import * as SecureStore from "expo-secure-store";
@@ -24,6 +25,7 @@ const useLoader = () => {
     const { setDecimals, setAsset } = useContext(SavingsContext);
     const { navigate } = useNavigation();
     const load = async () => {
+        Analytics.track(Analytics.events.APP_START);
         ExpoSplashScreen.preventAutoHide();
         await loadFonts();
         const mnemonic = await SecureStore.getItemAsync("mnemonic");

@@ -6,6 +6,7 @@ import { ConnectorContext } from "../contexts/ConnectorContext";
 import { PendingTransactionsContext } from "../contexts/PendingTransactionsContext";
 import Address from "../evm/Address";
 import useTokenBalanceUpdater from "./useTokenBalanceUpdater";
+import Analytics from "../helpers/Analytics";
 
 const useETHDepositor = () => {
     const { ethereumConnector } = useContext(ConnectorContext);
@@ -26,6 +27,7 @@ const useETHDepositor = () => {
                     addPendingDepositTransaction(ethereumAddress, tx);
                     await tx.wait();
                     // Done
+                    Analytics.track(Analytics.events.ASSET_DEPOSITED);
                     await update();
                     clearPendingDepositTransactions(ethereumAddress);
                 } catch (e) {

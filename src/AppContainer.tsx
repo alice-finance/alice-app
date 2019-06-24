@@ -11,6 +11,7 @@ import { useNavigation } from "react-navigation-hooks";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
 import { fromRight } from "react-navigation-transitions";
 
+import * as Analytics from "./helpers/Analytics";
 import platform from "../native-base-theme/variables/platform";
 import TabBarIcon from "./components/TabBarIcon";
 import AssetsScreen from "./screens/main/assets/AssetsScreen";
@@ -130,6 +131,8 @@ const I18nAppNavigator = Component => {
     HOC.router = Component.router;
     return HOC;
 };
+
+Analytics.initialize();
 
 const AppContainer = createAppContainer(I18nAppNavigator(AppNavigator));
 
