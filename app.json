@@ -28,6 +28,7 @@
       "bundleIdentifier": "finance.alice"
     },
     "android": {
+      "icon": "./src/assets/icon.android.png",
       "package": "finance.alice",
       "permissions": []
     }
