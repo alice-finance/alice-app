@@ -25,11 +25,11 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "finance.alice"
+      "bundleIdentifier": "finance.alice.app"
     },
     "android": {
       "icon": "./src/assets/icon.android.png",
-      "package": "finance.alice",
+      "package": "finance.alice.app",
       "permissions": []
     }
   }
