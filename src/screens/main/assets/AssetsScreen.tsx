@@ -5,15 +5,15 @@ import { useNavigation } from "react-navigation-hooks";
 import { defaultKeyExtractor } from "../../../utils/react-native-utils";
 
 import { Body, Button, Container, Icon, ListItem, Text } from "native-base";
+import ERC20Asset from "../../../../alice-js/ERC20Asset";
 import CaptionText from "../../../components/CaptionText";
 import TitleText from "../../../components/TitleText";
 import TokenIcon from "../../../components/TokenIcon";
 import { Spacing } from "../../../constants/dimension";
 import { ERC20_MAX_PRECISION } from "../../../constants/token";
+import { AssetContext } from "../../../contexts/AssetContext";
 import { BalancesContext } from "../../../contexts/BalancesContext";
-import { ConnectorContext } from "../../../contexts/ConnectorContext";
-import { TokensContext } from "../../../contexts/TokensContext";
-import ERC20Token from "../../../evm/ERC20Token";
+import { ChainContext } from "../../../contexts/ChainContext";
 import useEthereumBlockNumberListener from "../../../hooks/useEthereumBlockNumberListener";
 import usePendingWithdrawalHandler from "../../../hooks/usePendingWithdrawalHandler";
 import useTokenBalanceUpdater from "../../../hooks/useTokenBalanceUpdater";
@@ -26,14 +26,14 @@ const AssetsScreen = () => {
     const { sortedByName, setSortedByName, sortedTokens } = useTokenSorter();
     const { handlePendingWithdrawal } = usePendingWithdrawalHandler();
     const { blockNumber } = useEthereumBlockNumberListener();
-    const { loomConnector, ethereumConnector } = useContext(ConnectorContext);
+    const { loomChain, ethereumChain } = useContext(ChainContext);
     const { push, setParams } = useNavigation();
     const onSort = useCallback(() => setSortedByName(!sortedByName), [sortedByName]);
-    const onPress = useCallback((asset: ERC20Token) => push("ManageAsset", { asset }), []);
+    const onPress = useCallback((asset: ERC20Asset) => push("ManageAsset", { asset }), []);
     const renderItem = useCallback(({ item }) => <TokenListItem token={item} onPress={onPress} />, []);
     useEffect(() => {
         setParams({ onSort });
-        mapAccounts(ethereumConnector!, loomConnector!);
+        mapAccounts(ethereumChain!, loomChain!);
     }, []);
     useEffect(() => {
         if (blockNumber && blockNumber % 4 === 0) {
@@ -64,13 +64,13 @@ AssetsScreen.navigationOptions = ({ navigation }) => ({
 
 const useTokenSorter = () => {
     const [sortedByName, setSortedByName] = useState(false);
-    const { tokens } = useContext(TokensContext);
+    const { assets } = useContext(AssetContext);
     const { getBalance } = useContext(BalancesContext);
     const sortedTokens = useCallback(() => {
         if (sortedByName) {
-            return tokens.sort((t1, t2) => t1.symbol.localeCompare(t2.symbol));
+            return assets.sort((t1, t2) => t1.symbol.localeCompare(t2.symbol));
         } else {
-            return tokens.sort((t1, t2) =>
+            return assets.sort((t1, t2) =>
                 getBalance(t1.ethereumAddress)
                     .add(getBalance(t1.loomAddress))
                     .sub(getBalance(t2.ethereumAddress).add(getBalance(t2.loomAddress)))
@@ -78,11 +78,11 @@ const useTokenSorter = () => {
                     .toNumber()
             );
         }
-    }, [tokens]);
+    }, [assets]);
     return { sortedByName, setSortedByName, sortedTokens };
 };
 
-const TokenListItem = ({ token, onPress }: { token: ERC20Token; onPress: (ERC20Token) => void }) => {
+const TokenListItem = ({ token, onPress }: { token: ERC20Asset; onPress: (ERC20Asset) => void }) => {
     const { getBalance } = useContext(BalancesContext);
     return (
         <ListItem button={true} noBorder={true} iconRight={true} onPress={useCallback(() => onPress(token), [token])}>

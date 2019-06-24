@@ -6,9 +6,9 @@ import Dialog from "../react-native-paper/Dialog/Dialog";
 
 import { BigNumber } from "ethers/utils";
 import { Button, Card, CardItem, Left, Right, Text, Toast } from "native-base";
-import { ConnectorContext } from "../contexts/ConnectorContext";
+import { SavingsRecord } from "../../alice-js/contracts/MoneyMarket";
+import { ChainContext } from "../contexts/ChainContext";
 import { SavingsContext } from "../contexts/SavingsContext";
-import SavingsRecord from "../evm/SavingsRecord";
 import useMySavingsUpdater from "../hooks/useMySavingsUpdater";
 import preset from "../styles/preset";
 import { formatValue, toBigNumber } from "../utils/big-number-utils";
@@ -95,17 +95,17 @@ const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
 const WithdrawDialog = ({ visible, onCancel, onOk, record }) => {
     const { t } = useTranslation(["finance", "common"]);
     const { asset, decimals, setTotalBalance, apr, setAPR } = useContext(SavingsContext);
-    const { loomConnector } = useContext(ConnectorContext);
+    const { loomChain } = useContext(ChainContext);
     const [amount, setAmount] = useState<BigNumber | null>(toBigNumber(0));
     const [inProgress, setInProgress] = useState(false);
     const aprText = apr ? formatValue(apr, decimals, 2) + " %" : t("loading");
     const balanceText = formatValue(record.balance, asset!.decimals, 2) + " " + asset!.symbol;
     const { update } = useMySavingsUpdater();
     const onWithdraw = useCallback(async () => {
-        if (loomConnector && amount) {
+        if (loomChain && amount) {
             setInProgress(true);
             try {
-                const market = loomConnector.getMoneyMarket();
+                const market = loomChain.createMoneyMarket();
                 const tx = await market.withdraw(record.id, amount, { gasLimit: 0 });
                 await tx.wait();
                 setTotalBalance(toBigNumber(await market.totalFunds()));
@@ -117,7 +117,7 @@ const WithdrawDialog = ({ visible, onCancel, onOk, record }) => {
                 setInProgress(false);
             }
         }
-    }, [loomConnector, amount]);
+    }, [loomChain, amount]);
     return (
         <Portal>
             <Dialog dismissable={false} visible={visible} onDismiss={onCancel}>

@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 
-export default interface SavingsRecord {
+export interface SavingsRecord {
     id: ethers.utils.BigNumber;
     interestRate: ethers.utils.BigNumber;
     balance: ethers.utils.BigNumber;
@@ -14,4 +14,10 @@ export interface SavingsWithdrawal {
     recordId: ethers.utils.BigNumber;
     amount: ethers.utils.BigNumber;
     timestamp: Date;
+}
+
+export default class MoneyMarket extends ethers.Contract {
+    constructor(address: string, signerOrProvider: ethers.Signer | ethers.providers.Provider) {
+        super(address, require("@alice-finance/money-market/abis/MoneyMarket.json"), signerOrProvider);
+    }
 }

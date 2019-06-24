@@ -6,6 +6,7 @@ import { useNavigation } from "react-navigation-hooks";
 import { ethers } from "ethers";
 import { BigNumber } from "ethers/utils";
 import { Button, Container, Content, Icon, Text, Toast } from "native-base";
+import ERC20Asset from "../../../../alice-js/ERC20Asset";
 import platform from "../../../../native-base-theme/variables/platform";
 import AmountInput from "../../../components/AmountInput";
 import CaptionText from "../../../components/CaptionText";
@@ -14,7 +15,6 @@ import Row from "../../../components/Row";
 import TitleText from "../../../components/TitleText";
 import { BalancesContext } from "../../../contexts/BalancesContext";
 import { PendingTransactionsContext } from "../../../contexts/PendingTransactionsContext";
-import ERC20Token from "../../../evm/ERC20Token";
 import useERC20Depositor from "../../../hooks/useERC20Depositor";
 import useETHDepositor from "../../../hooks/useETHDepositor";
 import preset from "../../../styles/preset";
@@ -36,7 +36,7 @@ const DepositScreen = () => {
     const onOk = useCallback(async () => {
         setInProgress(true);
         try {
-            if (asset.ethereumAddress.isNull()) {
+            if (asset.ethereumAddress.isZero()) {
                 await depositETH(change!);
             } else {
                 await depositERC20(change!);
@@ -61,7 +61,7 @@ const DepositScreen = () => {
         }
     }, [change]);
 
-    const asset: ERC20Token = getParam("asset");
+    const asset: ERC20Asset = getParam("asset");
     const { deposit: depositETH } = useETHDepositor();
     const { deposit: depositERC20 } = useERC20Depositor(asset);
     const ethereumBalance = getBalance(asset.ethereumAddress);
@@ -109,7 +109,7 @@ const DepositScreen = () => {
 };
 
 interface ConfirmProps {
-    asset: ERC20Token;
+    asset: ERC20Asset;
     change: BigNumber;
     onCancel: () => void;
     onOk: () => void;

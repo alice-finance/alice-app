@@ -6,14 +6,14 @@ import { useNavigation } from "react-navigation-hooks";
 
 import { BigNumber } from "ethers/utils";
 import { Button, Container, Text, Toast } from "native-base";
+import ERC20Asset from "../../../../alice-js/ERC20Asset";
 import platform from "../../../../native-base-theme/variables/platform";
 import AmountInput from "../../../components/AmountInput";
 import Spinner from "../../../components/Spinner";
 import SubtitleText from "../../../components/SubtitleText";
 import { Spacing } from "../../../constants/dimension";
 import { BalancesContext } from "../../../contexts/BalancesContext";
-import { ConnectorContext } from "../../../contexts/ConnectorContext";
-import ERC20Token from "../../../evm/ERC20Token";
+import { ChainContext } from "../../../contexts/ChainContext";
 import preset from "../../../styles/preset";
 import { formatValue, toBigNumber } from "../../../utils/big-number-utils";
 import { openTx } from "../../../utils/ether-scan-utils";
@@ -21,14 +21,14 @@ import { openTx } from "../../../utils/ether-scan-utils";
 const TransferAssetScreen = () => {
     const { t } = useTranslation(["asset", "common"]);
     const { getParam } = useNavigation();
-    const { ethereumConnector } = useContext(ConnectorContext);
+    const { ethereumChain } = useContext(ChainContext);
     const { getBalance } = useContext(BalancesContext);
     const [address, setAddress] = useState<string>("");
     const [error, setError] = useState("");
     const [amount, setAmount] = useState<BigNumber | null>(toBigNumber(0));
     const [inProgress, setInProgress] = useState(false);
     const [txHash, setTxHash] = useState<string | null>(null);
-    const asset: ERC20Token = getParam("asset");
+    const asset: ERC20Asset = getParam("asset");
     const onChangeAddress = useCallback(newAddress => {
         const valid = newAddress.startsWith("0x") && newAddress.length === 42;
         setError(valid ? "" : "notAValidAddress");
@@ -42,20 +42,16 @@ const TransferAssetScreen = () => {
         );
     }, [address, asset, amount]);
     const transfer = useCallback(async () => {
-        if (amount) {
+        if (ethereumChain && amount) {
             try {
                 setInProgress(true);
-                if (asset.ethereumAddress.isNull()) {
-                    const tx = await ethereumConnector!.wallet.sendTransaction({
-                        to: address,
-                        value: amount.toHexString()
-                    });
+                if (asset.ethereumAddress.isZero()) {
+                    const tx = await ethereumChain.transferETHAsync(address, amount);
                     setTxHash(tx.hash!);
                     await tx.wait();
                 } else {
-                    const erc20 = ethereumConnector!.getERC20(asset.ethereumAddress.toLocalAddressString());
-                    const tx = await erc20.transfer(address, amount);
-                    setTxHash(tx.hash);
+                    const tx = await ethereumChain.transferERC20Async(asset, address, amount);
+                    setTxHash(tx.hash!);
                     await tx.wait();
                 }
                 setAddress("");
@@ -68,7 +64,7 @@ const TransferAssetScreen = () => {
                 setInProgress(false);
             }
         }
-    }, [ethereumConnector, address, amount]);
+    }, [ethereumChain, address, amount]);
     const onPress = useCallback(() => {
         if (txHash) {
             openTx(txHash);

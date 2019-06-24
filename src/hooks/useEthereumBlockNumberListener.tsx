@@ -1,16 +1,16 @@
 import { useContext, useEffect, useState } from "react";
 
-import { ConnectorContext } from "../contexts/ConnectorContext";
+import { ChainContext } from "../contexts/ChainContext";
 
 const useEthereumBlockNumberListener = () => {
-    const { ethereumConnector } = useContext(ConnectorContext);
+    const { ethereumChain } = useContext(ChainContext);
     const [blockNumber, setBlockNumber] = useState<number | null>(null);
     useEffect(() => {
-        ethereumConnector!.provider.on("block", setBlockNumber);
+        ethereumChain!.getProvider().on("block", setBlockNumber);
         return () => {
-            ethereumConnector!.provider.removeListener("block", setBlockNumber);
+            ethereumChain!.getProvider().removeListener("block", setBlockNumber);
         };
-    }, [ethereumConnector]);
+    }, [ethereumChain]);
     return { blockNumber };
 };
 

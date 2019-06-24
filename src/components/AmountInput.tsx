@@ -5,14 +5,14 @@ import { StyleProp, Text, TextInput, TextStyle, View, ViewStyle } from "react-na
 
 import { BigNumber } from "ethers/utils";
 import { Button } from "native-base";
+import ERC20Asset from "../../alice-js/ERC20Asset";
 import platform from "../../native-base-theme/variables/platform";
 import { Spacing } from "../constants/dimension";
-import ERC20Token from "../evm/ERC20Token";
 import preset from "../styles/preset";
 import { formatValue, parseValue } from "../utils/big-number-utils";
 
 interface AmountInputProps {
-    asset: ERC20Token;
+    asset: ERC20Asset;
     max: BigNumber;
     disabled: boolean;
     onChangeAmount: (amount: BigNumber | null) => void;

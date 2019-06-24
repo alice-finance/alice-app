@@ -1,6 +1,1 @@
-export const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
-
-export const ERC20_PROXY_ID = "0xcc4aa204";
-export const ERC721_PROXY_ID = "0x9013e617";
-
 export const ERC20_MAX_PRECISION = 4;

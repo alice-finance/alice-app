@@ -1,26 +1,27 @@
 import { useCallback, useContext, useState } from "react";
 
+import { AssetContext } from "../contexts/AssetContext";
 import { BalancesContext } from "../contexts/BalancesContext";
-import { ConnectorContext } from "../contexts/ConnectorContext";
-import { TokensContext } from "../contexts/TokensContext";
+import { ChainContext } from "../contexts/ChainContext";
 
 const useTokenBalanceUpdater = () => {
-    const { tokens } = useContext(TokensContext);
+    const { assets } = useContext(AssetContext);
     const { updateBalance } = useContext(BalancesContext);
-    const { ethereumConnector, loomConnector } = useContext(ConnectorContext);
+    const { ethereumChain, loomChain } = useContext(ChainContext);
     const [updating, setUpdating] = useState(true);
     const update = useCallback(async () => {
         try {
-            if (ethereumConnector && loomConnector) {
+            if (ethereumChain && loomChain) {
                 await Promise.all([
-                    ethereumConnector.fetchERC20Balances(tokens, updateBalance),
-                    loomConnector.fetchERC20Balances(tokens, updateBalance)
+                    ethereumChain.updateAssetBalancesAsync(assets, updateBalance),
+                    loomChain.updateAssetBalancesAsync(assets, updateBalance)
                 ]);
             }
-        } finally {
+            setUpdating(false);
+        } catch (e) {
             setUpdating(false);
         }
-    }, [tokens, ethereumConnector, loomConnector]);
+    }, [assets, ethereumChain, loomChain]);
     return { updating, update };
 };
 

@@ -1,29 +1,28 @@
 import { useCallback, useContext } from "react";
 
 import { ethers } from "ethers";
-import { ConnectorContext } from "../contexts/ConnectorContext";
+import ERC20Asset from "../../alice-js/ERC20Asset";
+import { ChainContext } from "../contexts/ChainContext";
 import { PendingTransactionsContext } from "../contexts/PendingTransactionsContext";
-import ERC20Token from "../evm/ERC20Token";
 import useTokenBalanceUpdater from "./useTokenBalanceUpdater";
 
-const useERC20Depositor = (asset: ERC20Token) => {
-    const { ethereumConnector } = useContext(ConnectorContext);
+const useERC20Depositor = (asset: ERC20Asset) => {
+    const { ethereumChain } = useContext(ChainContext);
     const { addPendingDepositTransaction, clearPendingDepositTransactions } = useContext(PendingTransactionsContext);
     const { update } = useTokenBalanceUpdater();
     const deposit = useCallback(
         async (amount: ethers.utils.BigNumber) => {
-            if (ethereumConnector) {
+            if (ethereumChain) {
                 const assetAddress = asset.ethereumAddress;
+                const gateway = ethereumChain.createGateway();
                 try {
                     clearPendingDepositTransactions(assetAddress);
                     // Step 1: approve
-                    const erc20 = ethereumConnector.getERC20(asset.ethereumAddress.toLocalAddressString());
-                    const gateway = ethereumConnector.getGateway();
-                    const approveTx = await erc20.approve(gateway.address, amount);
+                    const approveTx = await ethereumChain.approveERC20Async(asset, gateway.address, amount);
                     addPendingDepositTransaction(assetAddress, approveTx);
                     await approveTx.wait();
                     // Step 2: deposit
-                    const depositTx = await gateway.depositERC20(amount, asset.ethereumAddress.toLocalAddressString());
+                    const depositTx = await ethereumChain.depositERC20Async(asset, amount);
                     addPendingDepositTransaction(assetAddress, depositTx);
                     await depositTx.wait();
                     // Done
@@ -35,7 +34,7 @@ const useERC20Depositor = (asset: ERC20Token) => {
                 }
             }
         },
-        [ethereumConnector, addPendingDepositTransaction, clearPendingDepositTransactions]
+        [ethereumChain, addPendingDepositTransaction, clearPendingDepositTransactions]
     );
     return { deposit };
 };

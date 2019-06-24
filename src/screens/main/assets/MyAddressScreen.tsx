@@ -7,13 +7,13 @@ import { Button, Container, Text, Toast } from "native-base";
 import CaptionText from "../../../components/CaptionText";
 import HeadlineText from "../../../components/HeadlineText";
 import { Spacing } from "../../../constants/dimension";
-import { ConnectorContext } from "../../../contexts/ConnectorContext";
+import { ChainContext } from "../../../contexts/ChainContext";
 import preset from "../../../styles/preset";
 
 const MyAddressScreen = () => {
     const { t } = useTranslation(["profile", "common"]);
-    const { ethereumConnector } = useContext(ConnectorContext);
-    const address = ethereumConnector!.address.toLocalAddressString();
+    const { ethereumChain } = useContext(ChainContext);
+    const address = ethereumChain!.getAddress().toLocalAddressString();
     const onOk = useCallback(() => {
         Clipboard.setString(address);
         Toast.show({ text: t("addressCopiedToTheClipboard") });
