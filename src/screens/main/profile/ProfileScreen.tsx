@@ -8,11 +8,11 @@ import app from "../../../../app.json";
 import platform from "../../../../native-base-theme/variables/platform";
 import TitleText from "../../../components/TitleText";
 import { Spacing } from "../../../constants/dimension";
-import { ConnectorContext } from "../../../contexts/ConnectorContext";
+import { ChainContext } from "../../../contexts/ChainContext";
 
 const ProfileScreen = () => {
     const { t } = useTranslation("profile");
-    const { mnemonic } = useContext(ConnectorContext);
+    const { mnemonic } = useContext(ChainContext);
     const [dialogOpen, setDialogOpen] = useState(false);
     const openDialog = useCallback(() => setDialogOpen(true), []);
     const closeDialog = useCallback(() => setDialogOpen(false), []);
@@ -37,19 +37,19 @@ const ProfileScreen = () => {
 
 const MyAddressItem = () => {
     const { t } = useTranslation("profile");
-    const { ethereumConnector } = useContext(ConnectorContext);
+    const { ethereumChain } = useContext(ChainContext);
     const onPress = useCallback(() => {
-        if (ethereumConnector) {
-            Clipboard.setString(ethereumConnector.address.toLocalAddressString());
+        if (ethereumChain) {
+            Clipboard.setString(ethereumChain.getAddress().toLocalAddressString());
             Toast.show({ text: t("addressCopiedToTheClipboard") });
         }
-    }, [ethereumConnector]);
+    }, [ethereumChain]);
     return (
         <ListItem iconRight={true} button={true} style={{ height: 72 }} onPress={onPress}>
             <Body>
                 <Text style={{ fontSize: 20 }}>{t("myAddress")}</Text>
                 <Text note={true} ellipsizeMode="middle" numberOfLines={1}>
-                    {ethereumConnector ? ethereumConnector.address.toLocalAddressString() : "0x"}
+                    {ethereumChain ? ethereumChain.getAddress().toLocalAddressString() : "0x"}
                 </Text>
             </Body>
             <Icon type="SimpleLineIcons" name="key" style={{ color: "black", marginRight: Spacing.normal }} />

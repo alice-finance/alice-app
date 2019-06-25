@@ -11,7 +11,7 @@ import Row from "../../../components/Row";
 import Spinner from "../../../components/Spinner";
 import TitleText from "../../../components/TitleText";
 import { BalancesContext } from "../../../contexts/BalancesContext";
-import { ConnectorContext } from "../../../contexts/ConnectorContext";
+import { ChainContext } from "../../../contexts/ChainContext";
 import { SavingsContext } from "../../../contexts/SavingsContext";
 import useSavingsStarter from "../../../hooks/useSavingsStarter";
 import preset from "../../../styles/preset";
@@ -20,7 +20,7 @@ import { formatValue, toBigNumber } from "../../../utils/big-number-utils";
 const NewSavingsScreen = () => {
     const { push } = useNavigation();
     const { t } = useTranslation(["finance", "common"]);
-    const { loomConnector } = useContext(ConnectorContext);
+    const { loomChain } = useContext(ChainContext);
     const { asset, decimals } = useContext(SavingsContext);
     const { getBalance, updateBalance } = useContext(BalancesContext);
     const [amount, setAmount] = useState<BigNumber | null>(toBigNumber(0));
@@ -32,8 +32,7 @@ const NewSavingsScreen = () => {
     const onPressManageAsset = useCallback(() => push("ManageAsset", { asset }), []);
     useEffect(() => {
         const refresh = async () => {
-            const erc20 = loomConnector!.getERC20(asset!.loomAddress.toLocalAddressString());
-            const balance = await erc20.balanceOf(loomConnector!.address.toLocalAddressString());
+            const balance = await loomChain!.balanceOfERC20Async(asset!);
             updateBalance(asset!.loomAddress, toBigNumber(balance));
         };
         refresh();
@@ -42,7 +41,7 @@ const NewSavingsScreen = () => {
         if (amount) {
             const load = async () => {
                 setLoadingAPR(true);
-                const market = loomConnector!.getMoneyMarket();
+                const market = loomChain!.createMoneyMarket();
                 const expected = await market.getExpectedSavingsAPR(amount.toString());
                 setAprText(formatValue(toBigNumber(expected).mul(100), decimals, 2) + " %");
                 setLoadingAPR(false);

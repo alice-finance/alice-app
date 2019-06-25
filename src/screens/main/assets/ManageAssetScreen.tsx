@@ -1,9 +1,16 @@
-import React, { useCallback, useContext, useEffect } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FlatList, View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 import { defaultKeyExtractor } from "../../../utils/react-native-utils";
 
+import {
+    ERC20Received,
+    ERC20Withdrawn,
+    ETHReceived,
+    ETHWithdrawn
+} from "@alice-finance/alice.js/dist/chains/EthereumChain";
+import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
 import { IWithdrawalReceipt } from "loom-js/dist/contracts/transfer-gateway";
 import { Body, Button, Card, CardItem, Container, Content, Icon, Left, ListItem, Right, Text } from "native-base";
 import platform from "../../../../native-base-theme/variables/platform";
@@ -16,10 +23,8 @@ import SubtitleText from "../../../components/SubtitleText";
 import TokenIcon from "../../../components/TokenIcon";
 import { Spacing } from "../../../constants/dimension";
 import { BalancesContext } from "../../../contexts/BalancesContext";
-import ERC20Token from "../../../evm/ERC20Token";
+import { ChainContext } from "../../../contexts/ChainContext";
 import useEthereumBlockNumberListener from "../../../hooks/useEthereumBlockNumberListener";
-import useGatewayReceivedLoader from "../../../hooks/useGatewayReceivedLoader";
-import useGatewayTokenWithdrawnLoader from "../../../hooks/useGatewayTokenWithdrawnLoader";
 import usePendingWithdrawalListener from "../../../hooks/usePendingWithdrawalListener";
 import useTokenBalanceUpdater from "../../../hooks/useTokenBalanceUpdater";
 import preset from "../../../styles/preset";
@@ -29,10 +34,11 @@ import { openTx } from "../../../utils/ether-scan-utils";
 const ManageAssetScreen = () => {
     const { t } = useTranslation(["asset", "profile", "common"]);
     const { push, getParam } = useNavigation();
-    const asset: ERC20Token = getParam("asset");
+    const asset: ERC20Asset = getParam("asset");
+    const { ethereumChain } = useContext(ChainContext);
     const { getBalance } = useContext(BalancesContext);
-    const { loadReceived, received } = useGatewayReceivedLoader(asset.ethereumAddress);
-    const { loadWithdrawn, withdrawn } = useGatewayTokenWithdrawnLoader(asset.ethereumAddress);
+    const [received, setReceived] = useState<ETHReceived[] | ERC20Received[]>();
+    const [withdrawn, setWithdrawn] = useState<ETHWithdrawn[] | ERC20Withdrawn[]>();
     const { blockNumber } = useEthereumBlockNumberListener();
     const { update } = useTokenBalanceUpdater();
     const { receipt } = usePendingWithdrawalListener(asset);
@@ -40,11 +46,21 @@ const ManageAssetScreen = () => {
     const ethereumBalance = getBalance(asset.ethereumAddress);
     const renderItem = ({ item }) => <ItemView asset={asset} item={item} blockNumber={blockNumber} />;
     const items = [...(received || []), ...(withdrawn || [])].sort(
-        (l1, l2) => (l2.blockNumber || 0) - (l1.blockNumber || 0)
+        (l1, l2) => (l2.log.blockNumber || 0) - (l1.log.blockNumber || 0)
     );
     useEffect(() => {
         const refresh = async () => {
-            await Promise.all([loadReceived(), loadWithdrawn()]);
+            if (asset.ethereumAddress.isZero()) {
+                await Promise.all([
+                    ethereumChain!.getETHReceivedLogsAsync().then(setReceived),
+                    ethereumChain!.getETHWithdrawnLogsAsync().then(setWithdrawn)
+                ]);
+            } else {
+                await Promise.all([
+                    ethereumChain!.getERC20ReceivedLogsAsync(asset).then(setReceived),
+                    ethereumChain!.getERC20WithdrawnLogsAsync(asset).then(setWithdrawn)
+                ]);
+            }
             await update();
         };
         refresh();
@@ -112,7 +128,7 @@ const ManageAssetScreen = () => {
     }
 };
 
-const TokenView = ({ asset }: { asset: ERC20Token }) => {
+const TokenView = ({ asset }: { asset: ERC20Asset }) => {
     const { getBalance } = useContext(BalancesContext);
     return (
         <View style={{ alignItems: "center", margin: Spacing.normal }}>
@@ -176,7 +192,7 @@ const BalanceCard = ({ title, description, balance, asset, buttonText, onPressBu
     );
 };
 
-const PendingWithdrawalItemView = ({ asset, receipt }: { asset: ERC20Token; receipt: IWithdrawalReceipt }) => {
+const PendingWithdrawalItemView = ({ asset, receipt }: { asset: ERC20Asset; receipt: IWithdrawalReceipt }) => {
     const { t } = useTranslation("asset");
     const color = platform.brandWarning;
     return (
@@ -198,13 +214,13 @@ const PendingWithdrawalItemView = ({ asset, receipt }: { asset: ERC20Token; rece
     );
 };
 
-const ItemView = ({ asset, item, blockNumber }: { asset: ERC20Token; item: any; blockNumber: number | null }) => {
+const ItemView = ({ asset, item, blockNumber }: { asset: ERC20Asset; item: any; blockNumber: number | null }) => {
     const { t } = useTranslation("asset");
     const withdraw = !!item.value;
-    const inProgress = !withdraw && blockNumber && item.blockNumber && blockNumber - item.blockNumber <= 15;
+    const inProgress = !withdraw && blockNumber && item.log.blockNumber && blockNumber - item.log.blockNumber <= 15;
     const color = inProgress ? platform.brandWarning : withdraw ? platform.brandDanger : platform.brandInfo;
     return (
-        <ListItem noBorder={true} onPress={useCallback(() => openTx(item.transactionHash), [])}>
+        <ListItem noBorder={true} onPress={useCallback(() => openTx(item.log.transactionHash), [])}>
             <Left style={[preset.flex0]}>
                 <TypeBadge inProgress={inProgress} color={color} withdraw={withdraw} />
             </Left>

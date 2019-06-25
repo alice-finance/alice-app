@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { Image, StyleSheet, View, ViewProps } from "react-native";
 
-import { NULL_ADDRESS } from "../constants/token";
+import { ZERO_ADDRESS } from "@alice-finance/alice.js/dist/constants";
 
 interface TokenIconProps extends ViewProps {
     address: string;
@@ -14,7 +14,7 @@ const TokenIcon: React.FunctionComponent<TokenIconProps> = ({ address, width, he
     const [loaded, setLoaded] = useState(false);
     const onLoad = useCallback(() => setLoaded(true), [loaded]);
     const uri =
-        address === NULL_ADDRESS
+        address === ZERO_ADDRESS
             ? "https://raw.githubusercontent.com/ethereum/ethereum-org/master/public/images/logos/ETHEREUM-ICON_Black.png"
             : `https://raw.githubusercontent.com/TrustWallet/tokens/master/tokens/${address}.png`;
     return (

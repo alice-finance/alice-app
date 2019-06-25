@@ -2,14 +2,14 @@ import React, { useCallback, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 
+import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
 import { Button, Text } from "native-base";
 import { PendingTransactionsContext } from "../contexts/PendingTransactionsContext";
-import ERC20Token from "../evm/ERC20Token";
 import preset from "../styles/preset";
 import { openTx } from "../utils/ether-scan-utils";
 import Spinner from "./Spinner";
 
-const DepositInProgress = ({ asset }: { asset: ERC20Token }) => {
+const DepositInProgress = ({ asset }: { asset: ERC20Asset }) => {
     const { t } = useTranslation("asset");
     const { getPendingDepositTransactions } = useContext(PendingTransactionsContext);
     const pendingDepositTransactions = getPendingDepositTransactions(asset.ethereumAddress);

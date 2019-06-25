@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 
 import { ethers } from "ethers";
-import ERC20Token from "../evm/ERC20Token";
+import ERC20Asset from "../evm/ERC20Asset";
 import SavingsRecord from "../evm/SavingsRecord";
 import { toBigNumber } from "../utils/big-number-utils";
 
 export const SavingsContext = React.createContext({
     decimals: 0,
     setDecimals: (decimal: number) => {},
-    asset: null as (ERC20Token | null),
-    setAsset: (asset: ERC20Token) => {},
+    asset: null as (ERC20Asset | null),
+    setAsset: (asset: ERC20Asset) => {},
     totalBalance: null as (ethers.utils.BigNumber | null),
     setTotalBalance: (totalBalance: ethers.utils.BigNumber) => {},
     apr: null as (ethers.utils.BigNumber | null),
@@ -23,7 +23,7 @@ export const SavingsContext = React.createContext({
 
 export const SavingsProvider = ({ children }) => {
     const [decimals, setDecimals] = useState(0);
-    const [asset, setAsset] = useState<ERC20Token | null>(null);
+    const [asset, setAsset] = useState<ERC20Asset | null>(null);
     const [totalBalance, setTotalBalance] = useState<ethers.utils.BigNumber | null>(null);
     const [apr, setAPR] = useState<ethers.utils.BigNumber | null>(null);
     const [myRecords, setMyRecords] = useState<SavingsRecord[] | null>(null);

@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
+import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
 import { ethers } from "ethers";
 import { BigNumber } from "ethers/utils";
 import { Button, Container, Content, Icon, Text, Toast } from "native-base";
@@ -14,7 +15,6 @@ import TitleText from "../../../components/TitleText";
 import WithdrawalInProgress from "../../../components/WithdrawalInProgress";
 import { BalancesContext } from "../../../contexts/BalancesContext";
 import { PendingTransactionsContext } from "../../../contexts/PendingTransactionsContext";
-import ERC20Token from "../../../evm/ERC20Token";
 import useERC20Withdrawer from "../../../hooks/useERC20Withdrawer";
 import useETHWithdrawer from "../../../hooks/useETHWithdrawer";
 import preset from "../../../styles/preset";
@@ -36,7 +36,7 @@ const WithdrawalScreen = () => {
     const onOk = useCallback(async () => {
         setInProgress(true);
         try {
-            if (asset.loomAddress.isNull()) {
+            if (asset.loomAddress.isZero()) {
                 await withdrawETH(change!);
             } else {
                 await withdrawERC20(change!);
@@ -61,7 +61,7 @@ const WithdrawalScreen = () => {
         }
     }, [change]);
 
-    const asset: ERC20Token = getParam("asset");
+    const asset: ERC20Asset = getParam("asset");
     const { withdraw: withdrawETH } = useETHWithdrawer();
     const { withdraw: withdrawERC20 } = useERC20Withdrawer(asset);
     const loomBalance = getBalance(asset.loomAddress);
@@ -109,7 +109,7 @@ const WithdrawalScreen = () => {
 };
 
 interface ConfirmProps {
-    asset: ERC20Token;
+    asset: ERC20Asset;
     change: BigNumber;
     onCancel: () => void;
     onOk: () => void;

@@ -1,50 +1,44 @@
 import React, { useCallback, useContext } from "react";
 
-import { BN } from "bn.js";
+import Address from "@alice-finance/alice.js/dist/Address";
+import { ZERO_ADDRESS } from "@alice-finance/alice.js/dist/constants";
 import { ethers } from "ethers";
-import { EthCoin } from "loom-js/dist/contracts";
-import { NULL_ADDRESS } from "../constants/token";
-import { ConnectorContext } from "../contexts/ConnectorContext";
+import { ChainContext } from "../contexts/ChainContext";
 import { PendingTransactionsContext } from "../contexts/PendingTransactionsContext";
-import Address from "../evm/Address";
-import { listenToTokenWithdrawal } from "../utils/loom-utils";
 import useTokenBalanceUpdater from "./useTokenBalanceUpdater";
 import Analytics from "../helpers/Analytics";
 
 const useETHWithdrawer = () => {
-    const { loomConnector, ethereumConnector, transferGateway } = useContext(ConnectorContext);
+    const { loomChain, ethereumChain } = useContext(ChainContext);
     const { addPendingWithdrawalTransaction, clearPendingWithdrawalTransactions } = useContext(
         PendingTransactionsContext
     );
     const { update } = useTokenBalanceUpdater();
     const withdraw = useCallback(
         async (amount: ethers.utils.BigNumber) => {
-            if (loomConnector && ethereumConnector) {
-                const ethereumAddress = Address.newEthereumAddress(NULL_ADDRESS);
+            if (loomChain && ethereumChain) {
+                const ethereumAddress = Address.createEthereumAddress(ZERO_ADDRESS);
+                const gateway = await loomChain.createTransferGatewayAsync();
                 try {
                     clearPendingWithdrawalTransactions(ethereumAddress);
-                    const eth = await EthCoin.createAsync(loomConnector.client, loomConnector.address);
                     // Step 1: approve
-                    addPendingWithdrawalTransaction(ethereumAddress, { hash: "1" });
-                    await eth.approveAsync(transferGateway!.address, new BN(amount.toString()));
+                    const approveTx = await loomChain.approveETHAsync(gateway.address.local.toChecksumString(), amount);
+                    addPendingWithdrawalTransaction(ethereumAddress, approveTx);
+                    await approveTx.wait();
                     // Step 2: withdraw from loom network
-                    addPendingWithdrawalTransaction(ethereumAddress, { hash: "2" });
-                    await transferGateway!.withdrawETHAsync(
-                        new BN(amount.toString()),
-                        Address.newEthereumAddress(ethereumConnector.getGateway().address)
-                    );
-                    // Step 3: listen to token withdrawal event
-                    const ethereumGateway = ethereumConnector!.getGateway();
-                    const signature = await listenToTokenWithdrawal(
-                        transferGateway!,
-                        Address.newEthereumAddress(ethereumGateway.address),
-                        ethereumConnector!.address
-                    );
-                    // Step 4: withdraw from ethereum network
-                    const withdrawTx = await ethereumGateway.withdrawETH(amount.toString(), signature);
+                    const withdrawTx = await loomChain.withdrawETHAsync(amount, ethereumChain.createGateway().address);
                     addPendingWithdrawalTransaction(ethereumAddress, withdrawTx);
                     await withdrawTx.wait();
                     Analytics.track(Analytics.events.ASSET_WITHDRAWN);
+                    // Step 3: listen to token withdrawal event
+                    const signature = await loomChain.listenToTokenWithdrawal(
+                        ethereumChain.createGateway().address,
+                        ethereumChain.getAddress().toLocalAddressString()
+                    );
+                    // Step 4: withdraw from ethereum network
+                    const ethereumWithdrawTx = await ethereumChain.withdrawETHAsync(amount, signature);
+                    addPendingWithdrawalTransaction(ethereumAddress, ethereumWithdrawTx);
+                    await ethereumWithdrawTx.wait();
                     await update();
                 } catch (e) {
                     clearPendingWithdrawalTransactions(ethereumAddress);
@@ -52,7 +46,7 @@ const useETHWithdrawer = () => {
                 }
             }
         },
-        [loomConnector, ethereumConnector, addPendingWithdrawalTransaction, clearPendingWithdrawalTransactions]
+        [loomChain, ethereumChain, addPendingWithdrawalTransaction, clearPendingWithdrawalTransactions]
     );
     return { withdraw };
 };

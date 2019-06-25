@@ -1,18 +1,18 @@
 import React, { useContext } from "react";
+import { TESTNET } from "react-native-dotenv";
 import { useNavigation } from "react-navigation-hooks";
 
+import EthereumChain from "@alice-finance/alice.js/dist/chains/EthereumChain";
+import LoomChain from "@alice-finance/alice.js/dist/chains/LoomChain";
 import { AppLoading, SplashScreen as ExpoSplashScreen } from "expo";
 import * as Analytics from "../helpers/Analytics";
 import { Asset } from "expo-asset";
 import * as Font from "expo-font";
 import * as SecureStore from "expo-secure-store";
 import { LocalAddress } from "loom-js/dist";
-import { TransferGateway } from "loom-js/dist/contracts";
-import { ConnectorContext } from "../contexts/ConnectorContext";
+import { AssetContext } from "../contexts/AssetContext";
+import { ChainContext } from "../contexts/ChainContext";
 import { SavingsContext } from "../contexts/SavingsContext";
-import { TokensContext } from "../contexts/TokensContext";
-import EthereumConnector from "../evm/EthereumConnector";
-import LoomConnector from "../evm/LoomConnector";
 
 const SplashScreen = () => {
     const { load, onError, onFinish } = useLoader();
@@ -20,8 +20,8 @@ const SplashScreen = () => {
 };
 
 const useLoader = () => {
-    const { setMnemonic, setEthereumConnector, setLoomConnector, setTransferGateway } = useContext(ConnectorContext);
-    const { setTokens } = useContext(TokensContext);
+    const { setMnemonic, setEthereumChain, setLoomChain } = useContext(ChainContext);
+    const { setAssets } = useContext(AssetContext);
     const { setDecimals, setAsset } = useContext(SavingsContext);
     const { navigate } = useNavigation();
     const load = async () => {
@@ -32,22 +32,20 @@ const useLoader = () => {
         const ethereumPrivateKey = await SecureStore.getItemAsync("ethereumPrivateKey");
         const loomPrivateKey = await SecureStore.getItemAsync("loomPrivateKey");
         if (mnemonic && ethereumPrivateKey && loomPrivateKey) {
-            const ethereumConnector = new EthereumConnector(ethereumPrivateKey);
-            const loomConnector = new LoomConnector(loomPrivateKey);
-            const transferGateway = await TransferGateway.createAsync(loomConnector.client, loomConnector.address);
-            const tokens = await loomConnector.fetchERC20Tokens();
-            const market = loomConnector.getMoneyMarket();
+            const ethereumChain = new EthereumChain(ethereumPrivateKey, TESTNET || false);
+            const loomChain = new LoomChain(loomPrivateKey, TESTNET || false);
+            const assets = await loomChain.getERC20AssetsAsync();
+            const market = loomChain.createMoneyMarket();
             const assetAddress = await market.asset();
-            const asset = tokens.find(token =>
+            const asset = assets.find(token =>
                 token.loomAddress.local.equals(LocalAddress.fromHexString(assetAddress))
             );
             const decimals = Number((await market.DECIMALS()).toString());
 
             setMnemonic(mnemonic);
-            setEthereumConnector(ethereumConnector);
-            setLoomConnector(loomConnector);
-            setTransferGateway(transferGateway);
-            setTokens(tokens);
+            setEthereumChain(ethereumChain);
+            setLoomChain(loomChain);
+            setAssets(assets);
             setAsset(asset);
             setDecimals(decimals);
 

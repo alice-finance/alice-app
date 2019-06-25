@@ -1,29 +1,22 @@
 import { useContext, useEffect, useState } from "react";
 
+import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
 import { IWithdrawalReceipt } from "loom-js/dist/contracts/transfer-gateway";
-import { TransferGatewayTokenKind } from "loom-js/dist/proto/transfer_gateway_pb";
-import { ConnectorContext } from "../contexts/ConnectorContext";
-import ERC20Token from "../evm/ERC20Token";
-import { toBigNumber } from "../utils/big-number-utils";
+import { ChainContext } from "../contexts/ChainContext";
 import useEthereumBlockNumberListener from "./useEthereumBlockNumberListener";
 
-const usePendingWithdrawalListener = (asset: ERC20Token) => {
-    const { loomConnector, ethereumConnector, transferGateway: loomGateway } = useContext(ConnectorContext);
+const usePendingWithdrawalListener = (asset: ERC20Asset) => {
+    const { loomChain, ethereumChain } = useContext(ChainContext);
     const { blockNumber } = useEthereumBlockNumberListener();
     const [receipt, setReceipt] = useState<IWithdrawalReceipt | null>();
     useEffect(() => {
         const refresh = async () => {
-            const ethereumGateway = ethereumConnector!.getGateway();
-            const r = await loomGateway!.withdrawalReceiptAsync(loomConnector!.address);
-            setReceipt(null);
-            if (r) {
-                const loomNonce = r.withdrawalNonce.toString();
-                const ethereumNonce = await ethereumGateway.nonces(ethereumConnector!.address.toLocalAddressString());
-                if (
-                    toBigNumber(ethereumNonce).eq(toBigNumber(loomNonce)) &&
-                    ((asset.ethereumAddress.isNull() && r.tokenKind === TransferGatewayTokenKind.ETH) ||
-                        r.tokenContract.local.equals(asset.ethereumAddress.local))
-                ) {
+            const ethereumNonce = await ethereumChain!.getWithdrawalNonceAsync();
+            if (asset.ethereumAddress.isZero()) {
+                setReceipt(await loomChain!.getPendingETHWithdrawalReceipt(ethereumNonce));
+            } else {
+                const r = await loomChain!.getPendingERC20WithdrawalReceipt(ethereumNonce);
+                if (r && r.tokenContract.equals(asset.ethereumAddress)) {
                     setReceipt(r);
                 }
             }

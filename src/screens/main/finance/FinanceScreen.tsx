@@ -14,7 +14,7 @@ import SavingsCard from "../../../components/SavingsCard";
 import Spinner from "../../../components/Spinner";
 import SubtitleText from "../../../components/SubtitleText";
 import TitleText from "../../../components/TitleText";
-import { ConnectorContext } from "../../../contexts/ConnectorContext";
+import { ChainContext } from "../../../contexts/ChainContext";
 import { SavingsContext } from "../../../contexts/SavingsContext";
 import useMySavingsUpdater from "../../../hooks/useMySavingsUpdater";
 import preset from "../../../styles/preset";
@@ -72,11 +72,11 @@ FinanceScreen.navigationOptions = ({ navigation }) => ({
 });
 
 const useScheduledUpdater = () => {
-    const { loomConnector } = useContext(ConnectorContext);
+    const { loomChain } = useContext(ChainContext);
     const { totalBalance, setTotalBalance, apr, setAPR } = useContext(SavingsContext);
     useEffect(() => {
         const refresh = async () => {
-            const market = loomConnector!.getMoneyMarket();
+            const market = loomChain!.createMoneyMarket();
             setTotalBalance(toBigNumber(await market.totalFunds()));
             setAPR(toBigNumber(await market.getCurrentSavingsAPR()).mul(toBigNumber(100)));
         };
