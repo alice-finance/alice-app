@@ -23,7 +23,7 @@ const useSavingsStarter = (asset: ERC20Asset | null, amount: ethers.utils.BigNum
                 const market = loomChain.createMoneyMarket();
                 const approveTx = await loomChain.approveERC20Async(asset, market.address, amount);
                 await approveTx.wait();
-                const depositTx = await market.deposit(amount, { gasLimit: 0 });
+                const depositTx = await market.deposit(amount);
                 await depositTx.wait();
                 await updateTokenBalances();
                 await updateMySavings();

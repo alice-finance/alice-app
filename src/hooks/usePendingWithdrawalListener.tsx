@@ -11,8 +11,7 @@ const usePendingWithdrawalListener = (asset: ERC20Asset) => {
     const [receipt, setReceipt] = useState<IWithdrawalReceipt | null>();
     useEffect(() => {
         const refresh = async () => {
-            const ethereumGateway = ethereumChain!.createGateway();
-            const ethereumNonce = await ethereumGateway.nonces(ethereumChain!.getAddress().toLocalAddressString());
+            const ethereumNonce = await ethereumChain!.getWithdrawalNonceAsync();
             if (asset.ethereumAddress.isZero()) {
                 setReceipt(await loomChain!.getPendingETHWithdrawalReceipt(ethereumNonce));
             } else {

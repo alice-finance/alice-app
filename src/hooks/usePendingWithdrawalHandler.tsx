@@ -18,8 +18,7 @@ const usePendingWithdrawalHandler = () => {
     const { update } = useTokenBalanceUpdater();
     const handlePendingWithdrawal = useCallback(async () => {
         if (loomChain && ethereumChain) {
-            const ethereumGateway = ethereumChain.createGateway();
-            const ethereumNonce = await ethereumGateway.nonces(ethereumChain!.getAddress().toLocalAddressString());
+            const ethereumNonce = await ethereumChain.getWithdrawalNonceAsync();
             let receipt = await loomChain.getPendingETHWithdrawalReceipt(ethereumNonce);
             if (receipt) {
                 const ethereumAddress = Address.createEthereumAddress(ZERO_ADDRESS);

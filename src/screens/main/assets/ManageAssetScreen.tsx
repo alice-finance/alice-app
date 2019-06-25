@@ -48,12 +48,12 @@ const ManageAssetScreen = () => {
             if (asset.ethereumAddress.isZero()) {
                 await Promise.all([
                     ethereumChain!.getETHReceivedLogsAsync().then(setReceived),
-                    ethereumChain!.getETHWithdrawn().then(setWithdrawn)
+                    ethereumChain!.getETHWithdrawnLogsAsync().then(setWithdrawn)
                 ]);
             } else {
                 await Promise.all([
                     ethereumChain!.getERC20ReceivedLogsAsync(asset).then(setReceived),
-                    ethereumChain!.getERC20Withdrawn(asset).then(setWithdrawn)
+                    ethereumChain!.getERC20WithdrawnLogsAsync(asset).then(setWithdrawn)
                 ]);
             }
             await update();

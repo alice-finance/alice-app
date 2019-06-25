@@ -178,6 +178,14 @@ class LoomChain implements Chain {
         return erc20.approve(spender, amount, { gasLimit: 0 });
     };
 
+    /**
+     * Withdraw `amount` of ETH to `EthereumChain`.
+     *
+     * @link https://loomx.io/developers/en/transfer-gateway.html
+     *
+     * @param amount
+     * @param ethereumGateway Address of ethereum gateway
+     */
     public withdrawETHAsync = (
         amount: ethers.utils.BigNumber,
         ethereumGateway: string
@@ -205,6 +213,14 @@ class LoomChain implements Chain {
         });
     };
 
+    /**
+     * Withdraw `amount` of ERC20 to `EthereumChain`.
+     *
+     * @link https://loomx.io/developers/en/transfer-gateway.html
+     *
+     * @param asset
+     * @param amount
+     */
     public withdrawERC20Async = (
         asset: ERC20Asset,
         amount: ethers.utils.BigNumber
@@ -230,6 +246,14 @@ class LoomChain implements Chain {
         });
     };
 
+    /**
+     * Withdraw `amount` of ERC20 to `EthereumChain`.
+     *
+     * @link https://loomx.io/developers/en/transfer-gateway.html
+     *
+     * @param assetAddress Address of ethereum asset contract. If asset is ETH, it should be 0x00000000000000000000.
+     * @param ownerAddress Address of ethereum asset owner.
+     */
     public listenToTokenWithdrawal = (assetAddress: string, ownerAddress: string): Promise<string> =>
         this.createTransferGatewayAsync().then(
             gateway =>
@@ -251,6 +275,12 @@ class LoomChain implements Chain {
                 })
         );
 
+    /**
+     * Get a pending ETH withdrawal receipt that has not been processed by `EthereumChain`.
+     * If this returns non-null, you need to submit its signature to `EthereumChain`.
+     *
+     * @param ethereumNonce Nonce from calling `EthereumChain.getWithdrawalNonceAsync`.
+     */
     public getPendingETHWithdrawalReceipt = async (ethereumNonce: ethers.utils.BigNumber) => {
         const gateway = await this.createTransferGatewayAsync();
         const receipt = await gateway.withdrawalReceiptAsync(this.getAddress());
@@ -263,6 +293,12 @@ class LoomChain implements Chain {
         return null;
     };
 
+    /**
+     * Get a pending ERC20 withdrawal receipt that has not been processed by `EthereumChain`.
+     * If this returns non-null, you need to submit its signature to `EthereumChain`.
+     *
+     * @param ethereumNonce Nonce from calling `EthereumChain.getWithdrawalNonceAsync`.
+     */
     public getPendingERC20WithdrawalReceipt = async (ethereumNonce: ethers.utils.BigNumber) => {
         const gateway = await this.createTransferGatewayAsync();
         const receipt = await gateway.withdrawalReceiptAsync(this.getAddress());

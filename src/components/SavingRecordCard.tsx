@@ -106,7 +106,7 @@ const WithdrawDialog = ({ visible, onCancel, onOk, record }) => {
             setInProgress(true);
             try {
                 const market = loomChain.createMoneyMarket();
-                const tx = await market.withdraw(record.id, amount, { gasLimit: 0 });
+                const tx = await market.withdraw(record.id, amount);
                 await tx.wait();
                 setTotalBalance(toBigNumber(await market.totalFunds()));
                 setAPR(toBigNumber(await market.getCurrentSavingsAPR()).mul(toBigNumber(100)));
