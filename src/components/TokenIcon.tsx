@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { Image, StyleSheet, View, ViewProps } from "react-native";
 
-import { ZERO_ADDRESS } from "../../alice-js/constants";
+import { ZERO_ADDRESS } from "@alice-finance/alice.js/dist/constants";
 
 interface TokenIconProps extends ViewProps {
     address: string;

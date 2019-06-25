@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 
+import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
 import { IWithdrawalReceipt } from "loom-js/dist/contracts/transfer-gateway";
-import ERC20Asset from "../../alice-js/ERC20Asset";
 import { ChainContext } from "../contexts/ChainContext";
 import useEthereumBlockNumberListener from "./useEthereumBlockNumberListener";
 

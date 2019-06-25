@@ -4,10 +4,15 @@ import { FlatList, View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 import { defaultKeyExtractor } from "../../../utils/react-native-utils";
 
+import {
+    ERC20Received,
+    ERC20Withdrawn,
+    ETHReceived,
+    ETHWithdrawn
+} from "@alice-finance/alice.js/dist/chains/EthereumChain";
+import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
 import { IWithdrawalReceipt } from "loom-js/dist/contracts/transfer-gateway";
 import { Body, Button, Card, CardItem, Container, Content, Icon, Left, ListItem, Right, Text } from "native-base";
-import { ERC20Received, ERC20Withdrawn, ETHReceived, ETHWithdrawn } from "../../../../alice-js/chains/EthereumChain";
-import ERC20Asset from "../../../../alice-js/ERC20Asset";
 import platform from "../../../../native-base-theme/variables/platform";
 import BigNumberText from "../../../components/BigNumberText";
 import CaptionText from "../../../components/CaptionText";

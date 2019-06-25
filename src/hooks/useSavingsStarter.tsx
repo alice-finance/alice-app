@@ -2,9 +2,9 @@ import { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "react-navigation-hooks";
 
+import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
 import { ethers } from "ethers";
 import { Toast } from "native-base";
-import ERC20Asset from "../../alice-js/ERC20Asset";
 import { ChainContext } from "../contexts/ChainContext";
 import useMySavingsUpdater from "./useMySavingsUpdater";
 import useTokenBalanceUpdater from "./useTokenBalanceUpdater";

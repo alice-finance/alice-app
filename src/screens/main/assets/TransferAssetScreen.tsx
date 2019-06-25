@@ -4,9 +4,9 @@ import { useTranslation } from "react-i18next";
 import { Alert, TextInput, View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
+import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
 import { BigNumber } from "ethers/utils";
 import { Button, Container, Text, Toast } from "native-base";
-import ERC20Asset from "../../../../alice-js/ERC20Asset";
 import platform from "../../../../native-base-theme/variables/platform";
 import AmountInput from "../../../components/AmountInput";
 import Spinner from "../../../components/Spinner";

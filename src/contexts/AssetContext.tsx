@@ -1,9 +1,9 @@
 import React, { useCallback, useState } from "react";
 
+import Address from "@alice-finance/alice.js/dist/Address";
+import { ZERO_ADDRESS } from "@alice-finance/alice.js/dist/constants";
+import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
 import { LocalAddress } from "loom-js/dist";
-import Address from "../../alice-js/Address";
-import { ZERO_ADDRESS } from "../../alice-js/constants";
-import ERC20Asset from "../../alice-js/ERC20Asset";
 
 export const AssetContext = React.createContext({
     assets: [] as ERC20Asset[],

@@ -165,7 +165,7 @@ class Modal extends React.Component<Props, State> {
   }
 
   render() {
-    if (!this.state.rendered) return null;
+    if (!this.state.rendered) { return null; }
 
     const { children, dismissable, theme, contentContainerStyle } = this.props;
     const { colors } = theme;

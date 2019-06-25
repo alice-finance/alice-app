@@ -3,10 +3,10 @@ import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
+import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
 import { ethers } from "ethers";
 import { BigNumber } from "ethers/utils";
 import { Button, Container, Content, Icon, Text, Toast } from "native-base";
-import ERC20Asset from "../../../../alice-js/ERC20Asset";
 import platform from "../../../../native-base-theme/variables/platform";
 import AmountInput from "../../../components/AmountInput";
 import CaptionText from "../../../components/CaptionText";

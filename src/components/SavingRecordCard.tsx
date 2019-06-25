@@ -4,9 +4,9 @@ import { View } from "react-native";
 import { Portal } from "react-native-paper";
 import Dialog from "../react-native-paper/Dialog/Dialog";
 
+import { SavingsRecord } from "@alice-finance/alice.js/dist/contracts/MoneyMarket";
 import { BigNumber } from "ethers/utils";
 import { Button, Card, CardItem, Left, Right, Text, Toast } from "native-base";
-import { SavingsRecord } from "../../alice-js/contracts/MoneyMarket";
 import { ChainContext } from "../contexts/ChainContext";
 import { SavingsContext } from "../contexts/SavingsContext";
 import useMySavingsUpdater from "../hooks/useMySavingsUpdater";

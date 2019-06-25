@@ -3,9 +3,9 @@ import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { StyleProp, Text, TextInput, TextStyle, View, ViewStyle } from "react-native";
 
+import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
 import { BigNumber } from "ethers/utils";
 import { Button } from "native-base";
-import ERC20Asset from "../../alice-js/ERC20Asset";
 import platform from "../../native-base-theme/variables/platform";
 import { Spacing } from "../constants/dimension";
 import preset from "../styles/preset";

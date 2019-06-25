@@ -1,6 +1,6 @@
 import { useCallback, useContext } from "react";
 
-import { getLogs } from "../../alice-js/utils/ethers-utils";
+import { getLogs } from "@alice-finance/alice.js/dist/utils/ethers-utils";
 import { ChainContext } from "../contexts/ChainContext";
 import { SavingsContext } from "../contexts/SavingsContext";
 

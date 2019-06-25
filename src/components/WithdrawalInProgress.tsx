@@ -2,8 +2,8 @@ import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 
+import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
 import { Text } from "native-base";
-import ERC20Asset from "../../alice-js/ERC20Asset";
 import { PendingTransactionsContext } from "../contexts/PendingTransactionsContext";
 import preset from "../styles/preset";
 import Spinner from "./Spinner";

@@ -4,8 +4,8 @@ import { FlatList, StyleSheet, View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 import { defaultKeyExtractor } from "../../../utils/react-native-utils";
 
+import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
 import { Body, Button, Container, Icon, ListItem, Text } from "native-base";
-import ERC20Asset from "../../../../alice-js/ERC20Asset";
 import CaptionText from "../../../components/CaptionText";
 import TitleText from "../../../components/TitleText";
 import TokenIcon from "../../../components/TokenIcon";

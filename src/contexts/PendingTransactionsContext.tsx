@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 
+import Address from "@alice-finance/alice.js/dist/Address";
 import { ethers } from "ethers";
-import Address from "../../alice-js/Address";
 
 export const PendingTransactionsContext = React.createContext({
     getPendingDepositTransactions: (address: Address) => [] as ethers.providers.TransactionResponse[],

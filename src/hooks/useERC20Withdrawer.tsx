@@ -1,7 +1,7 @@
 import React, { useCallback, useContext } from "react";
 
+import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
 import { ethers } from "ethers";
-import ERC20Asset from "../../alice-js/ERC20Asset";
 import { ChainContext } from "../contexts/ChainContext";
 import { PendingTransactionsContext } from "../contexts/PendingTransactionsContext";
 import useTokenBalanceUpdater from "./useTokenBalanceUpdater";

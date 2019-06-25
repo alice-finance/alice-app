@@ -1,8 +1,8 @@
 import React, { useCallback, useContext } from "react";
 
+import Address from "@alice-finance/alice.js/dist/Address";
+import { ZERO_ADDRESS } from "@alice-finance/alice.js/dist/constants";
 import { ethers } from "ethers";
-import Address from "../../alice-js/Address";
-import { ZERO_ADDRESS } from "../../alice-js/constants";
 import { ChainContext } from "../contexts/ChainContext";
 import { PendingTransactionsContext } from "../contexts/PendingTransactionsContext";
 import useTokenBalanceUpdater from "./useTokenBalanceUpdater";

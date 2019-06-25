@@ -2,13 +2,13 @@ import React, { useContext } from "react";
 import { TESTNET } from "react-native-dotenv";
 import { useNavigation } from "react-navigation-hooks";
 
+import EthereumChain from "@alice-finance/alice.js/dist/chains/EthereumChain";
+import LoomChain from "@alice-finance/alice.js/dist/chains/LoomChain";
 import { AppLoading, SplashScreen as ExpoSplashScreen } from "expo";
 import { Asset } from "expo-asset";
 import * as Font from "expo-font";
 import * as SecureStore from "expo-secure-store";
 import { LocalAddress } from "loom-js/dist";
-import EthereumChain from "../../alice-js/chains/EthereumChain";
-import LoomChain from "../../alice-js/chains/LoomChain";
 import { AssetContext } from "../contexts/AssetContext";
 import { ChainContext } from "../contexts/ChainContext";
 import { SavingsContext } from "../contexts/SavingsContext";

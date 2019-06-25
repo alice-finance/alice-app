@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
-import EthereumChain from "../../alice-js/chains/EthereumChain";
-import LoomChain from "../../alice-js/chains/LoomChain";
+import EthereumChain from "@alice-finance/alice.js/dist/chains/EthereumChain";
+import LoomChain from "@alice-finance/alice.js/dist/chains/LoomChain";
 
 export const ChainContext = React.createContext({
     mnemonic: "",
