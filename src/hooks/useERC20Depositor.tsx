@@ -14,7 +14,7 @@ const useERC20Depositor = (asset: ERC20Asset) => {
         async (amount: ethers.utils.BigNumber) => {
             if (ethereumChain) {
                 const assetAddress = asset.ethereumAddress;
-                const gateway = ethereumChain.createGateway();
+                const gateway = ethereumChain.getGateway();
                 try {
                     clearPendingDepositTransactions(assetAddress);
                     // Step 1: approve

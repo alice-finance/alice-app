@@ -12,7 +12,7 @@ export const events = {
     ASSET_WITHDRAWN: "ASSET_WITHDRAWN",
     SAVINGS_DEPOSITED: "SAVINGS_DEPOSITED",
     SAVINGS_WITHDRAWN: "SAVINGS_WITHDRAWN"
-}
+};
 
 export function initialize(): void {
     if (isInitialized || !AMPLITUDE_API_KEY) {

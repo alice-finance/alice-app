@@ -76,7 +76,7 @@ const useScheduledUpdater = () => {
     const { totalBalance, setTotalBalance, apr, setAPR } = useContext(SavingsContext);
     useEffect(() => {
         const refresh = async () => {
-            const market = loomChain!.createMoneyMarket();
+            const market = loomChain!.getMoneyMarket();
             setTotalBalance(toBigNumber(await market.totalFunds()));
             setAPR(toBigNumber(await market.getCurrentSavingsAPR()).mul(toBigNumber(100)));
         };

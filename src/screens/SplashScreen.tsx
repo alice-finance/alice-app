@@ -5,7 +5,6 @@ import { useNavigation } from "react-navigation-hooks";
 import EthereumChain from "@alice-finance/alice.js/dist/chains/EthereumChain";
 import LoomChain from "@alice-finance/alice.js/dist/chains/LoomChain";
 import { AppLoading, SplashScreen as ExpoSplashScreen } from "expo";
-import * as Analytics from "../helpers/Analytics";
 import { Asset } from "expo-asset";
 import * as Font from "expo-font";
 import * as SecureStore from "expo-secure-store";
@@ -13,6 +12,7 @@ import { LocalAddress } from "loom-js/dist";
 import { AssetContext } from "../contexts/AssetContext";
 import { ChainContext } from "../contexts/ChainContext";
 import { SavingsContext } from "../contexts/SavingsContext";
+import * as Analytics from "../helpers/Analytics";
 
 const SplashScreen = () => {
     const { load, onError, onFinish } = useLoader();
@@ -35,7 +35,7 @@ const useLoader = () => {
             const ethereumChain = new EthereumChain(ethereumPrivateKey, TESTNET || false);
             const loomChain = new LoomChain(loomPrivateKey, TESTNET || false);
             const assets = await loomChain.getERC20AssetsAsync();
-            const market = loomChain.createMoneyMarket();
+            const market = loomChain.getMoneyMarket();
             const assetAddress = await market.asset();
             const asset = assets.find(token =>
                 token.loomAddress.local.equals(LocalAddress.fromHexString(assetAddress))

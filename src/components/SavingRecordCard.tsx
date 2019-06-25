@@ -9,6 +9,7 @@ import { BigNumber } from "ethers/utils";
 import { Button, Card, CardItem, Left, Right, Text, Toast } from "native-base";
 import { ChainContext } from "../contexts/ChainContext";
 import { SavingsContext } from "../contexts/SavingsContext";
+import Analytics from "../helpers/Analytics";
 import useMySavingsUpdater from "../hooks/useMySavingsUpdater";
 import preset from "../styles/preset";
 import { formatValue, toBigNumber } from "../utils/big-number-utils";
@@ -17,7 +18,6 @@ import AmountInput from "./AmountInput";
 import BigNumberText from "./BigNumberText";
 import Row from "./Row";
 import Spinner from "./Spinner";
-import Analytics from "../helpers/Analytics";
 
 const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
     const { t } = useTranslation("finance");
@@ -106,7 +106,7 @@ const WithdrawDialog = ({ visible, onCancel, onOk, record }) => {
         if (loomChain && amount) {
             setInProgress(true);
             try {
-                const market = loomChain.createMoneyMarket();
+                const market = loomChain.getMoneyMarket();
                 const tx = await market.withdraw(record.id, amount);
                 await tx.wait();
                 setTotalBalance(toBigNumber(await market.totalFunds()));

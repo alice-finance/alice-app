@@ -11,9 +11,9 @@ import { useNavigation } from "react-navigation-hooks";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
 import { fromRight } from "react-navigation-transitions";
 
-import * as Analytics from "./helpers/Analytics";
 import platform from "../native-base-theme/variables/platform";
 import TabBarIcon from "./components/TabBarIcon";
+import * as Analytics from "./helpers/Analytics";
 import AssetsScreen from "./screens/main/assets/AssetsScreen";
 import DepositScreen from "./screens/main/assets/DepositScreen";
 import ManageAssetScreen from "./screens/main/assets/ManageAssetScreen";

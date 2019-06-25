@@ -41,7 +41,7 @@ const NewSavingsScreen = () => {
         if (amount) {
             const load = async () => {
                 setLoadingAPR(true);
-                const market = loomChain!.createMoneyMarket();
+                const market = loomChain!.getMoneyMarket();
                 const expected = await market.getExpectedSavingsAPR(amount.toString());
                 setAprText(formatValue(toBigNumber(expected).mul(100), decimals, 2) + " %");
                 setLoadingAPR(false);

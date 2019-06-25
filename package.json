@@ -7,9 +7,9 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@alice-finance/alice.js": "^1.1.0",
     "@alice-finance/money-market": "^0.1.9",
     "@dnextco/alice-proxies": "^1.0.7",
-    "@alice-finance/alice.js": "^1.0.0",
     "@expo/vector-icons": "^9.0.0",
     "bip39": "^3.0.2",
     "bn.js": "^4.11.8",

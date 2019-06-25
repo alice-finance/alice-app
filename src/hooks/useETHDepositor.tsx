@@ -5,8 +5,8 @@ import { ZERO_ADDRESS } from "@alice-finance/alice.js/dist/constants";
 import { ethers } from "ethers";
 import { ChainContext } from "../contexts/ChainContext";
 import { PendingTransactionsContext } from "../contexts/PendingTransactionsContext";
-import useTokenBalanceUpdater from "./useTokenBalanceUpdater";
 import Analytics from "../helpers/Analytics";
+import useTokenBalanceUpdater from "./useTokenBalanceUpdater";
 
 const useETHDepositor = () => {
     const { ethereumChain } = useContext(ChainContext);

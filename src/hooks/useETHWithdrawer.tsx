@@ -5,8 +5,8 @@ import { ZERO_ADDRESS } from "@alice-finance/alice.js/dist/constants";
 import { ethers } from "ethers";
 import { ChainContext } from "../contexts/ChainContext";
 import { PendingTransactionsContext } from "../contexts/PendingTransactionsContext";
-import useTokenBalanceUpdater from "./useTokenBalanceUpdater";
 import Analytics from "../helpers/Analytics";
+import useTokenBalanceUpdater from "./useTokenBalanceUpdater";
 
 const useETHWithdrawer = () => {
     const { loomChain, ethereumChain } = useContext(ChainContext);
@@ -18,7 +18,7 @@ const useETHWithdrawer = () => {
         async (amount: ethers.utils.BigNumber) => {
             if (loomChain && ethereumChain) {
                 const ethereumAddress = Address.createEthereumAddress(ZERO_ADDRESS);
-                const gateway = await loomChain.createTransferGatewayAsync();
+                const gateway = await loomChain.getTransferGatewayAsync();
                 try {
                     clearPendingWithdrawalTransactions(ethereumAddress);
                     // Step 1: approve
@@ -26,13 +26,13 @@ const useETHWithdrawer = () => {
                     addPendingWithdrawalTransaction(ethereumAddress, approveTx);
                     await approveTx.wait();
                     // Step 2: withdraw from loom network
-                    const withdrawTx = await loomChain.withdrawETHAsync(amount, ethereumChain.createGateway().address);
+                    const withdrawTx = await loomChain.withdrawETHAsync(amount, ethereumChain.getGateway().address);
                     addPendingWithdrawalTransaction(ethereumAddress, withdrawTx);
                     await withdrawTx.wait();
                     Analytics.track(Analytics.events.ASSET_WITHDRAWN);
                     // Step 3: listen to token withdrawal event
                     const signature = await loomChain.listenToTokenWithdrawal(
-                        ethereumChain.createGateway().address,
+                        ethereumChain.getGateway().address,
                         ethereumChain.getAddress().toLocalAddressString()
                     );
                     // Step 4: withdraw from ethereum network

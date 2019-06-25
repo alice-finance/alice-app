@@ -10,9 +10,9 @@ import { Button, Container, Text } from "native-base";
 import CaptionText from "../../components/CaptionText";
 import Spinner from "../../components/Spinner";
 import SubtitleText from "../../components/SubtitleText";
+import Analytics from "../../helpers/Analytics";
 import preset from "../../styles/preset";
 import { ethereumPrivateKeyFromMnemonic, loomPrivateKeyFromMnemonic } from "../../utils/crypto-utils";
-import Analytics from "../../helpers/Analytics";
 
 const ImportMnemonicScreen = () => {
     const { t } = useTranslation(["start", "common"]);

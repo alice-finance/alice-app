@@ -6,9 +6,9 @@ import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
 import { ethers } from "ethers";
 import { Toast } from "native-base";
 import { ChainContext } from "../contexts/ChainContext";
+import Analytics from "../helpers/Analytics";
 import useMySavingsUpdater from "./useMySavingsUpdater";
 import useTokenBalanceUpdater from "./useTokenBalanceUpdater";
-import Analytics from "../helpers/Analytics";
 
 const useSavingsStarter = (asset: ERC20Asset | null, amount: ethers.utils.BigNumber | null) => {
     const { pop } = useNavigation();
@@ -21,7 +21,7 @@ const useSavingsStarter = (asset: ERC20Asset | null, amount: ethers.utils.BigNum
         if (loomChain && asset && amount) {
             setStarting(true);
             try {
-                const market = loomChain.createMoneyMarket();
+                const market = loomChain.getMoneyMarket();
                 const approveTx = await loomChain.approveERC20Async(asset, market.address, amount);
                 await approveTx.wait();
                 const depositTx = await market.deposit(amount);
