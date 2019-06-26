@@ -30,6 +30,7 @@ const preset = StyleSheet.create({
     colorDark: { color: platform.brandDark },
     colorLight: { color: platform.brandLight },
     marginLeft0: { marginLeft: 0 },
+    marginLeftTiny: { marginLeft: Spacing.tiny },
     marginLeftSmall: { marginLeft: Spacing.small },
     marginLeftNormal: { marginLeft: Spacing.normal },
     marginLeftLarge: { marginLeft: Spacing.large },

@@ -6391,7 +6391,7 @@ promise@^7.1.1:
   dependencies:
     asap "~2.0.3"
 
-prop-types@^15.5.10, prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2:
+prop-types@^15.5.10, prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2, prop-types@^15.7.2:
   version "15.7.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   integrity sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==
@@ -6700,6 +6700,13 @@ react-native-paper@^2.15.2:
     hoist-non-react-statics "^3.1.0"
     react-lifecycles-compat "^3.0.4"
     react-native-safe-area-view "^0.12.0"
+
+react-native-progress-webview@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/react-native-progress-webview/-/react-native-progress-webview-1.1.2.tgz#b9430804320ff414836d6d1b036731ae221bacd7"
+  integrity sha512-sBh+r2Mqh7G2/97Hh1GjVyuU7kV+5hIQakfYvJ+nuwvHR/fFb8xP40bjRs7CD0Al0PBLfYlSI3PqDmd+RwCHhg==
+  dependencies:
+    prop-types "^15.7.2"
 
 react-native-qrcode@latest:
   version "0.2.7"

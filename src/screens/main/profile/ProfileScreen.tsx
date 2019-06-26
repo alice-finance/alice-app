@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Clipboard, View } from "react-native";
 import { Chip, Dialog, Portal } from "react-native-paper";
 
-import { Body, Button, Container, Header, Icon, ListItem, Text, Toast } from "native-base";
+import { Body, Button, Container, Icon, ListItem, Text, Toast } from "native-base";
 import app from "../../../../app.json";
 import platform from "../../../../native-base-theme/variables/platform";
 import TitleText from "../../../components/TitleText";
@@ -23,7 +23,6 @@ const ProfileScreen = () => {
     }, []);
     return (
         <Container>
-            <Header noShadow={true} transparent={true} />
             <View>
                 <TitleText>{t("myProfile")}</TitleText>
                 <MyAddressItem />

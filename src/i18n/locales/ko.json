@@ -59,6 +59,20 @@
         "signUp": "회원가입"
     },
     "exchange": {
+        "title": "거래소",
+        "description": "아래는 DAI를 취급하는 거래소들입니다. 거래소에서 자산을 구매한 후에 나의 이더리움 주소로 입금을 하면 Alice에서 사용할 수 있습니다.",
+        "myAddress": "내 이더리움 주소",
+        "openInBrowser": "브라우저에서 열기",
+        "market": "마켓",
+        "selectMarket": "마켓 선택",
+        "select": "선택하기",
+        "addToken": "토큰 추가",
+        "tokenAddress": "토큰 주소",
+        "invalidAddress": "유효하지 않은 주소입니다.",
+        "failedToAddToken": "토큰 추가 실패",
+        "popularTokens": "인기 토큰",
+        "popularTokens.description": "24시간동안 가장 활발하게 거래된 토큰들입니다.",
+        "searchForTokens": "토큰을 검색해보세요.",
         "tokenSearch": "토큰 검색..."
     },
     "trade": {

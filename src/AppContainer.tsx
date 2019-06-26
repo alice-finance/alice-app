@@ -20,6 +20,8 @@ import ManageAssetScreen from "./screens/main/assets/ManageAssetScreen";
 import MyAddressScreen from "./screens/main/assets/MyAddressScreen";
 import TransferAssetScreen from "./screens/main/assets/TransferAssetScreen";
 import WithdrawalScreen from "./screens/main/assets/WithdrawalScreen";
+import ExchangeScreen from "./screens/main/exchange/ExchangeScreen";
+import ExchangeWebViewScreen from "./screens/main/exchange/ExchangeWebViewScreen";
 import FinanceScreen from "./screens/main/finance/FinanceScreen";
 import NewSavingsScreen from "./screens/main/finance/NewSavingsScreen";
 import ProfileScreen from "./screens/main/profile/ProfileScreen";
@@ -38,6 +40,9 @@ const createDefaultStackNavigator = (routeConfigMap, stackConfig = {}) =>
             headerStyle: {
                 borderBottomWidth: 0,
                 elevation: 0
+            },
+            headerTitleStyle: {
+                color: platform.brandDark
             },
             headerLeftContainerStyle: {
                 paddingLeft: Platform.OS === "ios" ? 4 : 0
@@ -66,22 +71,16 @@ const StartNavigator = createDefaultStackNavigator(
 
 const tabs = {
     FinanceTab: {
-        screen: createDefaultStackNavigator({
-            Finance: FinanceScreen,
-            NewSavings: NewSavingsScreen
-        }),
+        screen: FinanceScreen,
         navigationOptions: tabBarNavigationOptions("finance", "present")
     },
     AssetsTab: {
-        screen: createDefaultStackNavigator({
-            Assets: AssetsScreen,
-            ManageAsset: ManageAssetScreen,
-            MyAddress: MyAddressScreen,
-            TransferAsset: TransferAssetScreen,
-            Deposit: DepositScreen,
-            Withdrawal: WithdrawalScreen
-        }),
+        screen: AssetsScreen,
         navigationOptions: tabBarNavigationOptions("assets", "pie-chart")
+    },
+    ExchangeTab: {
+        screen: ExchangeScreen,
+        navigationOptions: tabBarNavigationOptions("exchange", "chart")
     },
     ProfileTab: {
         screen: ProfileScreen,
@@ -114,7 +113,16 @@ const AndroidTabNavigator = createMaterialBottomTabNavigator(tabs, {
     shifting: false
 });
 
-const MainNavigator = Platform.OS === "ios" ? IOSTabNavigator : AndroidTabNavigator;
+const MainNavigator = createDefaultStackNavigator({
+    Tab: Platform.OS === "ios" ? IOSTabNavigator : AndroidTabNavigator,
+    ExchangeWebView: ExchangeWebViewScreen,
+    NewSavings: NewSavingsScreen,
+    ManageAsset: ManageAssetScreen,
+    MyAddress: MyAddressScreen,
+    TransferAsset: TransferAssetScreen,
+    Deposit: DepositScreen,
+    Withdrawal: WithdrawalScreen
+});
 
 const AppNavigator = createSwitchNavigator({
     Splash: SplashScreen,
