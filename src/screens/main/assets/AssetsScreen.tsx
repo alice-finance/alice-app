@@ -34,7 +34,9 @@ const AssetsScreen = () => {
     useEffect(() => {
         setParams({ onSort });
         mapAccounts(ethereumChain!, loomChain!);
+        update();
     }, []);
+
     useEffect(() => {
         if (blockNumber && blockNumber % 4 === 0) {
             Promise.all([update(), handlePendingWithdrawal()]);

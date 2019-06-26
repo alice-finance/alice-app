@@ -13,6 +13,7 @@ import { AssetContext } from "../contexts/AssetContext";
 import { ChainContext } from "../contexts/ChainContext";
 import { SavingsContext } from "../contexts/SavingsContext";
 import * as Analytics from "../helpers/Analytics";
+import useTokenBalanceUpdater from "../hooks/useTokenBalanceUpdater";
 
 const SplashScreen = () => {
     const { load, onError, onFinish } = useLoader();
@@ -32,8 +33,10 @@ const useLoader = () => {
         const ethereumPrivateKey = await SecureStore.getItemAsync("ethereumPrivateKey");
         const loomPrivateKey = await SecureStore.getItemAsync("loomPrivateKey");
         if (mnemonic && ethereumPrivateKey && loomPrivateKey) {
-            const ethereumChain = new EthereumChain(ethereumPrivateKey, TESTNET || false);
-            const loomChain = new LoomChain(loomPrivateKey, TESTNET || false);
+            const testnet = String(TESTNET) === "true";
+            const ethereumChain = new EthereumChain(ethereumPrivateKey, testnet);
+            const loomChain = new LoomChain(loomPrivateKey, testnet);
+
             const assets = await loomChain.getERC20AssetsAsync();
             const market = loomChain.getMoneyMarket();
             const assetAddress = await market.asset();
