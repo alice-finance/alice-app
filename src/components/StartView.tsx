@@ -32,7 +32,7 @@ const StartView = ({ showImage = false, showTitle = false, style = {} }) => {
 
     return showStart ? (
         <View style={[preset.marginBottomLarge, style]}>
-            <TitleText aboveText={true}>{t("start")}</TitleText>
+            {showTitle && <TitleText aboveText={true}>{t("start")}</TitleText>}
             <SubtitleText style={startStyle.subtitle}>{t("start.depositAsset")}</SubtitleText>
             <CaptionText style={preset.marginBottomNormal}>{t("start.description")}</CaptionText>
             {showImage && (
