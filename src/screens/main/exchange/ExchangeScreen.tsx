@@ -18,8 +18,8 @@ export class Exchange {
 const items = [
     new Exchange("Upxide", "KRW", "https://www.upxide.com/", "https://www.upxide.com/exchange/KRW_DAI"),
     new Exchange("Coinbase", "USD", "https://www.coinbase.com", "https://www.coinbase.com/price/dai"),
-    new Exchange("Bibox", "ETH", "https://www.bibox.com", "https://www.bibox.com/exchange?coinPair=ETH_DAI"),
-    new Exchange("Yobit", "USD", "https://yobit.net", "https://yobit.net/en/trade/DAI/USD")
+    new Exchange("Yobit", "USD", "https://yobit.net", "https://yobit.net/en/trade/DAI/USD"),
+    new Exchange("Bibox", "ETH", "https://www.bibox.com", "https://www.bibox.com/exchange?coinPair=ETH_DAI")
 ];
 
 const ExchangeScreen = () => {
