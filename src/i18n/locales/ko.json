@@ -20,7 +20,8 @@
         "seedPhrase": "시드 단어",
         "generatingSeedPhrase": "시드 단어 생성 중...",
         "encrypting": "개인키 암호화 중...",
-        "blogUrl": "https://medium.com/alice-finance-korean"
+        "blogUrl": "https://medium.com/alice-finance-korean",
+        "telegramUrl": "https://t.me/alicefinancekorean"
     },
     "start": {
         "createNewWallet": "새로운 지갑 생성하기",
@@ -164,6 +165,8 @@
         "doYouWantToSignOut": "로그아웃하시겠습니까?",
         "modifyInfo": "내 정보 수정",
         "modifyInfoFailure": "내 정보 수정 실패",
+        "customerSupport": "고객 지원",
+        "customerSupport.description": "텔레그램 채널로 연결됩니다.",
         "appVersion": "앱 버전",
         "name": "이름",
         "email": "이메일"

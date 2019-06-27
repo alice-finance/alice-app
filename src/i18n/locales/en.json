@@ -20,7 +20,8 @@
         "seedPhrase": "Seed Phrase",
         "generatingSeedPhrase": "Generating Seed Phrase...",
         "encrypting": "Encrypting Your Private Key...",
-        "blogUrl": "https://medium.com/alice-finance"
+        "blogUrl": "https://medium.com/alice-finance",
+        "telegramUrl": "https://t.me/alicefinance"
     },
     "start": {
         "createNewWallet": "Create New Wallet",
@@ -165,6 +166,8 @@
         "doYouWantToSignOut": "Do you want to log out?",
         "modifyInfo": "Edit My Info",
         "modifyInfoFailure": "Failure editing your info",
+        "customerSupport": "Customer Service",
+        "customerSupport.description": "This will redirect you to our telegram channel.",
         "appVersion": "App Version",
         "name": "Name",
         "email": "Email"

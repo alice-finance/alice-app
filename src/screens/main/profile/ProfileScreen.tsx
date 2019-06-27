@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Clipboard, View } from "react-native";
 import { Chip, Dialog, Portal } from "react-native-paper";
 
+import { Linking } from "expo";
 import { Body, Button, Container, Icon, ListItem, Text, Toast } from "native-base";
 import app from "../../../../app.json";
 import platform from "../../../../native-base-theme/variables/platform";
@@ -27,6 +28,7 @@ const ProfileScreen = () => {
                 <TitleText>{t("myProfile")}</TitleText>
                 <MyAddressItem />
                 <Item title={t("backupSeedPhrase")} iconName="note" onPress={openDialog} />
+                <CustomerSupportItem />
                 <AppVersionItem />
             </View>
             <BackupSeedPhraseDialog visible={dialogOpen} onCancel={closeDialog} onOk={onOk} mnemonic={mnemonic} />
@@ -52,6 +54,19 @@ const MyAddressItem = () => {
                 </Text>
             </Body>
             <Icon type="SimpleLineIcons" name="key" style={{ color: "black", marginRight: Spacing.normal }} />
+        </ListItem>
+    );
+};
+
+const CustomerSupportItem = () => {
+    const { t } = useTranslation(["profile", "common"]);
+    const onPress = () => Linking.openURL(t("common:telegramUrl"));
+    return (
+        <ListItem iconRight={true} style={{ height: 72 }} onPress={onPress}>
+            <Body>
+                <Text style={{ fontSize: 20 }}>{t("customerSupport")}</Text>
+                <Text note={true}>{t("customerSupport.description")}</Text>
+            </Body>
         </ListItem>
     );
 };
