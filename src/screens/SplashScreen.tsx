@@ -25,6 +25,7 @@ const useLoader = () => {
     const { setAssets } = useContext(AssetContext);
     const { setDecimals, setAsset } = useContext(SavingsContext);
     const { navigate } = useNavigation();
+    const { update } = useTokenBalanceUpdater();
     const load = async () => {
         Analytics.track(Analytics.events.APP_START);
         ExpoSplashScreen.preventAutoHide();
@@ -51,6 +52,7 @@ const useLoader = () => {
             setAssets(assets);
             setAsset(asset);
             setDecimals(decimals);
+            await update();
 
             navigate("Main");
         } else {
