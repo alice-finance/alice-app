@@ -4,22 +4,26 @@ import { FlatList, View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 import { defaultKeyExtractor } from "../../../utils/react-native-utils";
 
-import { Body, Container, Left, ListItem, Text } from "native-base";
+import { Body, Container, Icon, Left, ListItem, Text } from "native-base";
 import platform from "../../../../native-base-theme/variables/platform";
 import CaptionText from "../../../components/CaptionText";
 import EmptyView from "../../../components/EmptyView";
 import TitleText from "../../../components/TitleText";
 import preset from "../../../styles/preset";
 
+export class Exchange {
+    constructor(readonly name: string, readonly market: string, readonly homepageUrl: string, readonly url: string) {}
+}
+
 const items = [
-    { name: "Upxide", homepageUrl: "https://www.upxide.com", url: "https://www.upxide.com/exchange/KRW_DAI" },
-    { name: "Coinbase", homepageUrl: "https://www.coinbase.com", url: "https://www.coinbase.com/price/dai" },
-    { name: "Bibox", homepageUrl: "https://www.bibox.com", url: "https://www.bibox.com/exchange?coinPair=ETH_DAI" },
-    { name: "Yobit", homepageUrl: "https://yobit.net", url: "https://yobit.net/en/trade/DAI/USD" }
+    new Exchange("Upxide", "KRW", "https://www.upxide.com/", "https://www.upxide.com/exchange/KRW_DAI"),
+    new Exchange("Coinbase", "USD", "https://www.coinbase.com", "https://www.coinbase.com/price/dai"),
+    new Exchange("Bibox", "ETH", "https://www.bibox.com", "https://www.bibox.com/exchange?coinPair=ETH_DAI"),
+    new Exchange("Yobit", "USD", "https://yobit.net", "https://yobit.net/en/trade/DAI/USD")
 ];
 
 const ExchangeScreen = () => {
-    const renderItem = ({ item }) => <ItemView name={item.name} homepageUrl={item.homepageUrl} url={item.url} />;
+    const renderItem = ({ item }) => <ItemView exchange={item} />;
     return (
         <Container>
             <FlatList
@@ -43,23 +47,25 @@ const ListHeader = () => {
     );
 };
 
-const ItemView = ({ name, homepageUrl, url }: { name: string; homepageUrl: string; url: string }) => {
+const ItemView = ({ exchange }: { exchange: Exchange }) => {
     const { push } = useNavigation();
+    const onPress = useCallback(() => push("ExchangeWebView", { exchange }), []);
     return (
-        <ListItem noBorder={true} onPress={useCallback(() => push("ExchangeWebView", { name, url }), [])}>
+        <ListItem noBorder={true} onPress={onPress}>
             <Left style={[preset.flex0, preset.marginLeftSmall, preset.marginRightSmall]}>
-                <Badge name={name} />
+                <Badge name={exchange.name} />
             </Left>
             <Body>
-                <Text style={preset.fontSize20}>{name}</Text>
-                <Text note={true}>{homepageUrl}</Text>
+                <Text style={[preset.fontSize20, preset.fontWeightBold]}>{exchange.name}</Text>
+                <Text note={true}>DAI ↔ {exchange.market}</Text>
             </Body>
+            <Icon type="MaterialIcons" name="chevron-right" style={preset.colorPrimary} />
         </ListItem>
     );
 };
 
 const Badge = ({ name }) => {
-    const color = platform.brandInfo;
+    const color = platform.brandPrimary;
     return (
         <View
             style={{
@@ -70,9 +76,7 @@ const Badge = ({ name }) => {
                 borderRadius: 24,
                 paddingTop: 4
             }}>
-            <Text style={[preset.fontWeightBold, preset.fontSize24, preset.alignCenter, { color }]}>
-                {name.charAt(0)}
-            </Text>
+            <Text style={[preset.fontSize24, preset.alignCenter, { color }]}>{name.charAt(0)}</Text>
         </View>
     );
 };

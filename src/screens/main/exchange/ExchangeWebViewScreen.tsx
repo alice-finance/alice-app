@@ -9,17 +9,18 @@ import { Linking } from "expo";
 import { Button, Container, Icon, Toast } from "native-base";
 import { ChainContext } from "../../../contexts/ChainContext";
 import preset from "../../../styles/preset";
+import { Exchange } from "./ExchangeScreen";
 
 const ExchangeWebViewScreen = () => {
     const { getParam, setParams } = useNavigation();
     const webView = useRef<ProgressWebView>(null);
-    const uri = getParam("url");
+    const exchange: Exchange = getParam("exchange");
     useEffect(() => {
-        setParams({ uri, webView });
+        setParams({ uri: exchange.url, webView });
     }, [webView]);
     return (
         <Container style={preset.flex1}>
-            <ProgressWebView ref={webView} source={{ uri }} style={preset.flex1} />
+            <ProgressWebView ref={webView} source={{ uri: exchange.url }} style={preset.flex1} />
         </Container>
     );
 };
