@@ -62,6 +62,7 @@
         "title": "Exchanges",
         "description": "Below is a list of exchanges for DAI token. After purchasing assets and transferring them to 'My Ethereum Address', you can use them in Alice.",
         "myAddress": "My Ethereum Address",
+        "openInBrowser": "Open In Browser",
         "market": "Market",
         "selectMarket": "Select a market",
         "select": "Select",
@@ -154,7 +155,6 @@
     "profile": {
         "myProfile": "My Profile",
         "myAddress": "My Ethereum Address",
-        "openInBrowser": "Open In Browser",
         "myAddress.description": "Send yours assets to 'My Ethereum Address' and check it in Alice.",
         "addressCopiedToTheClipboard": "'My Ethereum Address' was copied to the clipboard.",
         "backupSeedPhrase": "Backup Seed Phrase",
