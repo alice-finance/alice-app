@@ -156,7 +156,7 @@
         "myAddress": "My Ethereum Address",
         "openInBrowser": "Open In Browser",
         "myAddress.description": "Send yours assets to 'My Ethereum Address' and check it in Alice.",
-        "addressCopiedToTheClipboard": "The address was copied to the clipboard.",
+        "addressCopiedToTheClipboard": "'My Ethereum Address' was copied to the clipboard.",
         "backupSeedPhrase": "Backup Seed Phrase",
         "backupSeedPhrase.description": "If you ever change your mobile device, you will need this seed phrase to access your accounts. Save them somewhere safe and secret.",
         "backupSeedPhrase.warning": "DO NOT share this phrase with anyone. These words can be used to steal all account.",

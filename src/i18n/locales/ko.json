@@ -155,7 +155,7 @@
         "myProfile": "내 프로필",
         "myAddress": "내 이더리움 주소",
         "myAddress.description": "내 이더리움 주소로 자산을 전송하면 Alice 앱에 표시됩니다.",
-        "addressCopiedToTheClipboard": "주소가 클립보드에 복사되었습니다.",
+        "addressCopiedToTheClipboard": "내 이더리움 주소가 클립보드에 복사되었습니다.",
         "backupSeedPhrase": "시드 단어 백업",
         "backupSeedPhrase.description": "모바일 기기를 바꾸는 경우 이 시드 단어가 필요하며 이를 통해 계정에 접근할 수 있습니다. 시드 단어를 안전한 곳에 보관하세요.",
         "backupSeedPhrase.warning": "이 단어을 다른 사람과 절대로 공유하지 마세요! 시드 단어는 계정을 훔치는데 사용될 수 있습니다.",
