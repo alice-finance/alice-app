@@ -30,6 +30,7 @@ import useTokenBalanceUpdater from "../../../hooks/useTokenBalanceUpdater";
 import preset from "../../../styles/preset";
 import { formatValue, toBigNumber } from "../../../utils/big-number-utils";
 import { openTx } from "../../../utils/ether-scan-utils";
+import StartView from "../../../components/StartView";
 
 const ManageAssetScreen = () => {
     const { t } = useTranslation(["asset", "profile", "common"]);
@@ -90,6 +91,7 @@ const ManageAssetScreen = () => {
                             <Text>{t("send")}</Text>
                         </Button>
                     </View>
+                    <StartView style={{ marginBottom: Spacing.small }} />
                     <BalanceCard
                         title={t("ethereumWallet")}
                         description={t("ethereumWallet.description")}
