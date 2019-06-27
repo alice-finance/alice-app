@@ -173,7 +173,7 @@
         "start": "Start",
         "start.depositAsset": "Please deposit assets",
         "start.description": "A small amount of ETH (less than 0.1) and DAI is required to use Alice's services.",
-        "start.viewExchange": "View Exchanges",
+        "start.viewExchange": "Buy Assets",
         "savings": "Savings",
         "savings.description": "Deposit your DAI stable coins and start savings with 8% of maximum annual interest rate. You can withdraw coins whenever you want.",
         "startSavingsNow": "Start savings now!",
