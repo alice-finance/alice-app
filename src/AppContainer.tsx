@@ -25,6 +25,7 @@ import ExchangeWebViewScreen from "./screens/main/exchange/ExchangeWebViewScreen
 import FinanceScreen from "./screens/main/finance/FinanceScreen";
 import NewSavingsScreen from "./screens/main/finance/NewSavingsScreen";
 import ProfileScreen from "./screens/main/profile/ProfileScreen";
+import ResetAccountScreen from "./screens/main/profile/ResetAccountScreen";
 import SplashScreen from "./screens/SplashScreen";
 import CompleteScreen from "./screens/start/CompleteScreen";
 import ConfirmMnemonicScreen from "./screens/start/ConfirmMnemonicScreen";
@@ -121,7 +122,8 @@ const MainNavigator = createDefaultStackNavigator({
     MyAddress: MyAddressScreen,
     TransferAsset: TransferAssetScreen,
     Deposit: DepositScreen,
-    Withdrawal: WithdrawalScreen
+    Withdrawal: WithdrawalScreen,
+    ResetAccount: ResetAccountScreen
 });
 
 const AppNavigator = createSwitchNavigator({

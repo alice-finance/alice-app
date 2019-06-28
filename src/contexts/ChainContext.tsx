@@ -5,11 +5,11 @@ import LoomChain from "@alice-finance/alice.js/dist/chains/LoomChain";
 
 export const ChainContext = React.createContext({
     mnemonic: "",
-    setMnemonic: mnemonic => {},
+    setMnemonic: (mnemonic: string) => {},
     loomChain: null as (LoomChain | null),
-    setLoomChain: (connector: LoomChain) => {},
+    setLoomChain: (connector: LoomChain | null) => {},
     ethereumChain: null as (EthereumChain | null),
-    setEthereumChain: (connector: EthereumChain) => {}
+    setEthereumChain: (connector: EthereumChain | null) => {}
 });
 
 export const ChainProvider = ({ children }) => {

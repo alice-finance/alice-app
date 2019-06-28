@@ -1,137 +1,99 @@
-import React, { useCallback, useContext, useState } from "react";
+import React, { useCallback, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { Clipboard, View } from "react-native";
-import { Chip, Dialog, Portal } from "react-native-paper";
+import { useNavigation } from "react-navigation-hooks";
 
 import { Linking } from "expo";
-import { Body, Button, Container, Icon, ListItem, Text, Toast } from "native-base";
+import { Body, Container, Icon, ListItem, Text, Toast } from "native-base";
 import app from "../../../../app.json";
-import platform from "../../../../native-base-theme/variables/platform";
 import TitleText from "../../../components/TitleText";
 import { Spacing } from "../../../constants/dimension";
 import { ChainContext } from "../../../contexts/ChainContext";
+import useBackupSeedPhraseDialog from "../../../hooks/useBackupSeedPhraseDialog";
 
 const ProfileScreen = () => {
-    const { t } = useTranslation("profile");
-    const { mnemonic } = useContext(ChainContext);
-    const [dialogOpen, setDialogOpen] = useState(false);
-    const openDialog = useCallback(() => setDialogOpen(true), []);
-    const closeDialog = useCallback(() => setDialogOpen(false), []);
-    const onOk = useCallback(() => {
-        setDialogOpen(false);
-        Clipboard.setString(mnemonic);
-        Toast.show({ text: t("seedPhraseCopiedToTheClipboard") });
+    const { t } = useTranslation(["profile", "common"]);
+    const { push } = useNavigation();
+    const { ethereumChain } = useContext(ChainContext);
+    const onPressMyAddress = useCallback(() => {
+        Clipboard.setString(ethereumChain!.getAddress().toLocalAddressString());
+        Toast.show({ text: t("addressCopiedToTheClipboard") });
     }, []);
+    const onPressCustomerSupport = useCallback(() => Linking.openURL(t("common:telegramUrl")), []);
+    const onPressResetAccount = useCallback(() => push("ResetAccount"), []);
+    const { Dialog, openDialog } = useBackupSeedPhraseDialog();
     return (
         <Container>
             <View>
                 <TitleText>{t("myProfile")}</TitleText>
-                <MyAddressItem />
+                <Item
+                    title={t("customerSupport")}
+                    description={t("customerSupport.description")}
+                    iconType="AntDesign"
+                    iconName="customerservice"
+                    onPress={onPressCustomerSupport}
+                />
+                <Item
+                    title={t("myAddress")}
+                    description={ethereumChain!.getAddress().toLocalAddressString()}
+                    iconName="key"
+                    onPress={onPressMyAddress}
+                />
                 <Item title={t("backupSeedPhrase")} iconName="note" onPress={openDialog} />
-                <CustomerSupportItem />
-                <AppVersionItem />
+                <Item
+                    title={t("resetAccount")}
+                    description={t("resetAccount.description")}
+                    iconType={"AntDesign"}
+                    iconName={"warning"}
+                    onPress={onPressResetAccount}
+                />
+                <Item title={t("appVersion")} description={app.expo.version} />
             </View>
-            <BackupSeedPhraseDialog visible={dialogOpen} onCancel={closeDialog} onOk={onOk} mnemonic={mnemonic} />
+            <Dialog />
         </Container>
     );
 };
 
-const MyAddressItem = () => {
-    const { t } = useTranslation("profile");
-    const { ethereumChain } = useContext(ChainContext);
-    const onPress = useCallback(() => {
-        if (ethereumChain) {
-            Clipboard.setString(ethereumChain.getAddress().toLocalAddressString());
-            Toast.show({ text: t("addressCopiedToTheClipboard") });
-        }
-    }, [ethereumChain]);
-    return (
-        <ListItem iconRight={true} button={true} style={{ height: 72 }} onPress={onPress}>
-            <Body>
-                <Text style={{ fontSize: 20 }}>{t("myAddress")}</Text>
-                <Text note={true} ellipsizeMode="middle" numberOfLines={1}>
-                    {ethereumChain ? ethereumChain.getAddress().toLocalAddressString() : "0x"}
-                </Text>
-            </Body>
-            <Icon type="SimpleLineIcons" name="key" style={{ color: "black", marginRight: Spacing.normal }} />
-        </ListItem>
-    );
-};
+interface ItemProps {
+    title: string;
+    description?: string;
+    iconType?:
+        | "AntDesign"
+        | "Entypo"
+        | "EvilIcons"
+        | "Feather"
+        | "FontAwesome"
+        | "FontAwesome5"
+        | "Foundation"
+        | "Ionicons"
+        | "MaterialCommunityIcons"
+        | "MaterialIcons"
+        | "Octicons"
+        | "SimpleLineIcons"
+        | "Zocial";
+    iconName?: string;
+    onPress?: () => void;
+}
 
-const CustomerSupportItem = () => {
-    const { t } = useTranslation(["profile", "common"]);
-    const onPress = () => Linking.openURL(t("common:telegramUrl"));
-    return (
-        <ListItem iconRight={true} style={{ height: 72 }} onPress={onPress}>
-            <Body>
-                <Text style={{ fontSize: 20 }}>{t("customerSupport")}</Text>
-                <Text note={true}>{t("customerSupport.description")}</Text>
-            </Body>
-        </ListItem>
-    );
-};
-
-const AppVersionItem = () => {
-    const { t } = useTranslation("profile");
-    return (
-        <ListItem iconRight={true} style={{ height: 72 }}>
-            <Body>
-                <Text style={{ fontSize: 20 }}>{t("appVersion")}</Text>
-                <Text note={true}>{app.expo.version}</Text>
-            </Body>
-        </ListItem>
-    );
-};
-
-const Item = ({ title, iconName, onPress }) => {
+const Item = ({ title, description, iconType, iconName, onPress }: ItemProps) => {
     return (
         <ListItem button={true} iconRight={true} style={{ height: 72 }} onPress={onPress}>
             <Body>
                 <Text style={{ fontSize: 20 }}>{title}</Text>
-            </Body>
-            <Icon type="SimpleLineIcons" name={iconName} style={{ color: "black", marginRight: Spacing.normal }} />
-        </ListItem>
-    );
-};
-
-const BackupSeedPhraseDialog = ({ visible, onCancel, onOk, mnemonic }) => {
-    const { t } = useTranslation(["profile", "common"]);
-    return (
-        <Portal>
-            <Dialog visible={visible} onDismiss={onCancel}>
-                <Dialog.Content>
-                    <View style={{ flexDirection: "row" }}>
-                        <Icon type="AntDesign" name="warning" style={{ color: platform.brandDanger, fontSize: 28 }} />
-                        <Text style={{ color: platform.brandDanger, marginLeft: Spacing.small, fontSize: 20 }}>
-                            {t("common:warning")}
-                        </Text>
-                    </View>
-                    <Text style={{ color: platform.brandDanger, marginVertical: Spacing.normal }}>
-                        {t("backupSeedPhrase.warning")}
+                {description && (
+                    <Text note={true} ellipsizeMode="middle" numberOfLines={1}>
+                        {description}
                     </Text>
-                    <View
-                        style={{
-                            flexDirection: "row",
-                            flexWrap: "wrap",
-                            paddingHorizontal: 12
-                        }}>
-                        {mnemonic.split(" ").map((word, index) => (
-                            <Chip mode="outlined" key={index} style={{ margin: Spacing.tiny }}>
-                                {word}
-                            </Chip>
-                        ))}
-                    </View>
-                </Dialog.Content>
-                <Dialog.Actions>
-                    <Button rounded={true} transparent={true} onPress={onCancel}>
-                        <Text>{t("common:cancel")}</Text>
-                    </Button>
-                    <Button rounded={true} transparent={true} onPress={onOk}>
-                        <Text>{t("common:copy")}</Text>
-                    </Button>
-                </Dialog.Actions>
-            </Dialog>
-        </Portal>
+                )}
+            </Body>
+            {iconName && (
+                <Icon
+                    type={iconType || "SimpleLineIcons"}
+                    name={iconName}
+                    style={{ color: "black", marginRight: Spacing.normal }}
+                />
+            )}
+        </ListItem>
     );
 };
 
