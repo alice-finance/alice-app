@@ -1,5 +1,4 @@
 import React, { useContext } from "react";
-import { TESTNET } from "react-native-dotenv";
 import { useNavigation } from "react-navigation-hooks";
 
 import EthereumChain from "@alice-finance/alice.js/dist/chains/EthereumChain";
@@ -34,9 +33,8 @@ const useLoader = () => {
         const ethereumPrivateKey = await SecureStore.getItemAsync("ethereumPrivateKey");
         const loomPrivateKey = await SecureStore.getItemAsync("loomPrivateKey");
         if (mnemonic && ethereumPrivateKey && loomPrivateKey) {
-            const testnet = String(TESTNET) === "true";
-            const ethereumChain = new EthereumChain(ethereumPrivateKey, testnet);
-            const loomChain = new LoomChain(loomPrivateKey, testnet);
+            const ethereumChain = new EthereumChain(ethereumPrivateKey, __DEV__);
+            const loomChain = new LoomChain(loomPrivateKey, __DEV__);
 
             const assets = await loomChain.getERC20AssetsAsync();
             const market = loomChain.getMoneyMarket();
