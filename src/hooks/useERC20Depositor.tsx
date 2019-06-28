@@ -4,6 +4,7 @@ import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
 import { ethers } from "ethers";
 import { ChainContext } from "../contexts/ChainContext";
 import { PendingTransactionsContext } from "../contexts/PendingTransactionsContext";
+import Analytics from "../helpers/Analytics";
 import useTokenBalanceUpdater from "./useTokenBalanceUpdater";
 
 const useERC20Depositor = (asset: ERC20Asset) => {
@@ -26,6 +27,7 @@ const useERC20Depositor = (asset: ERC20Asset) => {
                     addPendingDepositTransaction(assetAddress, depositTx);
                     await depositTx.wait();
                     // Done
+                    Analytics.track(Analytics.events.ASSET_DEPOSITED);
                     await update();
                     clearPendingDepositTransactions(assetAddress);
                 } catch (e) {

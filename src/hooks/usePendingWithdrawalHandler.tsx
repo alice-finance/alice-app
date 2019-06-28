@@ -2,11 +2,11 @@ import React, { useCallback, useContext } from "react";
 
 import Address from "@alice-finance/alice.js/dist/Address";
 import { ZERO_ADDRESS } from "@alice-finance/alice.js/dist/constants";
+import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { bytesToHexAddr } from "loom-js/dist/crypto-utils";
 import { AssetContext } from "../contexts/AssetContext";
 import { ChainContext } from "../contexts/ChainContext";
 import { PendingTransactionsContext } from "../contexts/PendingTransactionsContext";
-import { toBigNumber } from "../utils/big-number-utils";
 import useTokenBalanceUpdater from "./useTokenBalanceUpdater";
 
 const usePendingWithdrawalHandler = () => {

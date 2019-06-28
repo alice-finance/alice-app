@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 
+import { ERC20Asset } from "@alice-finance/alice.js/dist";
+import { SavingsRecord } from "@alice-finance/alice.js/dist/contracts/MoneyMarket";
+import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { ethers } from "ethers";
-import ERC20Asset from "../evm/ERC20Asset";
-import SavingsRecord from "../evm/SavingsRecord";
-import { toBigNumber } from "../utils/big-number-utils";
 
 export const SavingsContext = React.createContext({
     decimals: 0,

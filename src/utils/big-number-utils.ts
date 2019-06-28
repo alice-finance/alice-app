@@ -1,19 +1,9 @@
-import BN from "bn.js";
+import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { ethers } from "ethers";
 import { fromWei } from "web3-utils";
 import { ERC20_MAX_PRECISION } from "../constants/token";
 
-export const toBigNumber = (value: ethers.utils.BigNumberish | BN) => {
-    if (BN.isBN(value)) {
-        return new ethers.utils.BigNumber(BN.toString());
-    } else {
-        return ethers.utils.bigNumberify(value);
-    }
-};
-
-export const pow10 = (e: number) => toBigNumber(10).pow(toBigNumber(e));
-
-export const isZero = (value: string | ethers.utils.BigNumber) => toBigNumber(value).toString() === "0";
+export const pow10 = (e: number) => toBigNumber(10).pow(e);
 
 export const formatValue = (
     value: string | ethers.utils.BigNumber,

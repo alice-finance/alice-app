@@ -4,6 +4,7 @@ import { FlatList, View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 import { defaultKeyExtractor } from "../../../utils/react-native-utils";
 
+import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { Linking } from "expo";
 import { Button, Container, Content, Icon } from "native-base";
 import platform from "../../../../native-base-theme/variables/platform";
@@ -19,7 +20,6 @@ import { ChainContext } from "../../../contexts/ChainContext";
 import { SavingsContext } from "../../../contexts/SavingsContext";
 import useMySavingsUpdater from "../../../hooks/useMySavingsUpdater";
 import preset from "../../../styles/preset";
-import { toBigNumber } from "../../../utils/big-number-utils";
 
 const FinanceScreen = () => {
     const { setParams } = useNavigation();

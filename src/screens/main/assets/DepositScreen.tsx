@@ -4,6 +4,7 @@ import { StyleSheet, View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
 import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
+import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { ethers } from "ethers";
 import { BigNumber } from "ethers/utils";
 import { Button, Container, Content, Icon, Text, Toast } from "native-base";
@@ -18,7 +19,7 @@ import { PendingTransactionsContext } from "../../../contexts/PendingTransaction
 import useERC20Depositor from "../../../hooks/useERC20Depositor";
 import useETHDepositor from "../../../hooks/useETHDepositor";
 import preset from "../../../styles/preset";
-import { formatValue, toBigNumber } from "../../../utils/big-number-utils";
+import { formatValue } from "../../../utils/big-number-utils";
 
 const DepositScreen = () => {
     const { t } = useTranslation(["asset"]);

@@ -5,6 +5,7 @@ import { Alert, TextInput, View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
 import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
+import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { BigNumber } from "ethers/utils";
 import { Button, Container, Text, Toast } from "native-base";
 import platform from "../../../../native-base-theme/variables/platform";
@@ -15,7 +16,7 @@ import { Spacing } from "../../../constants/dimension";
 import { BalancesContext } from "../../../contexts/BalancesContext";
 import { ChainContext } from "../../../contexts/ChainContext";
 import preset from "../../../styles/preset";
-import { formatValue, toBigNumber } from "../../../utils/big-number-utils";
+import { formatValue } from "../../../utils/big-number-utils";
 import { openTx } from "../../../utils/ether-scan-utils";
 
 const TransferAssetScreen = () => {

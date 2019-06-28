@@ -39,6 +39,7 @@ const useETHWithdrawer = () => {
                     const ethereumWithdrawTx = await ethereumChain.withdrawETHAsync(amount, signature);
                     addPendingWithdrawalTransaction(ethereumAddress, ethereumWithdrawTx);
                     await ethereumWithdrawTx.wait();
+                    // Done
                     await update();
                 } catch (e) {
                     clearPendingWithdrawalTransactions(ethereumAddress);

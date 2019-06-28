@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Text as NativeText, View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
+import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { BigNumber } from "ethers/utils";
 import { Button, Container, Icon, Text } from "native-base";
 import AmountInput from "../../../components/AmountInput";
@@ -15,7 +16,7 @@ import { ChainContext } from "../../../contexts/ChainContext";
 import { SavingsContext } from "../../../contexts/SavingsContext";
 import useSavingsStarter from "../../../hooks/useSavingsStarter";
 import preset from "../../../styles/preset";
-import { formatValue, toBigNumber } from "../../../utils/big-number-utils";
+import { formatValue } from "../../../utils/big-number-utils";
 
 const NewSavingsScreen = () => {
     const { push } = useNavigation();

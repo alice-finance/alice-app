@@ -1,8 +1,8 @@
 import React, { useCallback, useState } from "react";
 
+import { Address } from "@alice-finance/alice.js/dist";
+import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { ethers } from "ethers";
-import Address from "../evm/Address";
-import { toBigNumber } from "../utils/big-number-utils";
 
 export const BalancesContext = React.createContext({
     getBalance: (address: Address): ethers.utils.BigNumber => toBigNumber(0),

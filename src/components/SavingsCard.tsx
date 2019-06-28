@@ -3,12 +3,12 @@ import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
+import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { Body, Button, Card, CardItem, Left, Right, Text } from "native-base";
 import TokenIcon from "../components/TokenIcon";
 import { SavingsContext } from "../contexts/SavingsContext";
 import useTokenBalanceUpdater from "../hooks/useTokenBalanceUpdater";
 import preset from "../styles/preset";
-import { toBigNumber } from "../utils/big-number-utils";
 import { formatValue } from "../utils/big-number-utils";
 import BigNumberText from "./BigNumberText";
 import Spinner from "./Spinner";

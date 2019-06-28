@@ -4,6 +4,7 @@ import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
 import { ethers } from "ethers";
 import { ChainContext } from "../contexts/ChainContext";
 import { PendingTransactionsContext } from "../contexts/PendingTransactionsContext";
+import Analytics from "../helpers/Analytics";
 import useTokenBalanceUpdater from "./useTokenBalanceUpdater";
 
 const useERC20Withdrawer = (asset: ERC20Asset) => {
@@ -16,22 +17,22 @@ const useERC20Withdrawer = (asset: ERC20Asset) => {
         async (amount: ethers.utils.BigNumber) => {
             if (loomChain && ethereumChain) {
                 const ethereumAddress = asset.ethereumAddress;
-                const gateway = await loomChain.createTransferGatewayAsync();
+                const gateway = await loomChain.getTransferGatewayAsync();
                 try {
                     clearPendingWithdrawalTransactions(ethereumAddress);
                     // Step 1: approve
-                    addPendingWithdrawalTransaction(ethereumAddress, { hash: "1" });
                     const approveTx = await loomChain.approveERC20Async(
                         asset,
                         gateway.address.local.toChecksumString(),
                         amount
                     );
+                    addPendingWithdrawalTransaction(ethereumAddress, approveTx);
                     await approveTx.wait();
                     // Step 2: withdraw from loom network
-                    addPendingWithdrawalTransaction(ethereumAddress, { hash: "2" });
                     const withdrawTx = await loomChain.withdrawERC20Async(asset, amount);
                     addPendingWithdrawalTransaction(ethereumAddress, withdrawTx);
                     await withdrawTx.wait();
+                    Analytics.track(Analytics.events.ASSET_WITHDRAWN);
                     // Step 3: listen to token withdrawal event
                     const signature = await loomChain.listenToTokenWithdrawal(
                         asset.ethereumAddress.toLocalAddressString(),
@@ -41,6 +42,7 @@ const useERC20Withdrawer = (asset: ERC20Asset) => {
                     const ethereumWithdrawTx = await ethereumChain.withdrawERC20Async(asset, amount, signature);
                     addPendingWithdrawalTransaction(ethereumAddress, ethereumWithdrawTx);
                     await ethereumWithdrawTx.wait();
+                    // Done
                     await update();
                 } catch (e) {
                     clearPendingWithdrawalTransactions(ethereumAddress);

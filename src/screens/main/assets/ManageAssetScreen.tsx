@@ -11,6 +11,7 @@ import {
     ETHWithdrawn
 } from "@alice-finance/alice.js/dist/chains/EthereumChain";
 import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
+import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { IWithdrawalReceipt } from "loom-js/dist/contracts/transfer-gateway";
 import { Body, Button, Card, CardItem, Container, Content, Icon, Left, ListItem, Right, Text } from "native-base";
 import platform from "../../../../native-base-theme/variables/platform";
@@ -19,6 +20,7 @@ import CaptionText from "../../../components/CaptionText";
 import EmptyView from "../../../components/EmptyView";
 import HeadlineText from "../../../components/HeadlineText";
 import Spinner from "../../../components/Spinner";
+import StartView from "../../../components/StartView";
 import SubtitleText from "../../../components/SubtitleText";
 import TokenIcon from "../../../components/TokenIcon";
 import { Spacing } from "../../../constants/dimension";
@@ -28,9 +30,8 @@ import useEthereumBlockNumberListener from "../../../hooks/useEthereumBlockNumbe
 import usePendingWithdrawalListener from "../../../hooks/usePendingWithdrawalListener";
 import useTokenBalanceUpdater from "../../../hooks/useTokenBalanceUpdater";
 import preset from "../../../styles/preset";
-import { formatValue, toBigNumber } from "../../../utils/big-number-utils";
+import { formatValue } from "../../../utils/big-number-utils";
 import { openTx } from "../../../utils/ether-scan-utils";
-import StartView from "../../../components/StartView";
 
 const ManageAssetScreen = () => {
     const { t } = useTranslation(["asset", "profile", "common"]);

@@ -5,6 +5,7 @@ import { Portal } from "react-native-paper";
 import Dialog from "../react-native-paper/Dialog/Dialog";
 
 import { SavingsRecord } from "@alice-finance/alice.js/dist/contracts/MoneyMarket";
+import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { BigNumber } from "ethers/utils";
 import { Button, Card, CardItem, Left, Right, Text, Toast } from "native-base";
 import { ChainContext } from "../contexts/ChainContext";
@@ -12,7 +13,7 @@ import { SavingsContext } from "../contexts/SavingsContext";
 import Analytics from "../helpers/Analytics";
 import useMySavingsUpdater from "../hooks/useMySavingsUpdater";
 import preset from "../styles/preset";
-import { formatValue, toBigNumber } from "../utils/big-number-utils";
+import { formatValue } from "../utils/big-number-utils";
 import AgoText from "./AgoText";
 import AmountInput from "./AmountInput";
 import BigNumberText from "./BigNumberText";
