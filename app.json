@@ -24,15 +24,15 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "bundleIdentifier": "finance.alice.app",
-      "buildNumber": "2"
+      "buildNumber": "3"
     },
     "android": {
       "icon": "./src/assets/icon.android.png",
       "package": "finance.alice.app",
       "permissions": [],
-      "versionCode": 2
+      "versionCode": 3
     }
   }
 }
