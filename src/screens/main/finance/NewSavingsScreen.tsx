@@ -42,7 +42,7 @@ const NewSavingsScreen = () => {
             const load = async () => {
                 setLoadingAPR(true);
                 const market = loomChain!.getMoneyMarket();
-                const expected = await market.getExpectedSavingsAPR(amount.toString());
+                const expected = await market.getExpectedSavingsAPR(amount);
                 setAprText(formatValue(toBigNumber(expected).mul(100), decimals, 2) + " %");
                 setLoadingAPR(false);
             };
