@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import Moment from "react-moment";
 
-import "moment/locale/ko"; // Korean locale
+import "moment/min/locales";
 import { Text } from "native-base";
 
 const AgoText = ({ date }: { date: Date }) => {
