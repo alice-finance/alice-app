@@ -56,9 +56,14 @@ const ImportMnemonicScreen = () => {
                             multiline={true}
                             numberOfLines={0}
                             placeholder={t("common:seedPhrase")}
+                            autoCapitalize="none"
+                            autoCorrect={false}
                             onChangeText={onChangeMnemonic}
                             style={preset.marginTopNormal}
                         />
+                        <CaptionText style={[preset.marginTopNormal, { marginHorizontal: 0, fontSize: 16 }]}>
+                            {t("start:inputSeedPhraseNotice")}
+                        </CaptionText>
                         <Button
                             block={true}
                             rounded={true}
