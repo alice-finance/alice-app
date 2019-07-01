@@ -12,8 +12,10 @@ import platform from "../../../../native-base-theme/variables/platform";
 import AmountInput from "../../../components/AmountInput";
 import CaptionText from "../../../components/CaptionText";
 import DepositInProgress from "../../../components/DepositInProgress";
+import HeadlineText from "../../../components/HeadlineText";
 import Row from "../../../components/Row";
 import TitleText from "../../../components/TitleText";
+import { AssetContext } from "../../../contexts/AssetContext";
 import { BalancesContext } from "../../../contexts/BalancesContext";
 import { PendingTransactionsContext } from "../../../contexts/PendingTransactionsContext";
 import useERC20Depositor from "../../../hooks/useERC20Depositor";
@@ -24,23 +26,21 @@ import { formatValue } from "../../../utils/big-number-utils";
 const DepositScreen = () => {
     const { t } = useTranslation(["asset"]);
     const { pop, getParam } = useNavigation();
-    const { getBalance } = useContext(BalancesContext);
     const { getPendingDepositTransactions } = useContext(PendingTransactionsContext);
-    const [amount, setAmount] = useState<BigNumber | null>(toBigNumber(0));
-    const [change, setChange] = useState<BigNumber | null>(null);
+    const [amount, setAmount] = useState<BigNumber | null>(null);
+    const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
     const [inProgress, setInProgress] = useState(false);
-    const onPressDeposit = useCallback(() => setChange(amount), [amount]);
     const onCancel = useCallback(() => {
         setAmount(null);
-        setChange(null);
+        setSelectedSymbol(null);
     }, []);
     const onOk = useCallback(async () => {
         setInProgress(true);
         try {
             if (asset.ethereumAddress.isZero()) {
-                await depositETH(change!);
+                await depositETH(amount!);
             } else {
-                await depositERC20(change!);
+                await depositERC20(amount!);
             }
             pop();
             Toast.show({ text: t("depositSuccess") });
@@ -57,15 +57,13 @@ const DepositScreen = () => {
             }
         } finally {
             setAmount(null);
-            setChange(null);
             setInProgress(false);
         }
-    }, [change]);
+    }, [amount]);
 
     const asset: ERC20Asset = getParam("asset");
     const { deposit: depositETH } = useETHDepositor();
     const { deposit: depositERC20 } = useERC20Depositor(asset);
-    const ethereumBalance = getBalance(asset.ethereumAddress);
     const pendingDepositTransactions = getPendingDepositTransactions(asset.ethereumAddress);
     return (
         <Container>
@@ -75,33 +73,12 @@ const DepositScreen = () => {
                 <View style={[preset.marginNormal, preset.marginTopLarge]}>
                     {inProgress || pendingDepositTransactions.length > 0 ? (
                         <DepositInProgress asset={asset} />
-                    ) : change ? (
-                        <Confirm asset={asset} change={change} onCancel={onCancel} onOk={onOk} />
+                    ) : selectedSymbol ? (
+                        <Confirm asset={asset} amount={amount!} onCancel={onCancel} onOk={onOk} />
+                    ) : amount ? (
+                        <ConversionControls asset={asset} onNext={setSelectedSymbol} />
                     ) : (
-                        <>
-                            <AmountInput
-                                asset={asset}
-                                max={ethereumBalance}
-                                disabled={!!change}
-                                onChangeAmount={setAmount}
-                                style={preset.marginSmall}
-                            />
-                            <View style={[preset.marginLeftNormal, preset.marginRightNormal]}>
-                                <Row
-                                    label={t("available")}
-                                    value={formatValue(ethereumBalance, asset!.decimals, 2) + " " + asset!.symbol}
-                                />
-                            </View>
-                            <Button
-                                primary={true}
-                                rounded={true}
-                                block={true}
-                                disabled={!amount || amount.isZero()}
-                                style={preset.marginTopNormal}
-                                onPress={onPressDeposit}>
-                                <Text>{t("transfer")}</Text>
-                            </Button>
-                        </>
+                        <AmountControls asset={asset} onNext={setAmount} />
                     )}
                 </View>
             </Content>
@@ -109,29 +86,98 @@ const DepositScreen = () => {
     );
 };
 
+interface ConversionControlsProps {
+    asset: ERC20Asset;
+    onNext: (symbol: string) => void;
+}
+
+const ConversionControls = ({ asset, onNext }: ConversionControlsProps) => {
+    const { t } = useTranslation(["asset", "common"]);
+    const { assets } = useContext(AssetContext);
+    return (
+        <View>
+            <HeadlineText aboveText={true}>{t("tokenConversion")}</HeadlineText>
+            <CaptionText small={true}>{t("tokenConversion.description")}</CaptionText>
+            <Button
+                block={true}
+                rounded={true}
+                onPress={useCallback(() => onNext(asset.symbol), [])}
+                style={[preset.marginSmall, preset.marginTopLarge]}>
+                <Text>{t("tokenConversion.no", { symbol: asset.symbol })}</Text>
+            </Button>
+            {assets
+                .filter(a => a.symbol !== asset.symbol)
+                .map((a, key) => (
+                    <Button
+                        key={key}
+                        block={true}
+                        rounded={true}
+                        bordered={true}
+                        transparent={true}
+                        onPress={useCallback(() => onNext(a.symbol), [])}
+                        style={preset.marginSmall}>
+                        <Text>{a.symbol}</Text>
+                    </Button>
+                ))}
+        </View>
+    );
+};
+
+interface AmountControlsProps {
+    asset: ERC20Asset;
+    onNext: (amount: BigNumber) => void;
+}
+
+const AmountControls = ({ asset, onNext }: AmountControlsProps) => {
+    const { t } = useTranslation(["asset", "common"]);
+    const { getBalance } = useContext(BalancesContext);
+    const [amount, setAmount] = useState<BigNumber | null>(toBigNumber(0));
+    const ethereumBalance = getBalance(asset.ethereumAddress);
+    return (
+        <View>
+            <AmountInput asset={asset} max={ethereumBalance} onChangeAmount={setAmount} style={preset.marginSmall} />
+            <View style={[preset.marginLeftNormal, preset.marginRightNormal]}>
+                <Row
+                    label={t("available")}
+                    value={formatValue(ethereumBalance, asset!.decimals, 2) + " " + asset!.symbol}
+                />
+            </View>
+            <Button
+                primary={true}
+                rounded={true}
+                block={true}
+                disabled={!amount || amount.isZero()}
+                style={preset.marginTopNormal}
+                onPress={useCallback(() => onNext(amount!), [amount])}>
+                <Text>{t("common:next")}</Text>
+            </Button>
+        </View>
+    );
+};
+
 interface ConfirmProps {
     asset: ERC20Asset;
-    change: BigNumber;
+    amount: BigNumber;
     onCancel: () => void;
     onOk: () => void;
 }
 
-const Confirm = ({ asset, change, onCancel, onOk }: ConfirmProps) => {
+const Confirm = ({ asset, amount, onCancel, onOk }: ConfirmProps) => {
     const { t } = useTranslation(["asset"]);
     const { getBalance } = useContext(BalancesContext);
     const loomBalance = getBalance(asset.loomAddress);
-    const newLoomBalance = change ? loomBalance.add(change) : loomBalance;
+    const newLoomBalance = amount ? loomBalance.add(amount) : loomBalance;
     return (
         <View style={preset.marginNormal}>
             <Text>{t("wouldYouChangeTheDepositAmount")}</Text>
             <View style={[preset.marginTopNormal, preset.marginBottomNormal, styles.border]} />
-            <Value value={loomBalance} asset={asset} style={preset.flex1} />
+            <Value value={loomBalance} asset={asset} />
             <Icon
                 type="SimpleLineIcons"
                 name="arrow-down-circle"
                 style={[preset.marginSmall, preset.alignCenter, preset.colorGrey]}
             />
-            <Value value={newLoomBalance} asset={asset} style={preset.flex1} />
+            <Value value={newLoomBalance} asset={asset} />
             <View style={[preset.marginTopNormal, preset.marginBottomNormal, styles.border]} />
             <View style={[preset.flexDirectionRow, preset.marginTopNormal]}>
                 <Button
@@ -151,8 +197,8 @@ const Confirm = ({ asset, change, onCancel, onOk }: ConfirmProps) => {
     );
 };
 
-const Value = ({ asset, value, style = {} }) => (
-    <Text style={[preset.fontSize36, preset.textAlignCenter, preset.paddingSmall, style]}>
+const Value = ({ asset, value }: { asset: ERC20Asset; value: BigNumber }) => (
+    <Text style={[preset.fontSize36, preset.textAlignCenter, preset.paddingSmall, preset.flex1]}>
         {formatValue(value, asset.decimals, 2) + " " + asset.symbol}
     </Text>
 );

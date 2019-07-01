@@ -14,7 +14,7 @@ import { formatValue, parseValue } from "../utils/big-number-utils";
 interface AmountInputProps {
     asset: ERC20Asset;
     max: BigNumber;
-    disabled: boolean;
+    disabled?: boolean;
     onChangeAmount: (amount: BigNumber | null) => void;
     style?: StyleProp<ViewStyle>;
     inputStyle?: StyleProp<TextStyle>;
@@ -23,8 +23,8 @@ interface AmountInputProps {
 const AmountInput: FunctionComponent<AmountInputProps> = ({
     asset,
     max,
-    disabled,
     onChangeAmount,
+    disabled = false,
     style = {},
     inputStyle = {}
 }) => {
