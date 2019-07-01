@@ -34,7 +34,7 @@
         "complete.description": "지갑 생성이 완료되었습니다! 아래 버튼을 눌러 Alice를 시작해보세요.",
         "importSeedPhrase": "시드 단어 불러오기",
         "importSeedPhrase.description": "기존의 시드 단어를 입력해주세요. 12개의 단어로 구성되어 있습니다.",
-        "inputSeedPhraseNotice": "모든 단어는 소문자로 입력해 주세요.\n단어와 단어 사이는 공백으로 구분해 주세요."
+        "inputSeedPhraseNotice": "모든 단어는 소문자입니다.\n단어와 단어 사이는 공백으로 구분됩니다."
     },
     "auth": {
         "signInWithFacebook": "페이스북으로 로그인",

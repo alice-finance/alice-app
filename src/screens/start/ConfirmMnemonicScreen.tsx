@@ -19,8 +19,14 @@ const ConfirmMnemonicScreen = () => {
     const mnemonic = useNavigationParam("mnemonic");
     const [confirmed, setConfirmed] = useState(false);
     const [encrypting, setEncrypting] = useState(false);
+    const [userMnemonic, setUserMnemonic] = useState("");
     const onChangeMnemonic = useCallback(
         m => {
+            m = m
+                .toLowerCase()
+                .replace(/\s\s+/g, " ")
+                .replace(/[^a-z ]/, "");
+            setUserMnemonic(m);
             setConfirmed(mnemonic === m.trim());
         },
         [mnemonic]
@@ -57,6 +63,7 @@ const ConfirmMnemonicScreen = () => {
                             autoCorrect={false}
                             onChangeText={onChangeMnemonic}
                             style={preset.marginTopNormal}
+                            value={userMnemonic}
                         />
                         <CaptionText style={[preset.marginTopNormal, { marginHorizontal: 0, fontSize: 16 }]}>
                             {t("start:inputSeedPhraseNotice")}
