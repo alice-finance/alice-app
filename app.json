@@ -26,13 +26,13 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "finance.alice.app",
-      "buildNumber": "3"
+      "buildNumber": "4"
     },
     "android": {
       "icon": "./src/assets/icon.android.png",
       "package": "finance.alice.app",
       "permissions": [],
-      "versionCode": 3
+      "versionCode": 4
     }
   }
 }
