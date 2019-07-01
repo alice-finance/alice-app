@@ -28,7 +28,7 @@ const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
         record.balance
             .add(record.withdrawals.reduce((previous, current) => previous.add(current.amount), toBigNumber(0)))
             .sub(record.principal)
-            .mul(toBigNumber(10000))
+            .mul(toBigNumber("100").mul(toBigNumber(10).pow(toBigNumber(decimals))))
             .div(record.principal)
     );
     const [apr] = useState(() => {
@@ -44,7 +44,7 @@ const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
     const closeDialog = () => setDialogOpen(false);
     const onWithdraw = useCallback(() => openDialog(), [record]);
     return (
-        <View style={[preset.marginNormal]}>
+        <View style={[preset.marginNormal]} key={record.id.toString()}>
             <Card>
                 <CardItem>
                     <Left>
@@ -89,18 +89,18 @@ const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
                     </Right>
                 </CardItem>
             </Card>
-            <WithdrawDialog visible={dialogOpen} onCancel={closeDialog} onOk={closeDialog} record={record} />
+            <WithdrawDialog visible={dialogOpen} apr={apr} onCancel={closeDialog} onOk={closeDialog} record={record} />
         </View>
     );
 };
 
-const WithdrawDialog = ({ visible, onCancel, onOk, record }) => {
+const WithdrawDialog = ({ visible, onCancel, onOk, record, apr }) => {
     const { t } = useTranslation(["finance", "common"]);
-    const { asset, decimals, setTotalBalance, apr, setAPR } = useContext(SavingsContext);
+    const { asset, decimals, setTotalBalance } = useContext(SavingsContext);
     const { loomChain } = useContext(ChainContext);
     const [amount, setAmount] = useState<BigNumber | null>(toBigNumber(0));
     const [inProgress, setInProgress] = useState(false);
-    const aprText = apr ? formatValue(apr, decimals, 2) + " %" : t("loading");
+    const aprText = formatValue(apr, decimals, 2) + " %";
     const balanceText = formatValue(record.balance, asset!.decimals, 2) + " " + asset!.symbol;
     const { update } = useMySavingsUpdater();
     const onWithdraw = useCallback(async () => {
@@ -111,7 +111,6 @@ const WithdrawDialog = ({ visible, onCancel, onOk, record }) => {
                 const tx = await market.withdraw(record.id, amount);
                 await tx.wait();
                 setTotalBalance(toBigNumber(await market.totalFunds()));
-                setAPR(toBigNumber(await market.getCurrentSavingsAPR()).mul(toBigNumber(100)));
                 await update();
                 Toast.show({ text: t("withdrawalComplete") });
                 Analytics.track(Analytics.events.SAVINGS_WITHDRAWN);
