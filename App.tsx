@@ -12,7 +12,7 @@ import { ContextProvider } from "./src/contexts";
 import i18n from "./src/i18n";
 import { Portal } from "react-native-paper";
 import { ethers } from "ethers";
-import { YellowBox } from "react-native";
+import { YellowBox, Platform, StatusBar } from "react-native";
 
 YellowBox.ignoreWarnings(["Setting a timer"]);
 ethers.errors.setLogLevel("error");
@@ -24,6 +24,7 @@ export default class App extends React.Component {
                 <ContextProvider>
                     <StyleProvider style={getTheme(platform)}>
                         <Root>
+                            {Platform.OS === "ios" && <StatusBar barStyle="dark-content" />}
                             <Portal.Host>
                                 <AppContainer screenProps={{ t: i18n.t }} />
                             </Portal.Host>

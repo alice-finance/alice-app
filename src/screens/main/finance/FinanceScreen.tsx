@@ -2,8 +2,8 @@ import React, { useCallback, useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { FlatList, View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
-import { defaultKeyExtractor } from "../../../utils/react-native-utils";
 
+import { SavingsRecord } from "@alice-finance/alice.js/dist/contracts/MoneyMarket";
 import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { Linking } from "expo";
 import { Button, Container, Content, Icon } from "native-base";
@@ -53,7 +53,7 @@ const FinanceScreen = () => {
                     {myRecords ? (
                         <FlatList
                             data={sortedMyRecords}
-                            keyExtractor={defaultKeyExtractor}
+                            keyExtractor={savingRecordKeyExtractor}
                             renderItem={renderItem}
                             ListEmptyComponent={<EmptyView text={t("noSavingsHistory")} />}
                         />
@@ -65,6 +65,8 @@ const FinanceScreen = () => {
         </Container>
     );
 };
+
+const savingRecordKeyExtractor = (item: SavingsRecord, index) => item.id.toString();
 
 FinanceScreen.navigationOptions = ({ navigation }) => ({
     headerRight: (

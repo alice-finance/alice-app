@@ -20,11 +20,18 @@ const ImportMnemonicScreen = () => {
     const [confirmed, setConfirmed] = useState(false);
     const [encrypting, setEncrypting] = useState(false);
     const [mnemonic, setMnemonic] = useState("");
+    const [userMnemonic, setUserMnemonic] = useState("");
+
     const onChangeMnemonic = useCallback(
         newMnemonic => {
+            newMnemonic = newMnemonic
+                .toLowerCase()
+                .replace(/\s\s+/g, " ")
+                .replace(/[^a-z ]/, "");
+            setUserMnemonic(newMnemonic);
             const words = newMnemonic.trim().split(" ");
             setConfirmed(words.length === 12 && words.every(word => wordlists.english.includes(word)));
-            setMnemonic(newMnemonic);
+            setMnemonic(newMnemonic.trim());
         },
         [wordlists]
     );
@@ -56,9 +63,15 @@ const ImportMnemonicScreen = () => {
                             multiline={true}
                             numberOfLines={0}
                             placeholder={t("common:seedPhrase")}
+                            autoCapitalize="none"
+                            autoCorrect={false}
                             onChangeText={onChangeMnemonic}
                             style={preset.marginTopNormal}
+                            value={userMnemonic}
                         />
+                        <CaptionText style={[preset.marginTopNormal, { marginHorizontal: 0, fontSize: 16 }]}>
+                            {t("start:inputSeedPhraseNotice")}
+                        </CaptionText>
                         <Button
                             block={true}
                             rounded={true}

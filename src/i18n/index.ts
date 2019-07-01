@@ -24,6 +24,7 @@ i18n.use(initReactI18next)
     .init({
         resources,
         lng: Localization.locale,
+        whitelist: ["en", "ko"],
         fallbackLng: "en",
         keySeparator: false, // we do not use keys in form messages.welcome
         interpolation: {

@@ -33,7 +33,8 @@
         "complete": "Welcome",
         "complete.description": "Your wallet has been created. Start using Alice by clicking the button below.",
         "importSeedPhrase": "Import Seed Phrase",
-        "importSeedPhrase.description": "Input existing seed phrase. It consists of 12 words."
+        "importSeedPhrase.description": "Input existing seed phrase. It consists of 12 words.",
+        "inputSeedPhraseNotice": "All words are in lower case.\nEach word is separated by a space."
     },
     "auth": {
         "signInWithFacebook": "Log in with Facebook",
