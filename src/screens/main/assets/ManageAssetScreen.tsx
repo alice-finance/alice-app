@@ -55,8 +55,8 @@ const ManageAssetScreen = () => {
     }, [blockNumber]);
 
     useEffect(() => {
-        setReceived([]);
-        setWithdrawn([]);
+        setReceived(undefined);
+        setWithdrawn(undefined);
         refreshLog();
     }, [asset]);
 
