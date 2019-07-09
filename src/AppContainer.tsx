@@ -20,8 +20,6 @@ import ManageAssetScreen from "./screens/main/assets/ManageAssetScreen";
 import MyAddressScreen from "./screens/main/assets/MyAddressScreen";
 import TransferAssetScreen from "./screens/main/assets/TransferAssetScreen";
 import WithdrawalScreen from "./screens/main/assets/WithdrawalScreen";
-import ExchangeScreen from "./screens/main/exchange/ExchangeScreen";
-import ExchangeWebViewScreen from "./screens/main/exchange/ExchangeWebViewScreen";
 import FinanceScreen from "./screens/main/finance/FinanceScreen";
 import NewSavingsScreen from "./screens/main/finance/NewSavingsScreen";
 import ProfileScreen from "./screens/main/profile/ProfileScreen";
@@ -79,10 +77,6 @@ const tabs = {
         screen: AssetsScreen,
         navigationOptions: tabBarNavigationOptions("assets", "pie-chart")
     },
-    ExchangeTab: {
-        screen: ExchangeScreen,
-        navigationOptions: tabBarNavigationOptions("exchange", "chart")
-    },
     ProfileTab: {
         screen: ProfileScreen,
         navigationOptions: tabBarNavigationOptions("profile", "user")
@@ -116,7 +110,6 @@ const AndroidTabNavigator = createMaterialBottomTabNavigator(tabs, {
 
 const MainNavigator = createDefaultStackNavigator({
     Tab: Platform.OS === "ios" ? IOSTabNavigator : AndroidTabNavigator,
-    ExchangeWebView: ExchangeWebViewScreen,
     NewSavings: NewSavingsScreen,
     ManageAsset: ManageAssetScreen,
     MyAddress: MyAddressScreen,
