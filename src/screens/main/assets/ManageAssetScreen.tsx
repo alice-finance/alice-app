@@ -24,9 +24,11 @@ import StartView from "../../../components/StartView";
 import SubtitleText from "../../../components/SubtitleText";
 import TokenIcon from "../../../components/TokenIcon";
 import { Spacing } from "../../../constants/dimension";
+import { AssetContext } from "../../../contexts/AssetContext";
 import { BalancesContext } from "../../../contexts/BalancesContext";
 import { ChainContext } from "../../../contexts/ChainContext";
 import useEthereumBlockNumberListener from "../../../hooks/useEthereumBlockNumberListener";
+import useKyberSwap, { TokenSwapped } from "../../../hooks/useKyberSwap";
 import usePendingWithdrawalListener from "../../../hooks/usePendingWithdrawalListener";
 import useTokenBalanceUpdater from "../../../hooks/useTokenBalanceUpdater";
 import preset from "../../../styles/preset";
@@ -39,17 +41,20 @@ const ManageAssetScreen = () => {
     const asset: ERC20Asset = getParam("asset");
     const { ethereumChain } = useContext(ChainContext);
     const { getBalance } = useContext(BalancesContext);
+    const [swapped, setSwapped] = useState<TokenSwapped[]>();
     const [received, setReceived] = useState<ETHReceived[] | ERC20Received[]>();
     const [withdrawn, setWithdrawn] = useState<ETHWithdrawn[] | ERC20Withdrawn[]>();
     const { blockNumber } = useEthereumBlockNumberListener();
     const { update } = useTokenBalanceUpdater();
     const { receipt } = usePendingWithdrawalListener(asset);
+    const { ready, getSwapLogsAsync } = useKyberSwap();
     const loomBalance = getBalance(asset.loomAddress);
     const ethereumBalance = getBalance(asset.ethereumAddress);
     const renderItem = ({ item }) => <ItemView asset={asset} item={item} blockNumber={blockNumber} />;
-    const items = [...(received || []), ...(withdrawn || [])].sort(
-        (l1, l2) => (l2.log.blockNumber || 0) - (l1.log.blockNumber || 0)
-    );
+    const [items, setItems] = useState<Array<
+        ETHReceived | ERC20Received | ETHWithdrawn | ERC20Withdrawn | TokenSwapped
+    > | null>(null);
+
     useEffect(() => {
         refreshLog();
     }, [blockNumber]);
@@ -57,8 +62,17 @@ const ManageAssetScreen = () => {
     useEffect(() => {
         setReceived(undefined);
         setWithdrawn(undefined);
-        refreshLog();
-    }, [asset]);
+        if (ready) {
+            refreshLog();
+        }
+    }, [ready, asset]);
+
+    useEffect(() => {
+        const newItems = [...(received || []), ...(withdrawn || []), ...(swapped || [])].sort(
+            (l1, l2) => (l2.log.blockNumber || 0) - (l1.log.blockNumber || 0)
+        );
+        setItems(newItems);
+    }, [received, withdrawn, swapped]);
 
     const refreshLog = useCallback(async () => {
         if (asset.ethereumAddress.isZero()) {
@@ -72,8 +86,11 @@ const ManageAssetScreen = () => {
                 ethereumChain!.getERC20WithdrawnLogsAsync(asset).then(setWithdrawn)
             ]);
         }
+        const logs = await getSwapLogsAsync(asset);
+        setSwapped(logs);
+
         await update();
-    }, [asset]);
+    }, [ready, asset]);
 
     if (asset) {
         return (
@@ -227,9 +244,12 @@ const PendingWithdrawalItemView = ({ asset, receipt }: { asset: ERC20Asset; rece
 
 const ItemView = ({ asset, item, blockNumber }: { asset: ERC20Asset; item: any; blockNumber: number | null }) => {
     const { t } = useTranslation("asset");
+    const { getAssetByEthereumAddress } = useContext(AssetContext);
     const withdraw = !!item.value;
+    const swap = !!item.actualDestAmount;
     const inProgress = !withdraw && blockNumber && item.log.blockNumber && blockNumber - item.log.blockNumber <= 15;
     const color = inProgress ? platform.brandWarning : withdraw ? platform.brandDanger : platform.brandInfo;
+    const symbol = swap && getAssetByEthereumAddress(item.dest) ? getAssetByEthereumAddress(item.dest)!.symbol : "";
     return (
         <ListItem noBorder={true} onPress={useCallback(() => openTx(item.log.transactionHash), [])}>
             <Left style={[preset.flex0]}>
@@ -237,13 +257,34 @@ const ItemView = ({ asset, item, blockNumber }: { asset: ERC20Asset; item: any; 
             </Left>
             <Body style={[preset.flex1, preset.marginLeftSmall]}>
                 <Text note={true} style={[preset.padding0, preset.marginLeftSmall]}>
-                    {withdraw ? t("withdrawal") : t("deposit")} {inProgress && " (" + t("processing") + ")"}
+                    {withdraw ? t("withdrawal") : swap ? t("tokenConversion") : t("deposit")}{" "}
+                    {inProgress && " (" + t("processing") + ")"}
                 </Text>
-                <BigNumberText
-                    value={item.amount || item.value}
-                    style={[preset.marginLeftSmall, preset.fontSize20]}
-                    suffix={" " + asset.symbol}
-                />
+                {!swap ? (
+                    <BigNumberText
+                        value={item.amount || item.value}
+                        style={[preset.marginLeftSmall, preset.fontSize20]}
+                        suffix={" " + asset.symbol}
+                    />
+                ) : (
+                    <View style={{ flexDirection: "row" }}>
+                        <BigNumberText
+                            value={item.actualSrcAmount}
+                            style={[preset.marginLeftSmall, preset.fontSize20]}
+                            suffix={" " + asset.symbol}
+                        />
+                        <Icon
+                            type="AntDesign"
+                            name="arrowright"
+                            style={[preset.fontSize20, preset.alignCenter, preset.marginLeftSmall]}
+                        />
+                        <BigNumberText
+                            value={item.actualDestAmount}
+                            style={[preset.marginLeftSmall, preset.fontSize20]}
+                            suffix={" " + symbol}
+                        />
+                    </View>
+                )}
             </Body>
         </ListItem>
     );

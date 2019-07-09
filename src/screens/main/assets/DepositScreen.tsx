@@ -29,6 +29,7 @@ const DepositScreen = () => {
     const { navigate, pop, getParam } = useNavigation();
     const { getPendingDepositTransactions } = useContext(PendingTransactionsContext);
     const [amount, setAmount] = useState<BigNumber | null>(null);
+    const [amountTo, setAmountTo] = useState<BigNumber | null>();
     const [selectedAsset, setSelectedAsset] = useState<ERC20Asset | null>(null);
     const [inProgress, setInProgress] = useState(false);
     const { swapToken } = useKyberSwap();
@@ -93,6 +94,7 @@ const DepositScreen = () => {
         },
         [asset]
     );
+
     return (
         <Container>
             <Content>
@@ -106,11 +108,17 @@ const DepositScreen = () => {
                             assetFrom={asset}
                             amount={amount}
                             assetTo={selectedAsset}
+                            amountTo={amountTo ? amountTo : amount}
                             onCancel={onCancel}
                             onOk={onOk}
                         />
                     ) : amount ? (
-                        <ConversionControls asset={asset} amount={amount!} onNext={setSelectedAsset} />
+                        <ConversionControls
+                            asset={asset}
+                            amount={amount!}
+                            setAmountTo={setAmountTo}
+                            onNext={setSelectedAsset}
+                        />
                     ) : (
                         <AmountControls asset={asset} onNext={onAmountNext} />
                     )}
@@ -123,12 +131,39 @@ const DepositScreen = () => {
 interface ConversionControlsProps {
     asset: ERC20Asset;
     amount: BigNumber;
+    setAmountTo: (amountTo: BigNumber) => void;
     onNext: (asset: ERC20Asset) => void;
 }
 
-const ConversionControls = ({ asset, amount, onNext }: ConversionControlsProps) => {
+const ConversionControls = ({ asset, amount, setAmountTo, onNext }: ConversionControlsProps) => {
     const { t } = useTranslation(["asset", "common"]);
     const { assets } = useContext(AssetContext);
+    const [amountToList, setAmountToList] = useState<{}>({});
+    const totalCount = assets.filter(a => a.symbol !== asset.symbol).length;
+    const [loadCount, setLoadCount] = useState(0);
+    const { ready, checkRate } = useKyberSwap();
+
+    const getRate = useCallback(
+        async (assetTo: ERC20Asset) => {
+            if (ready) {
+                const rate = await checkRate(asset, assetTo, amount);
+                const amountTo = rate.expectedRate.mul(amount).div(toBigNumber(10).pow(18));
+                setAmountToList(Object.assign({}, amountToList, { [assetTo.symbol]: amountTo }));
+                setLoadCount(loadCount + 1);
+            }
+        },
+        [ready, asset, amount, amountToList, loadCount]
+    );
+
+    useEffect(() => {
+        if (ready) {
+            assets
+                .filter(a => a.symbol !== asset.symbol)
+                .forEach(e => {
+                    getRate(e);
+                });
+        }
+    }, [ready, assets, asset]);
 
     return (
         <View>
@@ -138,6 +173,7 @@ const ConversionControls = ({ asset, amount, onNext }: ConversionControlsProps) 
                 block={true}
                 rounded={true}
                 onPress={useCallback(() => onNext(asset), [])}
+                disabled={totalCount > loadCount}
                 style={[preset.marginSmall, preset.marginTopLarge]}>
                 <Text>
                     {asset.ethereumAddress.isZero() ? t("tokenConversion.no", { symbol: asset.symbol }) : t("transfer")}
@@ -149,40 +185,20 @@ const ConversionControls = ({ asset, amount, onNext }: ConversionControlsProps) 
                     .map((a, key) => (
                         <SwapButton
                             key={key}
-                            assetFrom={asset}
                             assetTo={a}
-                            amount={amount}
-                            onPress={useCallback(() => onNext(a), [])}
+                            amountTo={a.symbol in amountToList ? amountToList[a.symbol] : null}
+                            onPress={useCallback(() => {
+                                setAmountTo(a.symbol in amountToList ? amountToList[a.symbol] : amount);
+                                onNext(a);
+                            }, [amountToList])}
                         />
                     ))}
         </View>
     );
 };
 
-const SwapButton = ({ assetFrom, assetTo, amount, onPress }) => {
+const SwapButton = ({ assetTo, amountTo, onPress }) => {
     const { t } = useTranslation(["asset", "common", "finance"]);
-    const [enabled, setEnabled] = useState(false);
-    const [loaded, setLoaded] = useState(false);
-    const [rate, setRate] = useState<BigNumber>(toBigNumber(0));
-    const [toAmount, setToAmount] = useState<BigNumber>(toBigNumber(0));
-    const { ready, checkRate } = useKyberSwap();
-
-    useEffect(() => {
-        const getRate = async () => {
-            const { expectedRate } = await checkRate(assetFrom, assetTo, amount);
-            setLoaded(true);
-            setRate(expectedRate);
-            setToAmount(expectedRate.mul(amount).div(toBigNumber(10).pow(18)));
-
-            if (!expectedRate.isZero()) {
-                setEnabled(true);
-            }
-        };
-
-        if (ready) {
-            getRate();
-        }
-    }, [ready, amount]);
 
     return (
         <View>
@@ -191,16 +207,16 @@ const SwapButton = ({ assetFrom, assetTo, amount, onPress }) => {
                 rounded={true}
                 bordered={true}
                 transparent={true}
-                disabled={!(loaded && enabled)}
+                disabled={!(amountTo !== null && !amountTo.isZero())}
                 onPress={onPress}
                 style={preset.marginSmall}>
                 <Text>
-                    {loaded
-                        ? rate.isZero()
+                    {amountTo
+                        ? amountTo.isZero()
                             ? t("tokenConversion.notAvailable", { symbol: assetTo.symbol })
                             : t("tokenConversion.available", {
                                   symbol: assetTo.symbol,
-                                  amount: formatValue(toAmount, assetTo.decimals, 2)
+                                  amount: formatValue(amountTo, assetTo.decimals, 2)
                               })
                         : t("finance:loading")}
                 </Text>
@@ -245,11 +261,12 @@ interface ConfirmProps {
     assetFrom: ERC20Asset;
     amount: BigNumber;
     assetTo: ERC20Asset;
+    amountTo: BigNumber;
     onCancel: () => void;
     onOk: () => void;
 }
 
-const Confirm = ({ assetFrom, amount, assetTo, onCancel, onOk }: ConfirmProps) => {
+const Confirm = ({ assetFrom, amount, assetTo, amountTo, onCancel, onOk }: ConfirmProps) => {
     const { t } = useTranslation(["asset"]);
     const { getBalance } = useContext(BalancesContext);
     const needSwap = assetFrom.symbol !== assetTo.symbol;
@@ -268,9 +285,9 @@ const Confirm = ({ assetFrom, amount, assetTo, onCancel, onOk }: ConfirmProps) =
             {needSwap ? (
                 <SwapConfirm
                     balance={loomBalance}
-                    value={amount}
                     assetFrom={assetFrom}
                     assetTo={assetTo}
+                    amount={amountTo}
                     onCancel={onCancel}
                     onOk={onOk}
                 />
@@ -323,46 +340,16 @@ interface SwapConfirmProps {
     balance: BigNumber;
     assetFrom: ERC20Asset;
     assetTo: ERC20Asset;
-    value: BigNumber;
+    amount: BigNumber;
     onCancel: () => void;
     onOk: () => void;
 }
 
-const SwapConfirm = ({ balance, assetFrom, assetTo, value, onCancel, onOk }: SwapConfirmProps) => {
+const SwapConfirm = ({ balance, assetFrom, assetTo, amount, onCancel, onOk }: SwapConfirmProps) => {
     const { t } = useTranslation(["asset", "common", "finance"]);
-    const [enabled, setEnabled] = useState(false);
-    const [loaded, setLoaded] = useState(false);
-    const [rate, setRate] = useState<BigNumber>(toBigNumber(0));
-    const [amount, setAmount] = useState<BigNumber>(toBigNumber(0));
-    const { ready, checkRate } = useKyberSwap();
-
-    useEffect(() => {
-        const getRate = async () => {
-            const { expectedRate } = await checkRate(assetFrom, assetTo, value);
-            setLoaded(true);
-            setRate(expectedRate);
-            setAmount(expectedRate.mul(value).div(toBigNumber(10).pow(18)));
-
-            if (!expectedRate.isZero()) {
-                setEnabled(true);
-            }
-        };
-
-        if (ready) {
-            getRate();
-        }
-    }, [ready, checkRate]);
-
-    // check(assetFrom, assetTo, value);
     return (
         <>
-            {loaded ? (
-                <Value value={balance.add(amount)} asset={assetTo} />
-            ) : (
-                <Text style={[preset.fontSize36, preset.textAlignCenter, preset.paddingSmall, preset.flex1]}>
-                    {t("finance:loading")}
-                </Text>
-            )}
+            <Value value={balance.add(amount)} asset={assetTo} />
             <View style={[preset.marginTopNormal, preset.marginBottomNormal, styles.border]} />
             <View style={[preset.flexDirectionRow, preset.marginTopNormal]}>
                 <Button
@@ -374,13 +361,7 @@ const SwapConfirm = ({ balance, assetFrom, assetTo, value, onCancel, onOk }: Swa
                     style={[preset.flex1, preset.marginRightSmall]}>
                     <Text>{t("common:cancel")}</Text>
                 </Button>
-                <Button
-                    primary={true}
-                    rounded={true}
-                    block={true}
-                    onPress={onOk}
-                    style={preset.flex1}
-                    disabled={!(loaded && enabled)}>
+                <Button primary={true} rounded={true} block={true} onPress={onOk} style={preset.flex1}>
                     <Text>{t("common:ok")}</Text>
                 </Button>
             </View>
