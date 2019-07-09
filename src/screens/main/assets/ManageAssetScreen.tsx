@@ -251,7 +251,9 @@ const ItemView = ({ asset, item, blockNumber }: { asset: ERC20Asset; item: any; 
     const color = inProgress ? platform.brandWarning : withdraw ? platform.brandDanger : platform.brandInfo;
     const symbol = swap && getAssetByEthereumAddress(item.dest) ? getAssetByEthereumAddress(item.dest)!.symbol : "";
     return (
-        <ListItem noBorder={true} onPress={useCallback(() => openTx(item.log.transactionHash), [])}>
+        <ListItem
+            noBorder={true}
+            onPress={useCallback(() => openTx(item.log.transactionHash), [item.log.transactionHash])}>
             <Left style={[preset.flex0]}>
                 <TypeBadge inProgress={inProgress} color={color} withdraw={withdraw} />
             </Left>
