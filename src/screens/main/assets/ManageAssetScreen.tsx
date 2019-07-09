@@ -51,22 +51,30 @@ const ManageAssetScreen = () => {
         (l1, l2) => (l2.log.blockNumber || 0) - (l1.log.blockNumber || 0)
     );
     useEffect(() => {
-        const refresh = async () => {
-            if (asset.ethereumAddress.isZero()) {
-                await Promise.all([
-                    ethereumChain!.getETHReceivedLogsAsync().then(setReceived),
-                    ethereumChain!.getETHWithdrawnLogsAsync().then(setWithdrawn)
-                ]);
-            } else {
-                await Promise.all([
-                    ethereumChain!.getERC20ReceivedLogsAsync(asset).then(setReceived),
-                    ethereumChain!.getERC20WithdrawnLogsAsync(asset).then(setWithdrawn)
-                ]);
-            }
-            await update();
-        };
-        refresh();
+        refreshLog();
     }, [blockNumber]);
+
+    useEffect(() => {
+        setReceived([]);
+        setWithdrawn([]);
+        refreshLog();
+    }, [asset]);
+
+    const refreshLog = useCallback(async () => {
+        if (asset.ethereumAddress.isZero()) {
+            await Promise.all([
+                ethereumChain!.getETHReceivedLogsAsync().then(setReceived),
+                ethereumChain!.getETHWithdrawnLogsAsync().then(setWithdrawn)
+            ]);
+        } else {
+            await Promise.all([
+                ethereumChain!.getERC20ReceivedLogsAsync(asset).then(setReceived),
+                ethereumChain!.getERC20WithdrawnLogsAsync(asset).then(setWithdrawn)
+            ]);
+        }
+        await update();
+    }, [asset]);
+
     if (asset) {
         return (
             <Container>
@@ -79,7 +87,7 @@ const ManageAssetScreen = () => {
                             rounded={true}
                             block={true}
                             style={[preset.flex1, preset.marginRightSmall]}
-                            onPress={useCallback(() => push("MyAddress"), [])}>
+                            onPress={useCallback(() => push("MyAddress"), [asset])}>
                             <Text>{t("receive")}</Text>
                         </Button>
                         <Button
@@ -88,7 +96,7 @@ const ManageAssetScreen = () => {
                             rounded={true}
                             block={true}
                             style={preset.flex1}
-                            onPress={useCallback(() => push("TransferAsset", { asset }), [])}>
+                            onPress={useCallback(() => push("TransferAsset", { asset }), [asset])}>
                             <Text>{t("send")}</Text>
                         </Button>
                     </View>
@@ -99,7 +107,7 @@ const ManageAssetScreen = () => {
                         balance={ethereumBalance}
                         asset={asset}
                         buttonText={t("deposit")}
-                        onPressButton={useCallback(() => push("Deposit", { asset }), [])}
+                        onPressButton={useCallback(() => push("Deposit", { asset }), [asset])}
                     />
                     <BalanceCard
                         title={t("aliceWallet")}
@@ -107,7 +115,7 @@ const ManageAssetScreen = () => {
                         balance={loomBalance}
                         asset={asset}
                         buttonText={t("withdrawal")}
-                        onPressButton={useCallback(() => push("Withdrawal", { asset }), [])}
+                        onPressButton={useCallback(() => push("Withdrawal", { asset }), [asset])}
                     />
                     <HeadlineText aboveText={true}>{t("transferHistory")}</HeadlineText>
                     {received && withdrawn ? (

@@ -48,7 +48,7 @@ const useLoader = () => {
             setEthereumChain(ethereumChain);
             setLoomChain(loomChain);
             setAssets(assets);
-            setAsset(asset);
+            setAsset(asset!); // Asset should not be undefined
             setDecimals(decimals);
             await update();
 

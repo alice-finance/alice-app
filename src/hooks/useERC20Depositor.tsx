@@ -7,12 +7,12 @@ import { PendingTransactionsContext } from "../contexts/PendingTransactionsConte
 import Analytics from "../helpers/Analytics";
 import useTokenBalanceUpdater from "./useTokenBalanceUpdater";
 
-const useERC20Depositor = (asset: ERC20Asset) => {
+const useERC20Depositor = () => {
     const { ethereumChain } = useContext(ChainContext);
     const { addPendingDepositTransaction, clearPendingDepositTransactions } = useContext(PendingTransactionsContext);
     const { update } = useTokenBalanceUpdater();
     const deposit = useCallback(
-        async (amount: ethers.utils.BigNumber) => {
+        async (asset: ERC20Asset, amount: ethers.utils.BigNumber) => {
             if (ethereumChain) {
                 const assetAddress = asset.ethereumAddress;
                 const gateway = ethereumChain.getGateway();
