@@ -9,6 +9,9 @@
       "android"
     ],
     "version": "1.0.1",
+    "extra": {
+      "pubVersion": 1
+    },
     "orientation": "portrait",
     "primaryColor": "#8315d6",
     "icon": "./src/assets/icon.png",

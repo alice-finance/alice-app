@@ -47,7 +47,7 @@ const ProfileScreen = () => {
                     iconName={"warning"}
                     onPress={onPressResetAccount}
                 />
-                <Item title={t("appVersion")} description={app.expo.version} />
+                <Item title={t("appVersion")} description={app.expo.version + "." + app.expo.extra.pubVersion} />
             </View>
             <Dialog />
         </Container>
