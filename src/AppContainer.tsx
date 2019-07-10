@@ -13,7 +13,6 @@ import { fromRight } from "react-navigation-transitions";
 
 import platform from "../native-base-theme/variables/platform";
 import TabBarIcon from "./components/TabBarIcon";
-import * as Analytics from "./helpers/Analytics";
 import AssetsScreen from "./screens/main/assets/AssetsScreen";
 import DepositScreen from "./screens/main/assets/DepositScreen";
 import ManageAssetScreen from "./screens/main/assets/ManageAssetScreen";
@@ -134,8 +133,6 @@ const I18nAppNavigator = Component => {
     HOC.router = Component.router;
     return HOC;
 };
-
-Analytics.initialize();
 
 const AppContainer = createAppContainer(I18nAppNavigator(AppNavigator));
 

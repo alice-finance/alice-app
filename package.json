@@ -32,6 +32,7 @@
     "react-native-paper": "^2.15.2",
     "react-native-progress-webview": "^1.1.2",
     "react-native-qrcode": "latest",
+    "react-native-screens": "^1.0.0-alpha.23",
     "react-navigation": "^3.11.0",
     "react-navigation-hooks": "^1.0.0-alpha.2",
     "react-navigation-material-bottom-tabs": "^1.0.0",
