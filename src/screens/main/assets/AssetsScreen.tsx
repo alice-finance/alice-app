@@ -46,7 +46,7 @@ const AssetsScreen = () => {
         <Container>
             <FlatList
                 data={sortedTokens()}
-                keyExtractor={defaultKeyExtractor}
+                keyExtractor={tokensKeyExtractor}
                 renderItem={renderItem}
                 refreshing={updating}
                 onRefresh={update}
@@ -55,6 +55,8 @@ const AssetsScreen = () => {
         </Container>
     );
 };
+
+const tokensKeyExtractor = (item: ERC20Asset, _: number) => item.symbol;
 
 AssetsScreen.navigationOptions = ({ navigation }) => ({
     headerRight: (
@@ -87,7 +89,12 @@ const useTokenSorter = () => {
 const TokenListItem = ({ token, onPress }: { token: ERC20Asset; onPress: (ERC20Asset) => void }) => {
     const { getBalance } = useContext(BalancesContext);
     return (
-        <ListItem button={true} noBorder={true} iconRight={true} onPress={useCallback(() => onPress(token), [token])}>
+        <ListItem
+            key={token.symbol}
+            button={true}
+            noBorder={true}
+            iconRight={true}
+            onPress={useCallback(() => onPress(token), [token])}>
             <Body style={styles.tokenIcon}>
                 <TokenIcon address={token.ethereumAddress.toLocalAddressString()} width={32} height={32} />
             </Body>
