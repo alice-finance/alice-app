@@ -13,7 +13,6 @@ import EmptyView from "../../../components/EmptyView";
 import SavingRecordCard from "../../../components/SavingRecordCard";
 import SavingsCard from "../../../components/SavingsCard";
 import Spinner from "../../../components/Spinner";
-import StartView from "../../../components/StartView";
 import SubtitleText from "../../../components/SubtitleText";
 import TitleText from "../../../components/TitleText";
 import { ChainContext } from "../../../contexts/ChainContext";
@@ -43,7 +42,6 @@ const FinanceScreen = () => {
         <Container>
             <Content>
                 <View>
-                    <StartView showImage={true} showTitle={true} />
                     <TitleText aboveText={true}>{t("savings")}</TitleText>
                     <CaptionText style={preset.marginBottomNormal}>{t("savings.description")}</CaptionText>
                     <SavingsCard />
