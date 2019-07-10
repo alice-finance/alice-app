@@ -18,6 +18,8 @@
         "next": "Next",
         "start": "Start",
         "seedPhrase": "Seed Phrase",
+        "seedWordN": "Word {{index}}",
+        "invalidSeedWords": "Invalid seed words",
         "generatingSeedPhrase": "Generating Seed Phrase...",
         "encrypting": "Encrypting Your Private Key...",
         "blogUrl": "https://medium.com/alice-finance",

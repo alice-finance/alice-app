@@ -1,10 +1,10 @@
 import React, { useCallback, useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Keyboard, View } from "react-native";
-import { TextInput } from "react-native-paper";
 
 import { Button, Container, Text } from "native-base";
 import CaptionText from "../../../components/CaptionText";
+import MnemonicInput from "../../../components/MnemonicInput";
 import SubtitleText from "../../../components/SubtitleText";
 import { ChainContext } from "../../../contexts/ChainContext";
 import useResetAccountDialog from "../../../hooks/useResetAccountDialog";
@@ -16,8 +16,8 @@ const ResetAccountScreen = () => {
     const [confirmed, setConfirmed] = useState(false);
     const { Dialog, openDialog } = useResetAccountDialog();
     const onChangeMnemonic = useCallback(
-        m => {
-            setConfirmed(mnemonic === m.trim());
+        newMnemonic => {
+            setConfirmed(mnemonic === newMnemonic);
         },
         [mnemonic]
     );
@@ -32,22 +32,17 @@ const ResetAccountScreen = () => {
             <SubtitleText aboveText={true}>{t("resetAccount")}</SubtitleText>
             <CaptionText>{t("resetAccount.requirement")}</CaptionText>
             <View style={preset.marginNormal}>
-                <TextInput
-                    mode="outlined"
-                    multiline={true}
-                    numberOfLines={0}
-                    placeholder={t("seedPhrase")}
-                    onChangeText={onChangeMnemonic}
-                    style={preset.marginTopNormal}
-                />
-                <Button
-                    block={true}
-                    rounded={true}
-                    disabled={!confirmed}
-                    style={preset.marginTopNormal}
-                    onPress={onComplete}>
-                    <Text>{t("common:ok")}</Text>
-                </Button>
+                <MnemonicInput onChangeMnemonic={onChangeMnemonic} style={preset.marginTopNormal} />
+                {confirmed && (
+                    <Button
+                        block={true}
+                        rounded={true}
+                        disabled={!confirmed}
+                        style={preset.marginTopNormal}
+                        onPress={onComplete}>
+                        <Text>{t("common:ok")}</Text>
+                    </Button>
+                )}
             </View>
             <Dialog />
         </Container>

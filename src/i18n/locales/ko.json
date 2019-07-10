@@ -18,6 +18,8 @@
         "next": "다음",
         "start": "시작하기",
         "seedPhrase": "시드 단어",
+        "seedWordN": "단어 {{index}}",
+        "invalidSeedWords": "유효하지 않은 시드 단어입니다.",
         "generatingSeedPhrase": "시드 단어 생성 중...",
         "encrypting": "개인키 암호화 중...",
         "blogUrl": "https://medium.com/alice-finance-korean",
@@ -29,11 +31,11 @@
         "newSeedPhrase": "새로운 시드 단어",
         "newSeedPhrase.description": "새로운 계정의 시드 단어는 아래와 같습니다. 시드 단어를 안전한 곳에 보관하세요.",
         "confirmSeedPhrase": "시드 단어 확인",
-        "confirmSeedPhrase.description": "생성된 시드 단어를 입력해주세요. 12개의 단어로 구성되어 있습니다.",
+        "confirmSeedPhrase.description": "생성된 시드 단어를 띄어쓰기로 구분해서 입력해주세요. 12개의 단어로 구성되어 있습니다.",
         "complete": "환영합니다",
         "complete.description": "지갑 생성이 완료되었습니다! 아래 버튼을 눌러 Alice를 시작해보세요.",
         "importSeedPhrase": "시드 단어 불러오기",
-        "importSeedPhrase.description": "기존의 시드 단어를 입력해주세요. 12개의 단어로 구성되어 있습니다.",
+        "importSeedPhrase.description": "기존의 시드 단어를 띄어쓰기로 구분해서 입력해주세요. 12개의 단어로 구성되어 있습니다.",
         "inputSeedPhraseNotice": "모든 단어는 소문자입니다.\n단어와 단어 사이는 공백으로 구분됩니다."
     },
     "auth": {

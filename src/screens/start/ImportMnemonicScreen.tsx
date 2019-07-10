@@ -1,13 +1,13 @@
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
-import { TextInput } from "react-native-paper";
 import { useNavigation } from "react-navigation-hooks";
 
 import { wordlists } from "bip39";
 import * as SecureStore from "expo-secure-store";
 import { Button, Container, Text } from "native-base";
 import CaptionText from "../../components/CaptionText";
+import MnemonicInput from "../../components/MnemonicInput";
 import Spinner from "../../components/Spinner";
 import SubtitleText from "../../components/SubtitleText";
 import Analytics from "../../helpers/Analytics";
@@ -20,16 +20,10 @@ const ImportMnemonicScreen = () => {
     const [confirmed, setConfirmed] = useState(false);
     const [encrypting, setEncrypting] = useState(false);
     const [mnemonic, setMnemonic] = useState("");
-    const [userMnemonic, setUserMnemonic] = useState("");
 
     const onChangeMnemonic = useCallback(
         newMnemonic => {
-            newMnemonic = newMnemonic
-                .toLowerCase()
-                .replace(/\s\s+/g, " ")
-                .replace(/[^a-z ]/, "");
-            setUserMnemonic(newMnemonic);
-            const words = newMnemonic.trim().split(" ");
+            const words = newMnemonic.split(" ");
             setConfirmed(words.length === 12 && words.every(word => wordlists.english.includes(word)));
             setMnemonic(newMnemonic.trim());
         },
@@ -57,30 +51,19 @@ const ImportMnemonicScreen = () => {
                 {encrypting ? (
                     <Spinner compact={true} label={t("common:encrypting")} />
                 ) : (
-                    <>
-                        <TextInput
-                            mode="outlined"
-                            multiline={true}
-                            numberOfLines={0}
-                            placeholder={t("common:seedPhrase")}
-                            autoCapitalize="none"
-                            autoCorrect={false}
-                            onChangeText={onChangeMnemonic}
-                            style={preset.marginTopNormal}
-                            value={userMnemonic}
-                        />
-                        <CaptionText style={[preset.marginTopNormal, { marginHorizontal: 0, fontSize: 16 }]}>
-                            {t("start:inputSeedPhraseNotice")}
-                        </CaptionText>
-                        <Button
-                            block={true}
-                            rounded={true}
-                            disabled={!confirmed}
-                            style={preset.marginTopNormal}
-                            onPress={onComplete}>
-                            <Text>{t("common:next")}</Text>
-                        </Button>
-                    </>
+                    <View style={preset.marginSmall}>
+                        <MnemonicInput onChangeMnemonic={onChangeMnemonic} style={preset.marginTopNormal} />
+                        {confirmed && (
+                            <Button
+                                block={true}
+                                rounded={true}
+                                disabled={!confirmed}
+                                style={preset.marginTopNormal}
+                                onPress={onComplete}>
+                                <Text>{t("common:next")}</Text>
+                            </Button>
+                        )}
+                    </View>
                 )}
             </View>
         </Container>

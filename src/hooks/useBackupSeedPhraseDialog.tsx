@@ -1,10 +1,11 @@
 import React, { useCallback, useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Clipboard, View } from "react-native";
-import { Chip, Dialog, Portal } from "react-native-paper";
+import { Dialog, Portal } from "react-native-paper";
 
 import { Button, Icon, Text, Toast } from "native-base";
 import platform from "../../native-base-theme/variables/platform";
+import MnemonicChip from "../components/MnemonicChip";
 import { Spacing } from "../constants/dimension";
 import { ChainContext } from "../contexts/ChainContext";
 
@@ -43,16 +44,9 @@ const BackupSeedPhraseDialog = ({ visible, onCancel, onOk }) => {
                     <Text style={{ color: platform.brandDanger, marginVertical: Spacing.normal }}>
                         {t("backupSeedPhrase.warning")}
                     </Text>
-                    <View
-                        style={{
-                            flexDirection: "row",
-                            flexWrap: "wrap",
-                            paddingHorizontal: 12
-                        }}>
+                    <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
                         {mnemonic.split(" ").map((word, index) => (
-                            <Chip mode="outlined" key={index} style={{ margin: Spacing.tiny }}>
-                                {word}
-                            </Chip>
+                            <MnemonicChip key={index} word={word} />
                         ))}
                     </View>
                 </Dialog.Content>
