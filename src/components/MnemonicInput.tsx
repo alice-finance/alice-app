@@ -76,6 +76,7 @@ const Input = ({ index, onSubmit, onBackspace }) => {
         ({ nativeEvent }) => {
             if (nativeEvent.key === " ") {
                 onSubmit(text);
+                setText("");
                 if (input.current) {
                     input.current.focus();
                 }
@@ -85,16 +86,17 @@ const Input = ({ index, onSubmit, onBackspace }) => {
                 }
             }
         },
-        [text, input]
+        [text, setText, input]
     );
     const onSubmitEditing = useCallback(
         ({ nativeEvent }) => {
             onSubmit(nativeEvent.text);
+            setText("");
             if (input.current) {
                 input.current.focus();
             }
         },
-        [input]
+        [setText, input]
     );
     return (
         <TextInput
