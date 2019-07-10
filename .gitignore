@@ -320,5 +320,11 @@ fabric.properties
 # Sonarlint plugin
 .idea/sonarlint
 
+# vscode
+.vscode
+
+# systrace
+trace.html
+
 # End of https://www.gitignore.io/api/webstorm,reactnative
 

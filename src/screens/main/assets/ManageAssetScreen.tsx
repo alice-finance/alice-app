@@ -20,7 +20,6 @@ import CaptionText from "../../../components/CaptionText";
 import EmptyView from "../../../components/EmptyView";
 import HeadlineText from "../../../components/HeadlineText";
 import Spinner from "../../../components/Spinner";
-import StartView from "../../../components/StartView";
 import SubtitleText from "../../../components/SubtitleText";
 import TokenIcon from "../../../components/TokenIcon";
 import { Spacing } from "../../../constants/dimension";
@@ -117,7 +116,6 @@ const ManageAssetScreen = () => {
                             <Text>{t("send")}</Text>
                         </Button>
                     </View>
-                    <StartView style={{ marginBottom: Spacing.small }} />
                     <BalanceCard
                         title={t("ethereumWallet")}
                         description={t("ethereumWallet.description")}
