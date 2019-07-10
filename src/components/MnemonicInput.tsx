@@ -109,6 +109,7 @@ const Input = ({ index, onSubmit, onBackspace }) => {
             placeholder={t("seedWordN", { index })}
             returnKeyType={index === MAX_MNEMONIC ? "done" : "next"}
             onKeyPress={onKeyPress}
+            value={text}
             onChangeText={setText}
             onSubmitEditing={onSubmitEditing}
             style={[

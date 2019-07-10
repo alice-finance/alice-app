@@ -42,7 +42,7 @@ const ImportMnemonicScreen = () => {
                 setEncrypting(false);
             }
         }
-    }, [mnemonic]);
+    }, [confirmed, mnemonic]);
     return (
         <Container>
             <SubtitleText aboveText={true}>{t("importSeedPhrase")}</SubtitleText>
