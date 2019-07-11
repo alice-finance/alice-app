@@ -10,7 +10,7 @@
     ],
     "version": "1.0.1",
     "extra": {
-      "pubVersion": 4
+      "pubVersion": 5
     },
     "orientation": "portrait",
     "primaryColor": "#8315d6",
