@@ -7,7 +7,7 @@ import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
 import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { ethers } from "ethers";
 import { BigNumber } from "ethers/utils";
-import { Button, Container, Content, Icon, Text, Toast } from "native-base";
+import { Button, Container, Content, Icon, Text } from "native-base";
 import platform from "../../../../native-base-theme/variables/platform";
 import AmountInput from "../../../components/AmountInput";
 import CaptionText from "../../../components/CaptionText";
@@ -20,6 +20,7 @@ import useERC20Withdrawer from "../../../hooks/useERC20Withdrawer";
 import useETHWithdrawer from "../../../hooks/useETHWithdrawer";
 import preset from "../../../styles/preset";
 import { formatValue } from "../../../utils/big-number-utils";
+import SnackBar from "../../../utils/SnackBar";
 
 const WithdrawalScreen = () => {
     const { t } = useTranslation(["asset"]);
@@ -43,7 +44,7 @@ const WithdrawalScreen = () => {
                 await withdrawERC20(change!);
             }
             pop();
-            Toast.show({ text: t("withdrawalSuccess") });
+            SnackBar.success(t("withdrawalSuccess"));
         } catch (e) {
             if (e.code === "INSUFFICIENT_FUNDS") {
                 let text = t("insufficientFunds");
@@ -51,9 +52,9 @@ const WithdrawalScreen = () => {
                     const gas = ethers.utils.formatEther(e.transaction.gasPrice.mul(e.transaction.gasLimit));
                     text = text + " (" + gas + " ETH)";
                 }
-                Toast.show({ text });
+                SnackBar.danger(text);
             } else {
-                Toast.show({ text: t("depositChangeFailure") });
+                SnackBar.danger(e.message);
             }
         } finally {
             setAmount(null);

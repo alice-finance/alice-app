@@ -37,6 +37,8 @@
     "react-navigation-hooks": "^1.0.0-alpha.2",
     "react-navigation-material-bottom-tabs": "^1.0.0",
     "react-navigation-transitions": "^1.0.10",
+    "redux": "^4.0.4",
+    "rn-snackbar": "^1.0.6",
     "vm-browserify": "1.1.0",
     "whatwg-url": "^7.0.0"
   },

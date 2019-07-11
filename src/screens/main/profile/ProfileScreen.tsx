@@ -4,12 +4,13 @@ import { Clipboard, View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
 import { Linking } from "expo";
-import { Body, Container, Icon, ListItem, Text, Toast } from "native-base";
+import { Body, Container, Icon, ListItem, Text } from "native-base";
 import app from "../../../../app.json";
 import TitleText from "../../../components/TitleText";
 import { Spacing } from "../../../constants/dimension";
 import { ChainContext } from "../../../contexts/ChainContext";
 import useBackupSeedPhraseDialog from "../../../hooks/useBackupSeedPhraseDialog";
+import SnackBar from "../../../utils/SnackBar";
 
 const ProfileScreen = () => {
     const { t } = useTranslation(["profile", "common"]);
@@ -17,7 +18,7 @@ const ProfileScreen = () => {
     const { ethereumChain } = useContext(ChainContext);
     const onPressMyAddress = useCallback(() => {
         Clipboard.setString(ethereumChain!.getAddress().toLocalAddressString());
-        Toast.show({ text: t("addressCopiedToTheClipboard") });
+        SnackBar.success(t("addressCopiedToTheClipboard"));
     }, []);
     const onPressCustomerSupport = useCallback(() => Linking.openURL(t("common:telegramUrl")), []);
     const onPressResetAccount = useCallback(() => push("ResetAccount"), []);

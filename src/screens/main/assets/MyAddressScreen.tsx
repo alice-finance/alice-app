@@ -3,12 +3,13 @@ import { useTranslation } from "react-i18next";
 import { Clipboard, View } from "react-native";
 import QRCode from "react-native-qrcode";
 
-import { Button, Container, Text, Toast } from "native-base";
+import { Button, Container, Text } from "native-base";
 import CaptionText from "../../../components/CaptionText";
 import HeadlineText from "../../../components/HeadlineText";
 import { Spacing } from "../../../constants/dimension";
 import { ChainContext } from "../../../contexts/ChainContext";
 import preset from "../../../styles/preset";
+import SnackBar from "../../../utils/SnackBar";
 
 const MyAddressScreen = () => {
     const { t } = useTranslation(["profile", "common"]);
@@ -16,7 +17,7 @@ const MyAddressScreen = () => {
     const address = ethereumChain!.getAddress().toLocalAddressString();
     const onOk = useCallback(() => {
         Clipboard.setString(address);
-        Toast.show({ text: t("addressCopiedToTheClipboard") });
+        SnackBar.success(t("addressCopiedToTheClipboard"));
     }, []);
     return (
         <Container>

@@ -1,13 +1,13 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { StyleSheet, View } from "react-native";
+import { Keyboard, StyleSheet, View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
 import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
 import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { ethers } from "ethers";
 import { BigNumber } from "ethers/utils";
-import { Button, Container, Content, Icon, Text, Toast } from "native-base";
+import { Button, Container, Content, Icon, Text } from "native-base";
 import platform from "../../../../native-base-theme/variables/platform";
 import AmountInput from "../../../components/AmountInput";
 import CaptionText from "../../../components/CaptionText";
@@ -23,6 +23,7 @@ import useETHDepositor from "../../../hooks/useETHDepositor";
 import useKyberSwap from "../../../hooks/useKyberSwap";
 import preset from "../../../styles/preset";
 import { formatValue } from "../../../utils/big-number-utils";
+import SnackBar from "../../../utils/SnackBar";
 
 const DepositScreen = () => {
     const { t } = useTranslation(["asset"]);
@@ -47,7 +48,7 @@ const DepositScreen = () => {
                     await depositERC20(asset, amount!);
                 }
                 pop();
-                Toast.show({ text: t("depositSuccess") });
+                SnackBar.success(t("depositSuccess"));
             } catch (e) {
                 if (e.code === "INSUFFICIENT_FUNDS") {
                     let text = t("insufficientFunds");
@@ -55,9 +56,9 @@ const DepositScreen = () => {
                         const gas = ethers.utils.formatEther(e.transaction.gasPrice.mul(e.transaction.gasLimit));
                         text = text + " (" + gas + " ETH)";
                     }
-                    Toast.show({ text });
+                    SnackBar.danger(text);
                 } else {
-                    Toast.show({ text: t("depositChangeFailure") });
+                    SnackBar.danger(e.message);
                 }
             } finally {
                 setAmount(null);
@@ -72,8 +73,9 @@ const DepositScreen = () => {
                     await depositERC20(selectedAsset!, result.convertedAmount);
                 }
                 navigate("ManageAsset", { asset: selectedAsset });
-                Toast.show({ text: t("depositSuccess") });
+                SnackBar.success(t("depositSuccess"));
             } catch (e) {
+                SnackBar.danger(e.message);
             } finally {
                 setAmount(null);
                 setInProgress(false);
@@ -94,6 +96,11 @@ const DepositScreen = () => {
         },
         [asset]
     );
+    useEffect(() => {
+        return () => {
+            setTimeout(() => Keyboard.dismiss(), 500);
+        };
+    }, []);
 
     return (
         <Container>
@@ -285,7 +292,6 @@ const Confirm = ({ assetFrom, amount, assetTo, amountTo, onCancel, onOk }: Confi
             {needSwap ? (
                 <SwapConfirm
                     balance={loomBalance}
-                    assetFrom={assetFrom}
                     assetTo={assetTo}
                     amount={amountTo}
                     onCancel={onCancel}
@@ -338,14 +344,13 @@ const PlusConfirm = ({ balance, asset, value, onCancel, onOk }: PlusConfirmProps
 
 interface SwapConfirmProps {
     balance: BigNumber;
-    assetFrom: ERC20Asset;
     assetTo: ERC20Asset;
     amount: BigNumber;
     onCancel: () => void;
     onOk: () => void;
 }
 
-const SwapConfirm = ({ balance, assetFrom, assetTo, amount, onCancel, onOk }: SwapConfirmProps) => {
+const SwapConfirm = ({ balance, assetTo, amount, onCancel, onOk }: SwapConfirmProps) => {
     const { t } = useTranslation(["asset", "common", "finance"]);
     return (
         <>

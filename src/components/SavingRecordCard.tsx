@@ -7,13 +7,14 @@ import Dialog from "../react-native-paper/Dialog/Dialog";
 import { SavingsRecord } from "@alice-finance/alice.js/dist/contracts/MoneyMarket";
 import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { BigNumber } from "ethers/utils";
-import { Button, Card, CardItem, Left, Right, Text, Toast } from "native-base";
+import { Button, Card, CardItem, Left, Right, Text } from "native-base";
 import { ChainContext } from "../contexts/ChainContext";
 import { SavingsContext } from "../contexts/SavingsContext";
 import Analytics from "../helpers/Analytics";
 import useMySavingsUpdater from "../hooks/useMySavingsUpdater";
 import preset from "../styles/preset";
 import { formatValue } from "../utils/big-number-utils";
+import SnackBar from "../utils/SnackBar";
 import AgoText from "./AgoText";
 import AmountInput from "./AmountInput";
 import BigNumberText from "./BigNumberText";
@@ -112,9 +113,11 @@ const WithdrawDialog = ({ visible, onCancel, onOk, record, apr }) => {
                 await tx.wait();
                 setTotalBalance(toBigNumber(await market.totalFunds()));
                 await update();
-                Toast.show({ text: t("withdrawalComplete") });
+                SnackBar.success(t("withdrawalComplete"));
                 Analytics.track(Analytics.events.SAVINGS_WITHDRAWN);
                 onOk();
+            } catch (e) {
+                SnackBar.danger(e.message);
             } finally {
                 setInProgress(false);
             }

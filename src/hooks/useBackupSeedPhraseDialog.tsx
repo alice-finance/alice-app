@@ -3,11 +3,12 @@ import { useTranslation } from "react-i18next";
 import { Clipboard, View } from "react-native";
 import { Dialog, Portal } from "react-native-paper";
 
-import { Button, Icon, Text, Toast } from "native-base";
+import { Button, Icon, Text } from "native-base";
 import platform from "../../native-base-theme/variables/platform";
 import MnemonicChip from "../components/MnemonicChip";
 import { Spacing } from "../constants/dimension";
 import { ChainContext } from "../contexts/ChainContext";
+import SnackBar from "../utils/SnackBar";
 
 const useBackupSeedPhraseDialog = () => {
     const { t } = useTranslation("profile");
@@ -18,7 +19,7 @@ const useBackupSeedPhraseDialog = () => {
     const onOk = useCallback(() => {
         setDialogOpen(false);
         Clipboard.setString(mnemonic);
-        Toast.show({ text: t("seedPhraseCopiedToTheClipboard") });
+        SnackBar.success(t("seedPhraseCopiedToTheClipboard"));
     }, []);
     return {
         Dialog: (() => (

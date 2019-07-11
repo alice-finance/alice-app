@@ -6,9 +6,10 @@ import ProgressWebView from "react-native-progress-webview";
 import { useNavigation } from "react-navigation-hooks";
 
 import { Linking } from "expo";
-import { Button, Container, Icon, Toast } from "native-base";
+import { Button, Container, Icon } from "native-base";
 import { ChainContext } from "../../../contexts/ChainContext";
 import preset from "../../../styles/preset";
+import SnackBar from "../../../utils/SnackBar";
 import { Exchange } from "./ExchangeScreen";
 
 const ExchangeWebViewScreen = () => {
@@ -40,7 +41,7 @@ const HeaderMenu = ({ uri, webView }) => {
     const refresh = useCallback(() => webView.current.reload(), [webView]);
     const copy = useCallback(() => {
         Clipboard.setString(ethereumChain!.getAddress().toLocalAddressString());
-        Toast.show({ text: t("profile:addressCopiedToTheClipboard") });
+        SnackBar.success(t("profile:addressCopiedToTheClipboard"));
     }, []);
     const openInBrowser = useCallback(() => {
         Linking.openURL(uri);

@@ -4,9 +4,9 @@ import { useNavigation } from "react-navigation-hooks";
 
 import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
 import { ethers } from "ethers";
-import { Toast } from "native-base";
 import { ChainContext } from "../contexts/ChainContext";
 import Analytics from "../helpers/Analytics";
+import SnackBar from "../utils/SnackBar";
 import useMySavingsUpdater from "./useMySavingsUpdater";
 import useTokenBalanceUpdater from "./useTokenBalanceUpdater";
 
@@ -28,11 +28,11 @@ const useSavingsStarter = (asset: ERC20Asset | null, amount: ethers.utils.BigNum
                 await depositTx.wait();
                 await updateTokenBalances();
                 await updateMySavings();
-                Toast.show({ text: t("aNewSavingsStartToday") });
+                SnackBar.success(t("aNewSavingsStartToday"));
                 Analytics.track(Analytics.events.SAVINGS_DEPOSITED);
                 pop();
             } catch (e) {
-                Toast.show({ text: t("savingsFailure") });
+                SnackBar.danger(e.message);
             } finally {
                 setStarting(false);
             }

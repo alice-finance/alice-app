@@ -5,13 +5,14 @@ import { useNavigation } from "react-navigation-hooks";
 
 import { entropyToMnemonic } from "bip39";
 import * as Random from "expo-random";
-import { Button, Container, Text, Toast } from "native-base";
+import { Button, Container, Text } from "native-base";
 import CaptionText from "../../components/CaptionText";
 import MnemonicChip from "../../components/MnemonicChip";
 import Spinner from "../../components/Spinner";
 import SubtitleText from "../../components/SubtitleText";
 import { Spacing } from "../../constants/dimension";
 import preset from "../../styles/preset";
+import SnackBar from "../../utils/SnackBar";
 
 const NewMnemonicScreen = () => {
     const { t } = useTranslation(["common", "start", "profile"]);
@@ -21,7 +22,7 @@ const NewMnemonicScreen = () => {
     const onPressConfirm = useCallback(() => push("ConfirmMnemonic", { mnemonic }), [mnemonic]);
     const onCopy = useCallback(() => {
         Clipboard.setString(mnemonic);
-        Toast.show({ text: t("profile:seedPhraseCopiedToTheClipboard") });
+        SnackBar.success(t("profile:seedPhraseCopiedToTheClipboard"));
     }, [mnemonic]);
     useEffect(() => {
         Random.getRandomBytesAsync(16).then(entropy => {

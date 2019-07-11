@@ -7,7 +7,7 @@ import { useNavigation } from "react-navigation-hooks";
 import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
 import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { BigNumber } from "ethers/utils";
-import { Button, Container, Text, Toast } from "native-base";
+import { Button, Container, Text } from "native-base";
 import platform from "../../../../native-base-theme/variables/platform";
 import AmountInput from "../../../components/AmountInput";
 import Spinner from "../../../components/Spinner";
@@ -18,6 +18,7 @@ import { ChainContext } from "../../../contexts/ChainContext";
 import preset from "../../../styles/preset";
 import { formatValue } from "../../../utils/big-number-utils";
 import { openTx } from "../../../utils/ether-scan-utils";
+import SnackBar from "../../../utils/SnackBar";
 
 const TransferAssetScreen = () => {
     const { t } = useTranslation(["asset", "common"]);
@@ -57,9 +58,9 @@ const TransferAssetScreen = () => {
                 }
                 setAddress("");
                 setAmount(null);
-                Toast.show({ text: t("transferSuccess") });
+                SnackBar.success(t("transferSuccess"));
             } catch (e) {
-                Toast.show({ text: e.message, duration: 10000 });
+                SnackBar.danger(e.message);
             } finally {
                 setTxHash(null);
                 setInProgress(false);
