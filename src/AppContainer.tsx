@@ -83,6 +83,7 @@ const tabs = {
 };
 
 const IOSTabNavigator = createBottomTabNavigator(tabs, {
+    backBehavior: "initialRoute",
     tabBarOptions: {
         activeTintColor: platform.brandPrimary,
         inactiveTintColor: "darkgrey",
@@ -103,7 +104,7 @@ const AndroidTabNavigator = createMaterialBottomTabNavigator(tabs, {
         shadowRadius: 4,
         shadowOffset: { width: 0, height: 0 }
     },
-    backBehavior: "none",
+    backBehavior: "initialRoute",
     shifting: false
 });
 
