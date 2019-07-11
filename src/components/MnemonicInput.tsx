@@ -1,6 +1,6 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Text, TextInput, View, ViewProps } from "react-native";
+import { Platform, Text, TextInput, View, ViewProps } from "react-native";
 
 import { wordlists } from "bip39";
 import platform from "../../native-base-theme/variables/platform";
@@ -8,6 +8,8 @@ import preset from "../styles/preset";
 import MnemonicChip from "./MnemonicChip";
 
 const MAX_MNEMONIC = 12;
+
+const isLetter = char => char.length === 1 && char.match(/[a-z]/i);
 
 interface MnemonicInputProps extends ViewProps {
     onChangeMnemonic: (mnemonic: string) => void;
@@ -26,24 +28,18 @@ const MnemonicInput = (props: MnemonicInputProps) => {
                 .map(word => word.toLowerCase().replace(/[^a-z ]/, ""));
             const validWords = words.filter(word => wordlists.english.includes(word));
             if (words.length > 0) {
-                setMnemonic(prevState => {
-                    const newMnemonic = [...prevState, ...validWords];
-                    props.onChangeMnemonic(newMnemonic.join(" "));
-                    return newMnemonic;
-                });
+                setMnemonic([...mnemonic, ...validWords]);
             }
             setError(words.length !== validWords.length);
         },
-        [setMnemonic, setError]
+        [mnemonic, setMnemonic, setError]
     );
     const onBackspace = useCallback(() => {
-        setMnemonic(prevState => {
-            const newMnemonic = prevState;
-            newMnemonic.pop();
-            props.onChangeMnemonic(newMnemonic.join(" "));
-            return newMnemonic;
-        });
-    }, [setMnemonic]);
+        setMnemonic(mnemonic.slice(0, -1));
+    }, [mnemonic, setMnemonic]);
+    useEffect(() => {
+        props.onChangeMnemonic(mnemonic.join(" "));
+    }, [mnemonic]);
     return (
         <View {...props}>
             <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
@@ -71,9 +67,11 @@ const MnemonicInput = (props: MnemonicInputProps) => {
 const Input = ({ index, onSubmit, onBackspace }) => {
     const { t } = useTranslation("common");
     const [text, setText] = useState("");
+    const [changeable, setChangeable] = useState(true);
     const input = useRef<TextInput>(null);
     const onKeyPress = useCallback(
         ({ nativeEvent }) => {
+            setChangeable(false);
             if (nativeEvent.key === " ") {
                 onSubmit(text);
                 setText("");
@@ -83,20 +81,39 @@ const Input = ({ index, onSubmit, onBackspace }) => {
             } else if (nativeEvent.key === "Backspace") {
                 if (text.length === 0) {
                     onBackspace();
+                } else if (Platform.OS === "ios") {
+                    setText(text.slice(0, -1));
                 }
+            } else if (isLetter(nativeEvent.key) && Platform.OS === "ios") {
+                setText(text + nativeEvent.key);
             }
         },
-        [text, setText, input]
+        [text, input, onBackspace, onSubmit]
     );
     const onSubmitEditing = useCallback(
         ({ nativeEvent }) => {
             onSubmit(nativeEvent.text);
             setText("");
-            if (input.current) {
-                input.current.focus();
+            setTimeout(() => {
+                if (input.current) {
+                    input.current.focus();
+                }
+            }, 50);
+        },
+        [input, onSubmit]
+    );
+    const onChangeText = useCallback(
+        newText => {
+            if (Platform.OS === "ios") {
+                if (changeable) {
+                    setText(newText);
+                }
+                setChangeable(true);
+            } else {
+                setText(newText);
             }
         },
-        [setText, input]
+        [changeable, setChangeable]
     );
     return (
         <TextInput
@@ -110,7 +127,7 @@ const Input = ({ index, onSubmit, onBackspace }) => {
             returnKeyType={index === MAX_MNEMONIC ? "done" : "next"}
             onKeyPress={onKeyPress}
             value={text}
-            onChangeText={setText}
+            onChangeText={onChangeText}
             onSubmitEditing={onSubmitEditing}
             style={[
                 { width: 120, borderBottomColor: platform.brandLight, borderBottomWidth: 2 },
