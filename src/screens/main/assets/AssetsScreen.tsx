@@ -14,6 +14,7 @@ import { ERC20_MAX_PRECISION } from "../../../constants/token";
 import { AssetContext } from "../../../contexts/AssetContext";
 import { BalancesContext } from "../../../contexts/BalancesContext";
 import { ChainContext } from "../../../contexts/ChainContext";
+import useCancelablePromise from "../../../hooks/useCancelablePromise";
 import useEthereumBlockNumberListener from "../../../hooks/useEthereumBlockNumberListener";
 import usePendingWithdrawalHandler from "../../../hooks/usePendingWithdrawalHandler";
 import useTokenBalanceUpdater from "../../../hooks/useTokenBalanceUpdater";
@@ -27,6 +28,7 @@ const AssetsScreen = () => {
     const { handlePendingWithdrawal } = usePendingWithdrawalHandler();
     const { blockNumber } = useEthereumBlockNumberListener();
     const { loomChain, ethereumChain } = useContext(ChainContext);
+    const { cancelablePromise } = useCancelablePromise();
     const { push, setParams } = useNavigation();
     const onSort = useCallback(() => setSortedByName(!sortedByName), [sortedByName]);
     const onPress = useCallback((asset: ERC20Asset) => push("ManageAsset", { asset }), []);
@@ -39,7 +41,7 @@ const AssetsScreen = () => {
 
     useEffect(() => {
         if (blockNumber && blockNumber % 4 === 0) {
-            Promise.all([update(), handlePendingWithdrawal()]);
+            cancelablePromise(Promise.all([update(), handlePendingWithdrawal()]));
         }
     }, [blockNumber]);
     return (

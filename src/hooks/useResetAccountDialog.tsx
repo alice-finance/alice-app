@@ -1,12 +1,13 @@
 import React, { useCallback, useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { View } from "react-native";
+import { AsyncStorage, View } from "react-native";
 import { Dialog, Portal } from "react-native-paper";
 
 import { SecureStore, Updates } from "expo";
 import { Button, Icon, Text } from "native-base";
 import platform from "../../native-base-theme/variables/platform";
 import { Spacing } from "../constants/dimension";
+import { AssetContext } from "../contexts/AssetContext";
 import { ChainContext } from "../contexts/ChainContext";
 
 const useResetAccountDialog = () => {
@@ -20,6 +21,7 @@ const useResetAccountDialog = () => {
         await SecureStore.deleteItemAsync("ethereumPrivateKey");
         await SecureStore.deleteItemAsync("loomPrivateKey");
         await Updates.reload();
+        await AsyncStorage.clear();
         setEthereumChain(null);
         setLoomChain(null);
     }, []);

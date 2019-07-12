@@ -16,9 +16,14 @@ import { ethers } from "ethers";
 import { YellowBox, Platform, StatusBar } from "react-native";
 import { useScreens } from "react-native-screens";
 
-YellowBox.ignoreWarnings(["Setting a timer"]);
+if (__DEV__) {
+    YellowBox.ignoreWarnings(["Setting a timer"]);
+}
 ethers.errors.setLogLevel("error");
-Analytics.initialize();
+
+if (!__DEV__) {
+    Analytics.initialize();
+}
 useScreens();
 
 export default class App extends React.Component {

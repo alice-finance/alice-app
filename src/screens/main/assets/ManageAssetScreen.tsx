@@ -26,8 +26,10 @@ import { Spacing } from "../../../constants/dimension";
 import { AssetContext } from "../../../contexts/AssetContext";
 import { BalancesContext } from "../../../contexts/BalancesContext";
 import { ChainContext } from "../../../contexts/ChainContext";
+import useCancelablePromise from "../../../hooks/useCancelablePromise";
 import useEthereumBlockNumberListener from "../../../hooks/useEthereumBlockNumberListener";
 import useKyberSwap, { TokenSwapped } from "../../../hooks/useKyberSwap";
+import useLogLoader from "../../../hooks/useLogLoader";
 import usePendingWithdrawalListener from "../../../hooks/usePendingWithdrawalListener";
 import useTokenBalanceUpdater from "../../../hooks/useTokenBalanceUpdater";
 import preset from "../../../styles/preset";
@@ -35,18 +37,29 @@ import { formatValue } from "../../../utils/big-number-utils";
 import { openTx } from "../../../utils/ether-scan-utils";
 
 const ManageAssetScreen = () => {
+    const [loaded, setLoaded] = useState(false);
+    useEffect(() => {
+        setLoaded(true);
+    }, []);
+
+    return loaded ? <RealManageAssetScreen /> : <Spinner />;
+};
+
+const RealManageAssetScreen = () => {
     const { t } = useTranslation(["asset", "profile", "common"]);
     const { push, getParam } = useNavigation();
     const asset: ERC20Asset = getParam("asset");
-    const { ethereumChain } = useContext(ChainContext);
     const { getBalance } = useContext(BalancesContext);
     const [swapped, setSwapped] = useState<TokenSwapped[]>();
     const [received, setReceived] = useState<ETHReceived[] | ERC20Received[]>();
     const [withdrawn, setWithdrawn] = useState<ETHWithdrawn[] | ERC20Withdrawn[]>();
+    const [isRefreshingLogs, setIsRefreshingLogs] = useState(false);
     const { blockNumber } = useEthereumBlockNumberListener();
     const { update } = useTokenBalanceUpdater();
+    const { getGatewayDepositLogs, getGatewayWithdrawLogs, getKyberSwapLogs } = useLogLoader(asset);
     const { receipt } = usePendingWithdrawalListener(asset);
     const { ready, getSwapLogsAsync } = useKyberSwap();
+    const { cancelablePromise } = useCancelablePromise();
     const loomBalance = getBalance(asset.loomAddress);
     const ethereumBalance = getBalance(asset.ethereumAddress);
     const renderItem = ({ item }) => <ItemView asset={asset} item={item} blockNumber={blockNumber} />;
@@ -61,6 +74,7 @@ const ManageAssetScreen = () => {
     useEffect(() => {
         setReceived(undefined);
         setWithdrawn(undefined);
+        setSwapped(undefined);
         if (ready) {
             refreshLog();
         }
@@ -74,22 +88,22 @@ const ManageAssetScreen = () => {
     }, [received, withdrawn, swapped]);
 
     const refreshLog = useCallback(async () => {
-        if (asset.ethereumAddress.isZero()) {
-            await Promise.all([
-                ethereumChain!.getETHReceivedLogsAsync().then(setReceived),
-                ethereumChain!.getETHWithdrawnLogsAsync().then(setWithdrawn)
-            ]);
-        } else {
-            await Promise.all([
-                ethereumChain!.getERC20ReceivedLogsAsync(asset).then(setReceived),
-                ethereumChain!.getERC20WithdrawnLogsAsync(asset).then(setWithdrawn)
-            ]);
-        }
-        const logs = await getSwapLogsAsync(asset);
-        setSwapped(logs);
+        cancelablePromise(
+            (async () => {
+                if (!isRefreshingLogs) {
+                    setIsRefreshingLogs(true);
+                    Promise.all([
+                        getGatewayDepositLogs().then(setReceived),
+                        getGatewayWithdrawLogs().then(setWithdrawn),
+                        getKyberSwapLogs().then(setSwapped)
+                    ]);
 
-        await update();
-    }, [ready, asset]);
+                    await update();
+                    setIsRefreshingLogs(false);
+                }
+            })()
+        );
+    }, [asset, isRefreshingLogs, setIsRefreshingLogs, getGatewayDepositLogs, getGatewayWithdrawLogs, getKyberSwapLogs]);
 
     if (asset) {
         return (
@@ -133,7 +147,7 @@ const ManageAssetScreen = () => {
                         onPressButton={useCallback(() => push("Withdrawal", { asset }), [asset])}
                     />
                     <HeadlineText aboveText={true}>{t("transferHistory")}</HeadlineText>
-                    {received && withdrawn ? (
+                    {received && withdrawn && swapped ? (
                         <>
                             {receipt && <PendingWithdrawalItemView asset={asset} receipt={receipt} />}
                             <FlatList

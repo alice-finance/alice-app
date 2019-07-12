@@ -183,13 +183,17 @@ const useKyberSwap = () => {
     );
 
     const getSwapLogsAsync = useCallback(
-        async (sourceAsset: ERC20Asset) => {
+        async (sourceAsset: ERC20Asset, fromBlock: number = 0, toBlock: number = 0) => {
             if (kyber !== null && ethereumChain !== null) {
                 const provider = ethereumChain.getProvider();
-                const blockNumber = await provider.getBlockNumber();
-                const toBlock = Number(blockNumber);
-                const transaction = await provider.getTransaction(ethereumChain.config.gateway.transactionHash);
-                const fromBlock = Number(transaction.blockNumber || 0);
+                if (fromBlock === 0) {
+                    const transaction = await provider.getTransaction(ethereumChain.config.gateway.transactionHash);
+                    fromBlock = Number(transaction.blockNumber || 0);
+                }
+                if (toBlock === 0) {
+                    const blockNumber = await provider.getBlockNumber();
+                    toBlock = Number(blockNumber);
+                }
                 const event = kyber.interface.events.ExecuteTrade;
 
                 const logs = await getLogs(provider, {
