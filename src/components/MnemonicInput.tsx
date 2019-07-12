@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Platform, Text, TextInput, View, ViewProps } from "react-native";
+import { Platform, TextInput, View, ViewProps } from "react-native";
 
 import { wordlists } from "bip39";
+import { Text } from "native-base";
 import platform from "../../native-base-theme/variables/platform";
 import preset from "../styles/preset";
 import MnemonicChip from "./MnemonicChip";
@@ -19,8 +20,8 @@ const MnemonicInput = (props: MnemonicInputProps) => {
     const { t } = useTranslation("common");
     const [mnemonic, setMnemonic] = useState<string[]>([]);
     const [error, setError] = useState(false);
-    const onSubmit = useCallback(
-        text => {
+    const onAdd = useCallback(
+        (text: string) => {
             const words = text
                 .trim()
                 .split(" ")
@@ -34,7 +35,7 @@ const MnemonicInput = (props: MnemonicInputProps) => {
         },
         [mnemonic, setMnemonic, setError]
     );
-    const onBackspace = useCallback(() => {
+    const onRemove = useCallback(() => {
         setMnemonic(mnemonic.slice(0, -1));
     }, [mnemonic, setMnemonic]);
     useEffect(() => {
@@ -48,12 +49,10 @@ const MnemonicInput = (props: MnemonicInputProps) => {
                         <MnemonicChip
                             key={index}
                             word={word}
-                            onClose={index === mnemonic.length - 1 ? onBackspace : undefined}
+                            onClose={index === mnemonic.length - 1 ? onRemove : undefined}
                         />
                     ))}
-                {mnemonic.length < 12 && (
-                    <Input index={mnemonic.length + 1} onSubmit={onSubmit} onBackspace={onBackspace} />
-                )}
+                {mnemonic.length < 12 && <Input index={mnemonic.length + 1} onAdd={onAdd} onRemove={onRemove} />}
             </View>
             {error && (
                 <Text style={[preset.marginNormal, preset.colorDanger, preset.fontSize16]}>
@@ -64,7 +63,7 @@ const MnemonicInput = (props: MnemonicInputProps) => {
     );
 };
 
-const Input = ({ index, onSubmit, onBackspace }) => {
+const Input = ({ index, onAdd, onRemove }) => {
     const { t } = useTranslation("common");
     const [text, setText] = useState("");
     const [changeable, setChangeable] = useState(true);
@@ -73,14 +72,14 @@ const Input = ({ index, onSubmit, onBackspace }) => {
         ({ nativeEvent }) => {
             setChangeable(false);
             if (nativeEvent.key === " ") {
-                onSubmit(text);
+                onAdd(text);
                 setText("");
                 if (input.current) {
                     input.current.focus();
                 }
             } else if (nativeEvent.key === "Backspace") {
                 if (text.length === 0) {
-                    onBackspace();
+                    onRemove();
                 } else if (Platform.OS === "ios") {
                     setText(text.slice(0, -1));
                 }
@@ -88,11 +87,11 @@ const Input = ({ index, onSubmit, onBackspace }) => {
                 setText(text + nativeEvent.key);
             }
         },
-        [text, input, onBackspace, onSubmit]
+        [text, input, onAdd, onRemove]
     );
     const onSubmitEditing = useCallback(
         ({ nativeEvent }) => {
-            onSubmit(nativeEvent.text);
+            onAdd(nativeEvent.text);
             setText("");
             setTimeout(() => {
                 if (input.current) {
@@ -100,7 +99,7 @@ const Input = ({ index, onSubmit, onBackspace }) => {
                 }
             }, 50);
         },
-        [input, onSubmit]
+        [input, onAdd]
     );
     const onChangeText = useCallback(
         newText => {
@@ -125,6 +124,7 @@ const Input = ({ index, onSubmit, onBackspace }) => {
             autoFocus={true}
             placeholder={t("seedWordN", { index })}
             returnKeyType={index === MAX_MNEMONIC ? "done" : "next"}
+            blurOnSubmit={false}
             onKeyPress={onKeyPress}
             value={text}
             onChangeText={onChangeText}
