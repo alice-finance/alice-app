@@ -1,11 +1,11 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Text as NativeText, View } from "react-native";
+import { View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
 import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { BigNumber } from "ethers/utils";
-import { Button, Container, Icon, Text } from "native-base";
+import { Button, Container, Text } from "native-base";
 import AmountInput from "../../../components/AmountInput";
 import CaptionText from "../../../components/CaptionText";
 import Row from "../../../components/Row";
@@ -58,28 +58,18 @@ const NewSavingsScreen = () => {
                 <AmountInput
                     asset={asset!}
                     max={myBalance}
-                    disabled={starting}
+                    disabled={myBalance.isZero() || starting}
                     style={[preset.marginLeftSmall, preset.marginRightSmall]}
                     onChangeAmount={setAmount}
                 />
                 <View style={[preset.marginLeftNormal, preset.marginTopNormal, preset.marginRightNormal]}>
                     <Row label={t("apr")} value={loadingAPR ? t("loading") : aprText} />
-                    <Row label={t("myBalance")} value={myBalanceText} />
+                    <Row label={t("myBalance")} value={myBalanceText} error={myBalance.isZero()} />
                 </View>
                 {starting ? (
                     <Spinner compact={true} label={t("starting")} />
                 ) : (
                     <>
-                        <Button
-                            rounded={true}
-                            transparent={true}
-                            small={true}
-                            iconRight={true}
-                            onPress={onPressManageAsset}
-                            style={preset.alignFlexEnd}>
-                            <NativeText style={[preset.fontSize16, preset.colorPrimary]}>{t("manageAsset")}</NativeText>
-                            <Icon type="MaterialCommunityIcons" name="chevron-right" style={preset.fontSize20} />
-                        </Button>
                         <Button
                             primary={true}
                             rounded={true}
@@ -88,6 +78,16 @@ const NewSavingsScreen = () => {
                             disabled={!amount || amount.isZero() || loadingAPR}
                             onPress={start}>
                             <Text>{t("common:start")}</Text>
+                        </Button>
+                        <Button
+                            primary={true}
+                            rounded={true}
+                            block={true}
+                            bordered={true}
+                            iconRight={true}
+                            style={preset.marginSmall}
+                            onPress={onPressManageAsset}>
+                            <Text>{t("manageAsset")}</Text>
                         </Button>
                     </>
                 )}

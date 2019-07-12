@@ -11,7 +11,6 @@ import useTokenBalanceUpdater from "../hooks/useTokenBalanceUpdater";
 import preset from "../styles/preset";
 import { formatValue } from "../utils/big-number-utils";
 import BigNumberText from "./BigNumberText";
-import Spinner from "./Spinner";
 
 const SavingsCard = () => {
     const { t } = useTranslation("finance");
@@ -19,7 +18,7 @@ const SavingsCard = () => {
     const { asset, totalBalance, myTotalBalance, apr } = useContext(SavingsContext);
     const onPress = useCallback(() => push("NewSavings"), []);
     const { updating, update } = useTokenBalanceUpdater();
-    const refreshing = !asset || !totalBalance || !apr || updating;
+    const refreshing = !asset || !totalBalance || updating;
     useEffect(() => {
         update();
     }, []);
@@ -55,18 +54,14 @@ const SavingsCard = () => {
                         <BigNumberText value={apr} suffix={"%"} />
                     </View>
                 </CardItem>
-                {refreshing ? (
-                    <Spinner compact={true} />
-                ) : (
-                    <CardItem style={preset.marginBottomSmall}>
-                        <Left />
-                        <Right>
-                            <Button primary={true} bordered={true} rounded={true} onPress={onPress}>
-                                <Text style={{ fontSize: 16 }}>{t("startSaving")}</Text>
-                            </Button>
-                        </Right>
-                    </CardItem>
-                )}
+                <CardItem style={preset.marginBottomSmall}>
+                    <Left />
+                    <Right>
+                        <Button primary={true} bordered={true} rounded={true} disabled={refreshing} onPress={onPress}>
+                            <Text style={{ fontSize: 16 }}>{t("startSaving")}</Text>
+                        </Button>
+                    </Right>
+                </CardItem>
             </Card>
         </View>
     );

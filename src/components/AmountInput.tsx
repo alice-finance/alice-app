@@ -73,7 +73,7 @@ const AmountInput: FunctionComponent<AmountInputProps> = ({
                     }}
                     disabled={disabled}
                     onPress={onPressMax}>
-                    <Text style={[preset.colorInfo, preset.fontSize20]}>MAX</Text>
+                    <Text style={[disabled ? preset.colorGrey : preset.colorInfo, preset.fontSize20]}>MAX</Text>
                 </Button>
             </View>
             {error.length > 0 && (
