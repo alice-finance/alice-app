@@ -4,7 +4,8 @@
     "start": "NODE_OPTIONS=--max_old_space_size=32768 expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "eject": "expo eject"
+    "eject": "expo eject",
+    "lint": "tslint -c tslint.json -p tsconfig.json"
   },
   "dependencies": {
     "@alice-finance/alice.js": "^1.1.1",
@@ -62,7 +63,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "tslint -c tslint.json -p tsconfig.json"
+      "pre-commit": "yarn lint"
     }
   },
   "private": true
