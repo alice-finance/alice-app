@@ -118,7 +118,14 @@ const ManageAssetScreen = () => {
                     </View>
                     <HeadlineText aboveText={true}>{t("myAssetsInAliceNetwork")}</HeadlineText>
                     <CaptionText>{t("myAssetsInAliceNetwork.description")}</CaptionText>
-                    <BalanceView style={[preset.alignCenter, preset.marginTopNormal]} asset={asset} balance={balance} />
+                    <View style={preset.flexDirectionRow}>
+                        <BalanceView
+                            style={[preset.alignCenter, preset.marginTopNormal]}
+                            asset={asset}
+                            balance={balance}
+                        />
+                        <Text style={[preset.fontSize24]}>{t("deposited")}</Text>
+                    </View>
                     <Button
                         primary={true}
                         rounded={true}

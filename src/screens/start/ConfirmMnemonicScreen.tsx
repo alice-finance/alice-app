@@ -3,6 +3,8 @@ import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { useNavigation, useNavigationParam } from "react-navigation-hooks";
 
+import EthereumChain from "@alice-finance/alice.js/dist/chains/EthereumChain";
+import LoomChain from "@alice-finance/alice.js/dist/chains/LoomChain";
 import * as SecureStore from "expo-secure-store";
 import { Button, Container, Text } from "native-base";
 import CaptionText from "../../components/CaptionText";
@@ -12,6 +14,7 @@ import SubtitleText from "../../components/SubtitleText";
 import Analytics from "../../helpers/Analytics";
 import preset from "../../styles/preset";
 import { ethereumPrivateKeyFromMnemonic, loomPrivateKeyFromMnemonic } from "../../utils/crypto-utils";
+import { mapAccounts } from "../../utils/loom-utils";
 
 const ConfirmMnemonicScreen = () => {
     const { t } = useTranslation(["common", "start"]);
@@ -29,9 +32,14 @@ const ConfirmMnemonicScreen = () => {
         if (confirmed) {
             setEncrypting(true);
             try {
+                const ethereumPrivateKey = ethereumPrivateKeyFromMnemonic(mnemonic);
+                const loomPrivateKey = loomPrivateKeyFromMnemonic(mnemonic);
                 await SecureStore.setItemAsync("mnemonic", mnemonic);
-                await SecureStore.setItemAsync("ethereumPrivateKey", ethereumPrivateKeyFromMnemonic(mnemonic));
-                await SecureStore.setItemAsync("loomPrivateKey", loomPrivateKeyFromMnemonic(mnemonic));
+                await SecureStore.setItemAsync("ethereumPrivateKey", ethereumPrivateKey);
+                await SecureStore.setItemAsync("loomPrivateKey", loomPrivateKey);
+                const ethereumChain = new EthereumChain(ethereumPrivateKey, __DEV__);
+                const loomChain = new LoomChain(loomPrivateKey, __DEV__);
+                await mapAccounts(ethereumChain, loomChain);
                 Analytics.track(Analytics.events.KEY_CREATED);
                 push("Complete");
             } finally {

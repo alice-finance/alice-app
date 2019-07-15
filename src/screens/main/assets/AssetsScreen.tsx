@@ -14,37 +14,36 @@ import { Spacing } from "../../../constants/dimension";
 import { ERC20_MAX_PRECISION } from "../../../constants/token";
 import { AssetContext } from "../../../contexts/AssetContext";
 import { BalancesContext } from "../../../contexts/BalancesContext";
-import { ChainContext } from "../../../contexts/ChainContext";
-import useCancelablePromise from "../../../hooks/useCancelablePromise";
-import useEthereumBlockNumberListener from "../../../hooks/useEthereumBlockNumberListener";
+import { PendingTransactionsContext } from "../../../contexts/PendingTransactionsContext";
 import usePendingWithdrawalHandler from "../../../hooks/usePendingWithdrawalHandler";
 import useTokenBalanceUpdater from "../../../hooks/useTokenBalanceUpdater";
 import preset from "../../../styles/preset";
 import { pow10 } from "../../../utils/big-number-utils";
-import { mapAccounts } from "../../../utils/loom-utils";
 
 const AssetsScreen = () => {
     const { updating, update } = useTokenBalanceUpdater();
     const { sortedByName, setSortedByName, sortedTokens } = useTokenSorter();
     const { handlePendingWithdrawal } = usePendingWithdrawalHandler();
-    const { blockNumber } = useEthereumBlockNumberListener();
-    const { loomChain, ethereumChain } = useContext(ChainContext);
-    const { cancelablePromise } = useCancelablePromise();
+    const { assets } = useContext(AssetContext);
+    const { getPendingWithdrawalTransactions } = useContext(PendingTransactionsContext);
     const { push, setParams } = useNavigation();
     const onSort = useCallback(() => setSortedByName(!sortedByName), [sortedByName]);
     const onPress = useCallback((asset: ERC20Asset) => push("ManageAsset", { asset }), []);
     const renderItem = useCallback(({ item }) => <TokenListItem token={item} onPress={onPress} />, []);
+    const count = assets.reduce(
+        (sum, asset) => sum + (getPendingWithdrawalTransactions(asset.ethereumAddress) || []).length,
+        0
+    );
     useEffect(() => {
         setParams({ onSort });
-        mapAccounts(ethereumChain!, loomChain!);
         update();
     }, []);
 
     useEffect(() => {
-        if (blockNumber && blockNumber % 4 === 0) {
-            cancelablePromise(Promise.all([update(), handlePendingWithdrawal()]));
+        if (count && Number(count) > 0) {
+            handlePendingWithdrawal();
         }
-    }, [blockNumber]);
+    }, [count]);
     return (
         <Container>
             <FlatList
@@ -66,6 +65,8 @@ AssetsScreen.navigationOptions = ({ navigation }) => ({
         </Button>
     )
 });
+
+AssetsScreen.pendingWithdrawalCount = null;
 
 const useTokenSorter = () => {
     const [sortedByName, setSortedByName] = useState(false);
