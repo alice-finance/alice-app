@@ -17,6 +17,7 @@ import { Body, Button, Container, Content, Icon, Left, ListItem, Text } from "na
 import platform from "../../../../native-base-theme/variables/platform";
 import BalanceView from "../../../components/BalanceView";
 import BigNumberText from "../../../components/BigNumberText";
+import CaptionText from "../../../components/CaptionText";
 import EmptyView from "../../../components/EmptyView";
 import HeadlineText from "../../../components/HeadlineText";
 import Spinner from "../../../components/Spinner";
@@ -33,18 +34,10 @@ import preset from "../../../styles/preset";
 import { openTx } from "../../../utils/ether-scan-utils";
 
 const ManageAssetScreen = () => {
-    const [loaded, setLoaded] = useState(false);
-    useEffect(() => {
-        setLoaded(true);
-    }, []);
-
-    return loaded ? <RealManageAssetScreen /> : <Spinner />;
-};
-
-const RealManageAssetScreen = () => {
     const { t } = useTranslation(["asset", "profile", "common"]);
     const { push, getParam } = useNavigation();
     const asset: ERC20Asset = getParam("asset");
+    const { getBalance } = useContext(BalancesContext);
     const [swapped, setSwapped] = useState<TokenSwapped[]>();
     const [received, setReceived] = useState<ETHReceived[] | ERC20Received[]>();
     const [withdrawn, setWithdrawn] = useState<ETHWithdrawn[] | ERC20Withdrawn[]>();
@@ -59,6 +52,7 @@ const RealManageAssetScreen = () => {
     const [items, setItems] = useState<Array<
         ETHReceived | ERC20Received | ETHWithdrawn | ERC20Withdrawn | TokenSwapped
     > | null>(null);
+    const balance = getBalance(asset.loomAddress);
 
     useEffect(() => {
         refreshLog();
@@ -122,7 +116,18 @@ const RealManageAssetScreen = () => {
                             <Text>{t("send")}</Text>
                         </Button>
                     </View>
-                    <HeadlineText aboveText={true}>{t("transferHistory")}</HeadlineText>
+                    <HeadlineText aboveText={true}>{t("myAssetsInAliceNetwork")}</HeadlineText>
+                    <CaptionText>{t("myAssetsInAliceNetwork.description")}</CaptionText>
+                    <BalanceView style={[preset.alignCenter, preset.marginTopNormal]} asset={asset} balance={balance} />
+                    <Button
+                        primary={true}
+                        rounded={true}
+                        transparent={true}
+                        style={preset.alignFlexEnd}
+                        onPress={useCallback(() => push("ManageDeposits", { asset }), [asset])}>
+                        <Text>{t("manageDepositedAmount")}</Text>
+                    </Button>
+                    <HeadlineText aboveText={true}>{t("pendingTransactions")}</HeadlineText>
                     {received && withdrawn && swapped ? (
                         <>
                             {receipt && <PendingWithdrawalItemView asset={asset} receipt={receipt} />}
@@ -146,6 +151,7 @@ const RealManageAssetScreen = () => {
 
 const TokenView = ({ asset }: { asset: ERC20Asset }) => {
     const { getBalance } = useContext(BalancesContext);
+    const balance = getBalance(asset.loomAddress).add(getBalance(asset.ethereumAddress));
     return (
         <View style={[preset.flexDirectionRow, preset.justifyContentCenter, preset.alignItemsCenter]}>
             <TokenIcon
@@ -154,12 +160,8 @@ const TokenView = ({ asset }: { asset: ERC20Asset }) => {
                 height={64}
                 style={preset.marginNormal}
             />
-            <View>
-                <BalanceView
-                    style={preset.justifyContentCenter}
-                    asset={asset}
-                    balance={getBalance(asset.loomAddress).add(getBalance(asset.ethereumAddress))}
-                />
+            <View style={preset.marginRightNormal}>
+                <BalanceView style={preset.justifyContentCenter} asset={asset} balance={balance} />
                 <Text style={[preset.fontSize16, preset.colorGrey]}>{asset.name}</Text>
             </View>
         </View>

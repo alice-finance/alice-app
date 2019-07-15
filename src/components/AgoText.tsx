@@ -1,12 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import Moment from "react-moment";
 
+import { Localization } from "expo";
 import "moment/min/locales";
 import { Text } from "native-base";
-import i18n from "../i18n";
 
 const AgoText = ({ date }: { date: Date }) => {
-    const locale = i18n.languages[0].toLowerCase();
+    const [locale, setLocale] = useState<string>();
+    Localization.getLocalizationAsync().then(({ locale: l }) => setLocale(l));
     return (
         <Moment
             locale={locale}

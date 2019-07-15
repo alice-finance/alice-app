@@ -93,6 +93,9 @@
     "asset": {
         "receive": "받기",
         "send": "보내기",
+        "myAssetsInAliceNetwork": "Alice 네트워크 보유 자산",
+        "myAssetsInAliceNetwork.description": "Alice 네트워크는 이더리움과 호환이 되지만 훨씬 빠른 속도를 제공합니다. 지금 자산을 예치하고 다양한 금융 상품을 이용해보세요!",
+        "manageDepositedAmount": "예치 금액 관리",
         "myAssets": "보유 자산",
         "myAssets.description": "이더리움 네트워크에서 Alice 네트워크로 자산을 예치하고 편리한 금융을 이용해보세요!",
         "ethereumWallet": "이더리움 지갑",
@@ -118,7 +121,7 @@
         "withdrawalSuccess": "출금이 완료되었습니다.",
         "depositChangeFailure": "예치금 변경 실패. 다시 시도해 주세요.",
         "insufficientFunds": "수수료로 사용할 ETH가 부족합니다.",
-        "transferHistory": "전송 내역",
+        "pendingTransactions": "처리 중인 거래들",
         "status": "상태",
         "success": "완료",
         "waiting": "대기 중...",

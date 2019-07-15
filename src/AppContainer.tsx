@@ -16,6 +16,7 @@ import TabBarIcon from "./components/TabBarIcon";
 import AssetsScreen from "./screens/main/assets/AssetsScreen";
 import DepositScreen from "./screens/main/assets/DepositScreen";
 import ManageAssetScreen from "./screens/main/assets/ManageAssetScreen";
+import ManageDepositsScreen from "./screens/main/assets/ManageDepositsScreen";
 import MyAddressScreen from "./screens/main/assets/MyAddressScreen";
 import TransferAssetScreen from "./screens/main/assets/TransferAssetScreen";
 import WithdrawalScreen from "./screens/main/assets/WithdrawalScreen";
@@ -114,6 +115,7 @@ const MainNavigator = createDefaultStackNavigator({
     ManageAsset: ManageAssetScreen,
     MyAddress: MyAddressScreen,
     TransferAsset: TransferAssetScreen,
+    ManageDeposits: ManageDepositsScreen,
     Deposit: DepositScreen,
     Withdrawal: WithdrawalScreen,
     ResetAccount: ResetAccountScreen
