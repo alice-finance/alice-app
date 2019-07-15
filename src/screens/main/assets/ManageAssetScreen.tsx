@@ -24,7 +24,6 @@ import Spinner from "../../../components/Spinner";
 import TokenIcon from "../../../components/TokenIcon";
 import { AssetContext } from "../../../contexts/AssetContext";
 import { BalancesContext } from "../../../contexts/BalancesContext";
-import useCancelablePromise from "../../../hooks/useCancelablePromise";
 import useEthereumBlockNumberListener from "../../../hooks/useEthereumBlockNumberListener";
 import useKyberSwap, { TokenSwapped } from "../../../hooks/useKyberSwap";
 import useLogLoader from "../../../hooks/useLogLoader";
@@ -47,7 +46,6 @@ const ManageAssetScreen = () => {
     const { getGatewayDepositLogs, getGatewayWithdrawLogs, getKyberSwapLogs } = useLogLoader(asset);
     const { receipt } = usePendingWithdrawalListener(asset);
     const { ready } = useKyberSwap();
-    const { cancelablePromise } = useCancelablePromise();
     const renderItem = ({ item }) => <ItemView asset={asset} item={item} blockNumber={blockNumber} />;
     const [items, setItems] = useState<Array<
         ETHReceived | ERC20Received | ETHWithdrawn | ERC20Withdrawn | TokenSwapped
@@ -75,21 +73,17 @@ const ManageAssetScreen = () => {
     }, [received, withdrawn, swapped]);
 
     const refreshLog = useCallback(async () => {
-        cancelablePromise(
-            (async () => {
-                if (!isRefreshingLogs) {
-                    setIsRefreshingLogs(true);
-                    Promise.all([
-                        getGatewayDepositLogs().then(setReceived),
-                        getGatewayWithdrawLogs().then(setWithdrawn),
-                        getKyberSwapLogs().then(setSwapped)
-                    ]);
+        if (!isRefreshingLogs) {
+            setIsRefreshingLogs(true);
+            Promise.all([
+                getGatewayDepositLogs().then(setReceived),
+                getGatewayWithdrawLogs().then(setWithdrawn),
+                getKyberSwapLogs().then(setSwapped)
+            ]);
 
-                    await update();
-                    setIsRefreshingLogs(false);
-                }
-            })()
-        );
+            await update();
+            setIsRefreshingLogs(false);
+        }
     }, [asset, isRefreshingLogs, setIsRefreshingLogs, getGatewayDepositLogs, getGatewayWithdrawLogs, getKyberSwapLogs]);
 
     if (asset) {
