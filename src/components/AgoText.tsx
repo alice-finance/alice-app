@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Moment from "react-moment";
 
-import { Localization } from "expo";
+import * as Localization from "expo-localization";
 import "moment/min/locales";
 import { Text } from "native-base";
 
