@@ -13,16 +13,14 @@ import {
 import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
 import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { IWithdrawalReceipt } from "loom-js/dist/contracts/transfer-gateway";
-import { Body, Button, Card, CardItem, Container, Content, Icon, Left, ListItem, Right, Text } from "native-base";
+import { Body, Button, Container, Content, Icon, Left, ListItem, Text } from "native-base";
 import platform from "../../../../native-base-theme/variables/platform";
+import BalanceView from "../../../components/BalanceView";
 import BigNumberText from "../../../components/BigNumberText";
-import CaptionText from "../../../components/CaptionText";
 import EmptyView from "../../../components/EmptyView";
 import HeadlineText from "../../../components/HeadlineText";
 import Spinner from "../../../components/Spinner";
-import SubtitleText from "../../../components/SubtitleText";
 import TokenIcon from "../../../components/TokenIcon";
-import { Spacing } from "../../../constants/dimension";
 import { AssetContext } from "../../../contexts/AssetContext";
 import { BalancesContext } from "../../../contexts/BalancesContext";
 import useCancelablePromise from "../../../hooks/useCancelablePromise";
@@ -32,7 +30,6 @@ import useLogLoader from "../../../hooks/useLogLoader";
 import usePendingWithdrawalListener from "../../../hooks/usePendingWithdrawalListener";
 import useTokenBalanceUpdater from "../../../hooks/useTokenBalanceUpdater";
 import preset from "../../../styles/preset";
-import { formatValue } from "../../../utils/big-number-utils";
 import { openTx } from "../../../utils/ether-scan-utils";
 
 const ManageAssetScreen = () => {
@@ -48,7 +45,6 @@ const RealManageAssetScreen = () => {
     const { t } = useTranslation(["asset", "profile", "common"]);
     const { push, getParam } = useNavigation();
     const asset: ERC20Asset = getParam("asset");
-    const { getBalance } = useContext(BalancesContext);
     const [swapped, setSwapped] = useState<TokenSwapped[]>();
     const [received, setReceived] = useState<ETHReceived[] | ERC20Received[]>();
     const [withdrawn, setWithdrawn] = useState<ETHWithdrawn[] | ERC20Withdrawn[]>();
@@ -59,8 +55,6 @@ const RealManageAssetScreen = () => {
     const { receipt } = usePendingWithdrawalListener(asset);
     const { ready } = useKyberSwap();
     const { cancelablePromise } = useCancelablePromise();
-    const loomBalance = getBalance(asset.loomAddress);
-    const ethereumBalance = getBalance(asset.ethereumAddress);
     const renderItem = ({ item }) => <ItemView asset={asset} item={item} blockNumber={blockNumber} />;
     const [items, setItems] = useState<Array<
         ETHReceived | ERC20Received | ETHWithdrawn | ERC20Withdrawn | TokenSwapped
@@ -111,40 +105,23 @@ const RealManageAssetScreen = () => {
                     <TokenView asset={asset} />
                     <View style={[preset.flexDirectionRow, preset.marginNormal]}>
                         <Button
-                            info={true}
-                            bordered={true}
+                            primary={true}
                             rounded={true}
                             block={true}
-                            style={[preset.flex1, preset.marginRightSmall]}
+                            style={[preset.flex1, preset.marginTiny]}
                             onPress={useCallback(() => push("MyAddress"), [asset])}>
                             <Text>{t("receive")}</Text>
                         </Button>
                         <Button
-                            info={true}
+                            primary={true}
                             bordered={true}
                             rounded={true}
                             block={true}
-                            style={preset.flex1}
+                            style={[preset.flex1, preset.marginTiny]}
                             onPress={useCallback(() => push("TransferAsset", { asset }), [asset])}>
                             <Text>{t("send")}</Text>
                         </Button>
                     </View>
-                    <BalanceCard
-                        title={t("ethereumWallet")}
-                        description={t("ethereumWallet.description")}
-                        balance={ethereumBalance}
-                        asset={asset}
-                        buttonText={t("deposit")}
-                        onPressButton={useCallback(() => push("Deposit", { asset }), [asset])}
-                    />
-                    <BalanceCard
-                        title={t("aliceWallet")}
-                        description={t("aliceWallet.description")}
-                        balance={loomBalance}
-                        asset={asset}
-                        buttonText={t("withdrawal")}
-                        onPressButton={useCallback(() => push("Withdrawal", { asset }), [asset])}
-                    />
                     <HeadlineText aboveText={true}>{t("transferHistory")}</HeadlineText>
                     {received && withdrawn && swapped ? (
                         <>
@@ -170,63 +147,21 @@ const RealManageAssetScreen = () => {
 const TokenView = ({ asset }: { asset: ERC20Asset }) => {
     const { getBalance } = useContext(BalancesContext);
     return (
-        <View style={{ alignItems: "center", margin: Spacing.normal }}>
+        <View style={[preset.flexDirectionRow, preset.justifyContentCenter, preset.alignItemsCenter]}>
             <TokenIcon
                 address={asset.ethereumAddress.toLocalAddressString()}
-                width={72}
-                height={72}
-                style={{ marginLeft: Spacing.small, flex: 0 }}
+                width={64}
+                height={64}
+                style={preset.marginNormal}
             />
-            <SubtitleText aboveText={true}>{asset.name}</SubtitleText>
-            <CaptionText style={preset.fontSize20}>
-                {formatValue(getBalance(asset.loomAddress).add(getBalance(asset.ethereumAddress)), asset.decimals, 2)}{" "}
-                {asset.symbol}
-            </CaptionText>
-        </View>
-    );
-};
-
-const BalanceCard = ({ title, description, balance, asset, buttonText, onPressButton }) => {
-    return (
-        <View style={[preset.marginNormal]}>
-            <Card>
-                <CardItem>
-                    <View>
-                        <View style={[preset.flex1, preset.flexDirectionRow]}>
-                            <HeadlineText
-                                aboveText={true}
-                                style={[preset.flex1, preset.marginLeftSmall, preset.marginTopSmall]}>
-                                {title}
-                            </HeadlineText>
-                        </View>
-                        <CaptionText small={true} style={preset.marginLeftSmall}>
-                            {description}
-                        </CaptionText>
-                    </View>
-                </CardItem>
-                <CardItem>
-                    <View
-                        style={[
-                            preset.flex1,
-                            preset.flexDirectionRow,
-                            preset.justifyContentCenter,
-                            preset.alignItemsCenter
-                        ]}>
-                        <Text style={[preset.marginLeftNormal, preset.marginRightSmall, preset.fontSize36]}>
-                            {formatValue(balance, asset.decimals, 2)}
-                        </Text>
-                        <Text style={[preset.fontSize24]}>{asset.symbol}</Text>
-                    </View>
-                </CardItem>
-                <CardItem>
-                    <Left />
-                    <Right>
-                        <Button transparent={true} rounded={true} small={true} onPress={onPressButton}>
-                            <Text style={[preset.marginTopSmall, preset.colorPrimary]}>{buttonText}</Text>
-                        </Button>
-                    </Right>
-                </CardItem>
-            </Card>
+            <View>
+                <BalanceView
+                    style={preset.justifyContentCenter}
+                    asset={asset}
+                    balance={getBalance(asset.loomAddress).add(getBalance(asset.ethereumAddress))}
+                />
+                <Text style={[preset.fontSize16, preset.colorGrey]}>{asset.name}</Text>
+            </View>
         </View>
     );
 };

@@ -6,6 +6,7 @@ import { defaultKeyExtractor } from "../../../utils/react-native-utils";
 
 import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
 import { Body, Button, Container, Icon, ListItem } from "native-base";
+import BalanceView from "../../../components/BalanceView";
 import CaptionText from "../../../components/CaptionText";
 import TitleText from "../../../components/TitleText";
 import TokenIcon from "../../../components/TokenIcon";
@@ -19,7 +20,7 @@ import useEthereumBlockNumberListener from "../../../hooks/useEthereumBlockNumbe
 import usePendingWithdrawalHandler from "../../../hooks/usePendingWithdrawalHandler";
 import useTokenBalanceUpdater from "../../../hooks/useTokenBalanceUpdater";
 import preset from "../../../styles/preset";
-import { formatValue, pow10 } from "../../../utils/big-number-utils";
+import { pow10 } from "../../../utils/big-number-utils";
 import { mapAccounts } from "../../../utils/loom-utils";
 
 const AssetsScreen = () => {
@@ -99,11 +100,11 @@ const TokenListItem = ({ token, onPress }: { token: ERC20Asset; onPress: (ERC20A
             <Body style={styles.tokenIcon}>
                 <TokenIcon address={token.ethereumAddress.toLocalAddressString()} width={32} height={32} />
             </Body>
-            <Body style={[preset.flex0, preset.marginTiny]}>
-                <Text style={[preset.fontSize32, preset.colorDark]}>{formatValue(balance, token.decimals, 2)}</Text>
-            </Body>
             <Body style={[preset.flex1, preset.marginTiny]}>
-                <Text style={[preset.fontSize24, preset.colorDark]}>{token.symbol}</Text>
+                <View>
+                    <BalanceView asset={token} balance={balance} />
+                    <Text style={[preset.fontSize16, preset.colorGrey]}>{token.name}</Text>
+                </View>
             </Body>
             <Icon type="MaterialIcons" name="chevron-right" style={preset.colorPrimary} />
         </ListItem>
