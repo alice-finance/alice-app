@@ -1,11 +1,11 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FlatList, StyleSheet, View } from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 import { defaultKeyExtractor } from "../../../utils/react-native-utils";
 
 import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
-import { Body, Button, Container, Icon, ListItem, Text } from "native-base";
+import { Body, Button, Container, Icon, ListItem } from "native-base";
 import CaptionText from "../../../components/CaptionText";
 import TitleText from "../../../components/TitleText";
 import TokenIcon from "../../../components/TokenIcon";
@@ -48,7 +48,7 @@ const AssetsScreen = () => {
         <Container>
             <FlatList
                 data={sortedTokens()}
-                keyExtractor={tokensKeyExtractor}
+                keyExtractor={defaultKeyExtractor}
                 renderItem={renderItem}
                 refreshing={updating}
                 onRefresh={update}
@@ -57,8 +57,6 @@ const AssetsScreen = () => {
         </Container>
     );
 };
-
-const tokensKeyExtractor = (item: ERC20Asset, _: number) => item.symbol;
 
 AssetsScreen.navigationOptions = ({ navigation }) => ({
     headerRight: (
@@ -90,6 +88,7 @@ const useTokenSorter = () => {
 
 const TokenListItem = ({ token, onPress }: { token: ERC20Asset; onPress: (ERC20Asset) => void }) => {
     const { getBalance } = useContext(BalancesContext);
+    const balance = getBalance(token.ethereumAddress).add(getBalance(token.loomAddress));
     return (
         <ListItem
             key={token.symbol}
@@ -100,20 +99,11 @@ const TokenListItem = ({ token, onPress }: { token: ERC20Asset; onPress: (ERC20A
             <Body style={styles.tokenIcon}>
                 <TokenIcon address={token.ethereumAddress.toLocalAddressString()} width={32} height={32} />
             </Body>
-            <Body style={preset.flex0}>
-                <Text style={preset.fontSize20}>{token.symbol}</Text>
-                <Text note={true} style={{ color: "darkgrey" }}>
-                    {token.name}
-                </Text>
+            <Body style={[preset.flex0, preset.marginTiny]}>
+                <Text style={[preset.fontSize32, preset.colorDark]}>{formatValue(balance, token.decimals, 2)}</Text>
             </Body>
-            <Body style={preset.flex1}>
-                <Text style={[preset.fontSize20, preset.textAlignRight, preset.colorDarkGrey, preset.marginRightTiny]}>
-                    {formatValue(
-                        getBalance(token.ethereumAddress).add(getBalance(token.loomAddress)),
-                        token.decimals,
-                        2
-                    )}
-                </Text>
+            <Body style={[preset.flex1, preset.marginTiny]}>
+                <Text style={[preset.fontSize24, preset.colorDark]}>{token.symbol}</Text>
             </Body>
             <Icon type="MaterialIcons" name="chevron-right" style={preset.colorPrimary} />
         </ListItem>

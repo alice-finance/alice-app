@@ -14,6 +14,7 @@ const preset = StyleSheet.create({
     fontSize16: { fontSize: 16 },
     fontSize20: { fontSize: 20 },
     fontSize24: { fontSize: 24 },
+    fontSize32: { fontSize: 32 },
     fontSize36: { fontSize: 36 },
     fontSize48: { fontSize: 48 },
     fontWeightBold: { fontWeight: "bold" },
