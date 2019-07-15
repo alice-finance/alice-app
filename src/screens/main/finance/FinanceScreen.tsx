@@ -64,7 +64,7 @@ const FinanceScreen = () => {
     );
 };
 
-const savingRecordKeyExtractor = (item: SavingsRecord, index) => item.id.toString();
+const savingRecordKeyExtractor = (item: SavingsRecord) => item.id.toString();
 
 FinanceScreen.navigationOptions = ({ navigation }) => ({
     headerRight: (

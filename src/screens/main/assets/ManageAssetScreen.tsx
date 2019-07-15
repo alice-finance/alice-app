@@ -25,7 +25,6 @@ import TokenIcon from "../../../components/TokenIcon";
 import { Spacing } from "../../../constants/dimension";
 import { AssetContext } from "../../../contexts/AssetContext";
 import { BalancesContext } from "../../../contexts/BalancesContext";
-import { ChainContext } from "../../../contexts/ChainContext";
 import useCancelablePromise from "../../../hooks/useCancelablePromise";
 import useEthereumBlockNumberListener from "../../../hooks/useEthereumBlockNumberListener";
 import useKyberSwap, { TokenSwapped } from "../../../hooks/useKyberSwap";
@@ -58,7 +57,7 @@ const RealManageAssetScreen = () => {
     const { update } = useTokenBalanceUpdater();
     const { getGatewayDepositLogs, getGatewayWithdrawLogs, getKyberSwapLogs } = useLogLoader(asset);
     const { receipt } = usePendingWithdrawalListener(asset);
-    const { ready, getSwapLogsAsync } = useKyberSwap();
+    const { ready } = useKyberSwap();
     const { cancelablePromise } = useCancelablePromise();
     const loomBalance = getBalance(asset.loomAddress);
     const ethereumBalance = getBalance(asset.ethereumAddress);
