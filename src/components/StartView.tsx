@@ -27,7 +27,7 @@ const StartView = ({ showImage = false, showTitle = false, style = {} }) => {
     }, [balance]);
 
     const onStartButtonPress = useCallback(() => {
-        navigate("ExchangeTab");
+        navigate("AssetsTab");
     }, []);
 
     return showStart ? (
@@ -52,7 +52,7 @@ const StartView = ({ showImage = false, showTitle = false, style = {} }) => {
                     rounded={true}
                     onPress={onStartButtonPress}
                     style={startStyle.horizontalMargin}>
-                    <Text style={startStyle.button}>{t("start.viewExchange")}</Text>
+                    <Text style={startStyle.button}>{t("manageAsset")}</Text>
                 </Button>
             </View>
         </View>

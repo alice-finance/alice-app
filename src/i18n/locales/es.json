@@ -165,7 +165,6 @@
         "start": "Comienzo",
         "start.depositAsset": "Por favor deposite los bienes",
         "start.description": "Se requiere una pequeña cantidad de ETH (menos de 0.1) y DAI para usar los servicios de Alice.",
-        "start.viewExchange": "Comprar bienes",
         "savings": "Los Ahorros",
         "savings.description": "Deposite sus monedas estables DAI y comience a ahorrar con un 8% de la tasa de interés anual máxima. Puedes retirar monedas cuando quieras.",
         "startSavingsNow": "Comience a ahorrar ahora!",
