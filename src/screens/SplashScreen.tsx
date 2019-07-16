@@ -1,9 +1,11 @@
 import React, { useContext } from "react";
+import { useTranslation } from "react-i18next";
+import { Alert } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
 import EthereumChain from "@alice-finance/alice.js/dist/chains/EthereumChain";
 import LoomChain from "@alice-finance/alice.js/dist/chains/LoomChain";
-import { AppLoading, SplashScreen as ExpoSplashScreen } from "expo";
+import { AppLoading, SplashScreen as ExpoSplashScreen, Updates } from "expo";
 import { Asset } from "expo-asset";
 import * as Font from "expo-font";
 import * as SecureStore from "expo-secure-store";
@@ -13,6 +15,7 @@ import { ChainContext } from "../contexts/ChainContext";
 import { SavingsContext } from "../contexts/SavingsContext";
 import * as Analytics from "../helpers/Analytics";
 import useTokenBalanceUpdater from "../hooks/useTokenBalanceUpdater";
+import useUpdateChecker from "../hooks/useUpdateChecker";
 
 const SplashScreen = () => {
     const { load, onError, onFinish } = useLoader();
@@ -25,6 +28,7 @@ const useLoader = () => {
     const { setDecimals, setAsset } = useContext(SavingsContext);
     const { navigate } = useNavigation();
     const { update } = useTokenBalanceUpdater();
+    const { checkForUpdate } = useUpdateChecker();
     const load = async () => {
         Analytics.track(Analytics.events.APP_START);
         ExpoSplashScreen.preventAutoHide();
@@ -51,6 +55,8 @@ const useLoader = () => {
             setAsset(asset!); // Asset should not be undefined
             setDecimals(decimals);
             await update();
+
+            checkForUpdate({ onlyOnWifi: true });
 
             navigate("Main");
         } else {

@@ -195,5 +195,13 @@
         "withdrawalComplete": "Su retiro se ha completado.",
         "loan": "Préstamo hipotecario",
         "loan.description": "Deposite las fichas como garantía que usted cree cuyo precio aumentará y que se le pagará por sus monedas estables DAI."
+    },
+    "update": {
+        "title": "Hay una actualización esencial",
+        "description": "La aplicación se reiniciará para la actualización. La actualización puede tardar decenas de segundos.",
+        "start": "Iniciar Actualización",
+        "error": "Error",
+        "fetchInfoError": "No se pudo obtener información de actualización.",
+        "latestVersion": "Alice está al día"
     }
 }
