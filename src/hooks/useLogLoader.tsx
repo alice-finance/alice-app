@@ -51,22 +51,26 @@ const useLogLoader = (asset: ERC20Asset) => {
             const latestBlock = await ethereumChain.getProvider().getBlockNumber();
 
             if (asset.ethereumAddress.isZero()) {
-                const result = await ethereumChain.getETHReceivedLogsAsync(lastBlock, latestBlock);
+                if (lastBlock < latestBlock) {
+                    const result = await ethereumChain.getETHReceivedLogsAsync(lastBlock, latestBlock);
 
-                if (result) {
-                    logWrapper.logs = removeDuplicate([...logWrapper.logs, ...result]);
-                    logWrapper.lastBlockNumber = latestBlock;
-                    await setLogWrapper(asset.symbol, TYPE, logWrapper);
+                    if (result) {
+                        logWrapper.logs = removeDuplicate([...logWrapper.logs, ...result]);
+                        logWrapper.lastBlockNumber = latestBlock;
+                        await setLogWrapper(asset.symbol, TYPE, logWrapper);
+                    }
                 }
 
                 return logWrapper.logs || [];
             } else {
-                const result = await ethereumChain.getERC20ReceivedLogsAsync(asset, lastBlock, latestBlock);
+                if (lastBlock < latestBlock) {
+                    const result = await ethereumChain.getERC20ReceivedLogsAsync(asset, lastBlock, latestBlock);
 
-                if (result) {
-                    logWrapper.logs = removeDuplicate([...logWrapper.logs, ...result]);
-                    logWrapper.lastBlockNumber = latestBlock;
-                    await setLogWrapper(asset.symbol, TYPE, logWrapper);
+                    if (result) {
+                        logWrapper.logs = removeDuplicate([...logWrapper.logs, ...result]);
+                        logWrapper.lastBlockNumber = latestBlock;
+                        await setLogWrapper(asset.symbol, TYPE, logWrapper);
+                    }
                 }
                 return logWrapper.logs || [];
             }
@@ -84,22 +88,26 @@ const useLogLoader = (asset: ERC20Asset) => {
             const latestBlock = await ethereumChain.getProvider().getBlockNumber();
 
             if (asset.ethereumAddress.isZero()) {
-                const result = await ethereumChain.getETHWithdrawnLogsAsync(lastBlock, latestBlock);
+                if (lastBlock < latestBlock) {
+                    const result = await ethereumChain.getETHWithdrawnLogsAsync(lastBlock, latestBlock);
 
-                if (result) {
-                    logWrapper.logs = removeDuplicate([...logWrapper.logs, ...result]);
-                    logWrapper.lastBlockNumber = latestBlock;
-                    await setLogWrapper(asset.symbol, TYPE, logWrapper);
+                    if (result) {
+                        logWrapper.logs = removeDuplicate([...logWrapper.logs, ...result]);
+                        logWrapper.lastBlockNumber = latestBlock;
+                        await setLogWrapper(asset.symbol, TYPE, logWrapper);
+                    }
                 }
 
                 return logWrapper.logs || [];
             } else {
-                const result = await ethereumChain.getERC20WithdrawnLogsAsync(asset, lastBlock, latestBlock);
+                if (lastBlock < latestBlock) {
+                    const result = await ethereumChain.getERC20WithdrawnLogsAsync(asset, lastBlock, latestBlock);
 
-                if (result) {
-                    logWrapper.logs = removeDuplicate([...logWrapper.logs, ...result]);
-                    logWrapper.lastBlockNumber = latestBlock;
-                    await setLogWrapper(asset.symbol, TYPE, logWrapper);
+                    if (result) {
+                        logWrapper.logs = removeDuplicate([...logWrapper.logs, ...result]);
+                        logWrapper.lastBlockNumber = latestBlock;
+                        await setLogWrapper(asset.symbol, TYPE, logWrapper);
+                    }
                 }
                 return logWrapper.logs || [];
             }
@@ -116,12 +124,14 @@ const useLogLoader = (asset: ERC20Asset) => {
             const lastBlock = logWrapper.lastBlockNumber;
             const latestBlock = await ethereumChain.getProvider().getBlockNumber();
 
-            const result = await getSwapLogsAsync(asset, lastBlock, latestBlock);
+            if (lastBlock < latestBlock) {
+                const result = await getSwapLogsAsync(asset, lastBlock, latestBlock);
 
-            if (result) {
-                logWrapper.logs = removeDuplicate([...logWrapper.logs, ...result]);
-                logWrapper.lastBlockNumber = latestBlock;
-                await setLogWrapper(asset.symbol, TYPE, logWrapper);
+                if (result) {
+                    logWrapper.logs = removeDuplicate([...logWrapper.logs, ...result]);
+                    logWrapper.lastBlockNumber = latestBlock;
+                    await setLogWrapper(asset.symbol, TYPE, logWrapper);
+                }
             }
 
             return logWrapper.logs || [];
@@ -130,10 +140,23 @@ const useLogLoader = (asset: ERC20Asset) => {
         return logWrapper.logs;
     }, [asset, ethereumChain, getSwapLogsAsync]);
 
+    const getCached = useCallback(async () => {
+        const depositLogWrapper = await getLogWrapper(asset.symbol, "gateway-deposit");
+        const withdrawLogWrapper = await getLogWrapper(asset.symbol, "gateway-withdraw");
+        const swapLogWrapper = await getLogWrapper(asset.symbol, "kyber-swap");
+
+        return [
+            ...(depositLogWrapper.logs || []),
+            ...(withdrawLogWrapper.logs || []),
+            ...(swapLogWrapper.logs || [])
+        ].sort((l1, l2) => (l2.log.blockNumber || 0) - (l1.log.blockNumber || 0));
+    }, []);
+
     return {
         getGatewayDepositLogs,
         getGatewayWithdrawLogs,
-        getKyberSwapLogs
+        getKyberSwapLogs,
+        getCached
     };
 };
 

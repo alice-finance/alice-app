@@ -123,6 +123,7 @@
         "depositChangeFailure": "예치금 변경 실패. 다시 시도해 주세요.",
         "insufficientFunds": "수수료로 사용할 ETH가 부족합니다.",
         "pendingTransactions": "처리 중인 거래들",
+        "latestTransactions": "최근 거래들",
         "status": "상태",
         "success": "완료",
         "waiting": "대기 중...",

@@ -1,30 +1,63 @@
-import React, { useCallback, useContext } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { View } from "react-native";
-import { useNavigation } from "react-navigation-hooks";
+import { FlatList, InteractionManager, View } from "react-native";
+import { useFocusState, useNavigation } from "react-navigation-hooks";
+import { defaultKeyExtractor } from "../../../utils/react-native-utils";
 
+import {
+    ERC20Received,
+    ERC20Withdrawn,
+    ETHReceived,
+    ETHWithdrawn
+} from "@alice-finance/alice.js/dist/chains/EthereumChain";
 import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
-import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
-import { IWithdrawalReceipt } from "loom-js/dist/contracts/transfer-gateway";
-import { Body, Button, Container, Content, Icon, Left, ListItem, Text } from "native-base";
-import platform from "../../../../native-base-theme/variables/platform";
+import { Button, Container, Content, Text } from "native-base";
 import BalanceView from "../../../components/BalanceView";
-import BigNumberText from "../../../components/BigNumberText";
 import CaptionText from "../../../components/CaptionText";
 import EmptyView from "../../../components/EmptyView";
 import HeadlineText from "../../../components/HeadlineText";
 import TokenIcon from "../../../components/TokenIcon";
+import TransactionLogListItem from "../../../components/TransactionLogListItem";
 import { BalancesContext } from "../../../contexts/BalancesContext";
-import usePendingWithdrawalListener from "../../../hooks/usePendingWithdrawalListener";
+import { ChainContext } from "../../../contexts/ChainContext";
+import { TokenSwapped } from "../../../hooks/useKyberSwap";
+import useLogLoader from "../../../hooks/useLogLoader";
 import preset from "../../../styles/preset";
 
 const ManageAssetScreen = () => {
     const { t } = useTranslation(["asset", "profile", "common"]);
     const { push, getParam } = useNavigation();
+    const { isFocused } = useFocusState();
     const asset: ERC20Asset = getParam("asset");
+    const { ethereumChain } = useContext(ChainContext);
+    const [] = useState(false);
+    const { getCached } = useLogLoader(asset);
     const { getBalance } = useContext(BalancesContext);
-    const { receipt } = usePendingWithdrawalListener(asset);
+    const [blockNumber, setBlockNumber] = useState(0);
     const balance = getBalance(asset.loomAddress);
+    const [items, setItems] = useState<Array<
+        ETHReceived | ERC20Received | ETHWithdrawn | ERC20Withdrawn | TokenSwapped
+    > | null>(null);
+    const renderItem = ({ item }) => <TransactionLogListItem asset={asset} item={item} blockNumber={blockNumber} />;
+
+    useEffect(() => {
+        InteractionManager.runAfterInteractions(async () => {
+            const cachedItems = await getCached();
+            const newItems = cachedItems
+                .sort((l1, l2) => (l2.log.blockNumber || 0) - (l1.log.blockNumber || 0))
+                .slice(0, 5);
+            setItems(newItems);
+        });
+    }, []);
+
+    useEffect(() => {
+        if (isFocused && ethereumChain != null) {
+            ethereumChain
+                .getProvider()
+                .getBlockNumber()
+                .then(setBlockNumber);
+        }
+    }, [isFocused, ethereumChain]);
 
     if (asset) {
         return (
@@ -70,8 +103,13 @@ const ManageAssetScreen = () => {
                         onPress={useCallback(() => push("ManageDeposits", { asset }), [asset])}>
                         <Text>{t("manageDepositedAmount")}</Text>
                     </Button>
-                    <HeadlineText aboveText={true}>{t("pendingTransactions")}</HeadlineText>
-                    {receipt ? <PendingWithdrawalItemView asset={asset} receipt={receipt} /> : <EmptyView />}
+                    <HeadlineText aboveText={true}>{t("latestTransactions")}</HeadlineText>
+                    <FlatList
+                        data={items}
+                        keyExtractor={defaultKeyExtractor}
+                        renderItem={renderItem}
+                        ListEmptyComponent={<EmptyView />}
+                    />
                 </Content>
             </Container>
         );
@@ -95,48 +133,6 @@ const TokenView = ({ asset }: { asset: ERC20Asset }) => {
                 <BalanceView style={preset.justifyContentCenter} asset={asset} balance={balance} />
                 <Text style={[preset.fontSize16, preset.colorGrey]}>{asset.name}</Text>
             </View>
-        </View>
-    );
-};
-
-const PendingWithdrawalItemView = ({ asset, receipt }: { asset: ERC20Asset; receipt: IWithdrawalReceipt }) => {
-    const { t } = useTranslation("asset");
-    const color = platform.brandWarning;
-    return (
-        <ListItem noBorder={true}>
-            <Left style={[preset.flex0]}>
-                <TypeBadge inProgress={true} color={color} withdraw={true} />
-            </Left>
-            <Body style={[preset.flex1, preset.marginLeftSmall]}>
-                <Text note={true} style={[preset.padding0, preset.marginLeftSmall]}>
-                    {t("withdrawal")} ({t("processing")})
-                </Text>
-                <BigNumberText
-                    value={toBigNumber(receipt.tokenAmount.toString())}
-                    style={[preset.marginLeftSmall, preset.fontSize20]}
-                    suffix={" " + asset.symbol}
-                />
-            </Body>
-        </ListItem>
-    );
-};
-
-const TypeBadge = ({ color, inProgress, withdraw }) => {
-    return (
-        <View
-            style={{
-                borderColor: color,
-                borderWidth: platform.borderWidth * 2,
-                width: 48,
-                height: 48,
-                borderRadius: 24,
-                paddingTop: 14
-            }}>
-            <Icon
-                type="AntDesign"
-                name={inProgress ? "hourglass" : withdraw ? "arrowleft" : "arrowright"}
-                style={[preset.fontSize20, preset.alignCenter, { color }]}
-            />
         </View>
     );
 };

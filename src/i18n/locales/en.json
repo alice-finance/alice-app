@@ -124,6 +124,7 @@
         "depositChangeFailure": "Failure changing your deposit. Please try again.",
         "insufficientFunds": "Insufficient ETH for transaction fee.",
         "pendingTransactions": "Pending Transactions",
+        "latestTransactions": "Latest Transactions",
         "status": "Status",
         "success": "Success",
         "waiting": "Waiting...",

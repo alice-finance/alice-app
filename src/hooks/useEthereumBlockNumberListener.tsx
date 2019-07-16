@@ -6,6 +6,10 @@ const useEthereumBlockNumberListener = () => {
     const { ethereumChain } = useContext(ChainContext);
     const [blockNumber, setBlockNumber] = useState<number | null>(null);
     useEffect(() => {
+        ethereumChain!
+            .getProvider()
+            .getBlockNumber()
+            .then(setBlockNumber);
         ethereumChain!.getProvider().on("block", setBlockNumber);
         return () => {
             ethereumChain!.getProvider().removeListener("block", setBlockNumber);
