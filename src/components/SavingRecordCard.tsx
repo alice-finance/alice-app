@@ -136,7 +136,7 @@ const WithdrawDialog = ({ visible, onCancel, onOk, record, apr }) => {
                     <AmountInput
                         asset={asset!}
                         max={record.balance}
-                        disabled={!amount || inProgress}
+                        disabled={inProgress}
                         onChangeAmount={setAmount}
                         style={preset.marginTopNormal}
                     />

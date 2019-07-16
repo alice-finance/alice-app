@@ -33,9 +33,10 @@ const AmountInput: FunctionComponent<AmountInputProps> = ({
     const [error, setError] = useState("");
     const onChangeValue = (newValue: string) => {
         setValue(newValue);
-        const isError = parseValue(newValue, asset!.decimals).gt(max);
+        const parsedValue = parseValue(newValue, asset!.decimals);
+        const isError = parsedValue.gt(max);
         setError(isError ? t("amountGreaterThanBalance") : "");
-        onChangeAmount(isError ? null : parseValue(newValue, asset!.decimals));
+        onChangeAmount(isError ? null : parsedValue);
     };
     const onChange = useCallback(
         event => {
@@ -46,7 +47,8 @@ const AmountInput: FunctionComponent<AmountInputProps> = ({
     );
     const onPressMax = useCallback(() => {
         const newValue = formatValue(max, asset!.decimals, 2);
-        onChangeValue(newValue);
+        setValue(newValue);
+        onChangeAmount(max);
     }, [asset, max]);
     return (
         <View style={[preset.flexDirectionColumn, style]}>
