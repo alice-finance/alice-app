@@ -10,6 +10,18 @@ interface LogWrapper {
     logs: any[];
 }
 
+interface LogObject {
+    log: {
+        transactionHash: string;
+    };
+}
+
+const removeDuplicate = (list: any[]) => {
+    const hashSet = Array.from(new Set(list.map((a: LogObject) => a.log.transactionHash)));
+    const result = hashSet.map(hash => list.find((a: LogObject) => a.log.transactionHash === hash));
+    return result;
+};
+
 const getLogWrapper = async (symbol: string, type: string): Promise<LogWrapper> => {
     const key = symbol + "-logs-" + type;
     const logWrapperData = (await AsyncStorage.getItem(key)) || '{"lastBlockNumber": 0, "logs": []}';
@@ -42,7 +54,7 @@ const useLogLoader = (asset: ERC20Asset) => {
                 const result = await ethereumChain.getETHReceivedLogsAsync(lastBlock, latestBlock);
 
                 if (result) {
-                    logWrapper.logs = [...logWrapper.logs, ...result];
+                    logWrapper.logs = removeDuplicate([...logWrapper.logs, ...result]);
                     logWrapper.lastBlockNumber = latestBlock;
                     await setLogWrapper(asset.symbol, TYPE, logWrapper);
                 }
@@ -52,7 +64,7 @@ const useLogLoader = (asset: ERC20Asset) => {
                 const result = await ethereumChain.getERC20ReceivedLogsAsync(asset, lastBlock, latestBlock);
 
                 if (result) {
-                    logWrapper.logs = [...logWrapper.logs, ...result];
+                    logWrapper.logs = removeDuplicate([...logWrapper.logs, ...result]);
                     logWrapper.lastBlockNumber = latestBlock;
                     await setLogWrapper(asset.symbol, TYPE, logWrapper);
                 }
@@ -75,7 +87,7 @@ const useLogLoader = (asset: ERC20Asset) => {
                 const result = await ethereumChain.getETHWithdrawnLogsAsync(lastBlock, latestBlock);
 
                 if (result) {
-                    logWrapper.logs = [...logWrapper.logs, ...result];
+                    logWrapper.logs = removeDuplicate([...logWrapper.logs, ...result]);
                     logWrapper.lastBlockNumber = latestBlock;
                     await setLogWrapper(asset.symbol, TYPE, logWrapper);
                 }
@@ -85,7 +97,7 @@ const useLogLoader = (asset: ERC20Asset) => {
                 const result = await ethereumChain.getERC20WithdrawnLogsAsync(asset, lastBlock, latestBlock);
 
                 if (result) {
-                    logWrapper.logs = [...logWrapper.logs, ...result];
+                    logWrapper.logs = removeDuplicate([...logWrapper.logs, ...result]);
                     logWrapper.lastBlockNumber = latestBlock;
                     await setLogWrapper(asset.symbol, TYPE, logWrapper);
                 }
@@ -107,7 +119,7 @@ const useLogLoader = (asset: ERC20Asset) => {
             const result = await getSwapLogsAsync(asset, lastBlock, latestBlock);
 
             if (result) {
-                logWrapper.logs = [...logWrapper.logs, ...result];
+                logWrapper.logs = removeDuplicate([...logWrapper.logs, ...result]);
                 logWrapper.lastBlockNumber = latestBlock;
                 await setLogWrapper(asset.symbol, TYPE, logWrapper);
             }
