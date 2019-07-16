@@ -39,7 +39,7 @@ export const formatValue = (
     }
 
     if (precision > 0) {
-        if (realPart && realPart.length > precision) {
+        if (realPart && realPart.length >= precision) {
             realPart = realPart.substring(0, precision);
         } else {
             do {
