@@ -7,34 +7,50 @@ export const pow10 = (e: number) => toBigNumber(10).pow(e);
 
 export const formatValue = (
     value: string | ethers.utils.BigNumber,
-    decimals: number,
-    precision = ERC20_MAX_PRECISION
+    decimals: number = ERC20_MAX_PRECISION,
+    precision: number = ERC20_MAX_PRECISION,
+    useCommas: boolean = false
 ) => {
-    let formatted = fromWei(
+    const formatted = fromWei(
         toBigNumber(value)
             .mul(pow10(18 - decimals))
             .toString(),
         "ether"
     );
-    if (precision && precision > 0) {
-        const index = formatted.indexOf(".");
-        if (index > 0) {
-            if (formatted.length < index + precision + 1) {
-                const padding = index + precision + 1 - formatted.length;
-                for (let i = 0; i < padding; i++) {
-                    formatted += "0";
-                }
-            } else {
-                formatted = formatted.substring(0, index + precision + 1);
-            }
-        } else {
-            formatted += ".";
-            for (let i = 0; i < precision; i++) {
-                formatted += "0";
-            }
+
+    const numberSeparator = ",";
+    const decimalPoint = ".";
+
+    let [intPart, realPart] = formatted.split(".");
+
+    if (intPart === undefined) {
+        intPart = "0";
+    }
+
+    if (realPart === undefined) {
+        realPart = "";
+    }
+
+    if (useCommas) {
+        const reg = /(^[+-]?\d+)(\d{3})/;
+        while (reg.test(intPart)) {
+            intPart = intPart.replace(reg, "$1" + numberSeparator + "$2");
         }
     }
-    return formatted;
+
+    if (precision > 0) {
+        if (realPart && realPart.length > precision) {
+            realPart = realPart.substring(0, precision);
+        } else {
+            do {
+                realPart = "0" + realPart;
+            } while (realPart.length < precision);
+        }
+
+        return [intPart, realPart].join(decimalPoint);
+    } else {
+        return intPart;
+    }
 };
 
 export const parseValue = (value: string, decimals: number) => {

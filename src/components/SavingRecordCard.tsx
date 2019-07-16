@@ -29,8 +29,8 @@ const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
         record.balance
             .add(record.withdrawals.reduce((previous, current) => previous.add(current.amount), toBigNumber(0)))
             .sub(record.principal)
-            .mul(toBigNumber("100").mul(toBigNumber(10).pow(toBigNumber(decimals))))
-            .div(record.principal)
+        // .mul(toBigNumber("100").mul(toBigNumber(10).pow(toBigNumber(decimals))))
+        // .div(record.principal)
     );
     const [apr] = useState(() => {
         const multiplier = toBigNumber(10).pow(decimals);
@@ -44,7 +44,7 @@ const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
     const openDialog = () => setDialogOpen(true);
     const closeDialog = () => setDialogOpen(false);
     const onWithdraw = useCallback(() => openDialog(), [record]);
-    return (
+    return asset ? (
         <View style={[preset.marginNormal]} key={record.id.toString()}>
             <Card>
                 <CardItem>
@@ -65,7 +65,7 @@ const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
                         <Text note={true} style={preset.marginLeft0}>
                             {t("profit")}
                         </Text>
-                        <BigNumberText value={profit} suffix={"%"} />
+                        <BigNumberText value={profit} decimalPlaces={2} suffix={""} prefix={"+"} />
                     </View>
                     <View style={[preset.marginLeftSmall, preset.marginRightSmall, preset.flex0]}>
                         <Text note={true} style={preset.marginLeft0}>
@@ -92,7 +92,7 @@ const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
             </Card>
             <WithdrawDialog visible={dialogOpen} apr={apr} onCancel={closeDialog} onOk={closeDialog} record={record} />
         </View>
-    );
+    ) : null;
 };
 
 const WithdrawDialog = ({ visible, onCancel, onOk, record, apr }) => {

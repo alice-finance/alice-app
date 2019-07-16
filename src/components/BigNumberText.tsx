@@ -6,12 +6,12 @@ import { SavingsContext } from "../contexts/SavingsContext";
 import preset from "../styles/preset";
 import { formatValue } from "../utils/big-number-utils";
 
-const BigNumberText = ({ value, prefix = "", suffix = " ", style = {} }) => {
+const BigNumberText = ({ value, prefix = "", suffix = " ", decimalPlaces = 2, style = {} }) => {
     const { t } = useTranslation("finance");
     const { asset, decimals } = useContext(SavingsContext);
     return (
         <Text style={[preset.fontSize20, style]}>
-            {value ? prefix + formatValue(value, decimals, 2) + suffix || asset!.symbol : t("loading")}
+            {value ? prefix + formatValue(value, decimals, decimalPlaces) + suffix || asset!.symbol : t("loading")}
         </Text>
     );
 };
