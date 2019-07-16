@@ -15,11 +15,9 @@ const BalanceView = ({
     balance: ethers.utils.BigNumber;
     style?: object;
 }) => (
-    <View style={style}>
-        <View style={[preset.flexDirectionRow, preset.alignItemsCenter]}>
-            <Text style={[preset.fontSize32]}>{formatValue(balance, asset.decimals, 2)}</Text>
-            <Text style={[preset.fontSize24, preset.marginLeftSmall]}>{asset.symbol}</Text>
-        </View>
+    <View style={[style, preset.flexDirectionRow, preset.alignItemsCenter]}>
+        <Text style={[preset.fontSize32]}>{formatValue(balance, asset.decimals, 2)}</Text>
+        <Text style={[preset.fontSize24, preset.marginLeftSmall]}>{asset.symbol}</Text>
     </View>
 );
 
