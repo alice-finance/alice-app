@@ -241,10 +241,40 @@ const AmountControls = ({ asset, onNext }: AmountControlsProps) => {
     const { t } = useTranslation(["asset", "common"]);
     const { getBalance } = useContext(BalancesContext);
     const [amount, setAmount] = useState<BigNumber | null>(toBigNumber(0));
+    const [error, setError] = useState("");
+    const [warning, setWarning] = useState("");
     const ethereumBalance = getBalance(asset.ethereumAddress);
+    const updateAmount = useCallback(
+        newAmount => {
+            setAmount(newAmount);
+            if (newAmount) {
+                if (asset.ethereumAddress.isZero()) {
+                    const remainingEthers = ethereumBalance.sub(newAmount);
+
+                    if (remainingEthers.eq(toBigNumber(0))) {
+                        setError(t("notEnoughEthereum") + " " + t("ethRecommend"));
+                        setWarning("");
+                    } else if (remainingEthers.lt(toBigNumber("10000000000000000"))) {
+                        setError("");
+                        setWarning(t("willNotEnoughEthereum") + " " + t("ethRecommend"));
+                    } else {
+                        setError("");
+                        setWarning("");
+                    }
+                }
+            }
+        },
+        [ethereumBalance]
+    );
     return (
         <View>
-            <AmountInput asset={asset} max={ethereumBalance} onChangeAmount={setAmount} style={preset.marginSmall} />
+            <AmountInput asset={asset} max={ethereumBalance} onChangeAmount={updateAmount} style={preset.marginSmall} />
+            {error.length > 0 && (
+                <Text style={[preset.marginNormal, preset.colorDanger, preset.fontSize14]}>{error}</Text>
+            )}
+            {warning.length > 0 && (
+                <Text style={[preset.marginNormal, preset.colorInfo, preset.fontSize14]}>{warning}</Text>
+            )}
             <View style={[preset.marginLeftNormal, preset.marginRightNormal]}>
                 <Row
                     label={t("available")}
@@ -255,7 +285,7 @@ const AmountControls = ({ asset, onNext }: AmountControlsProps) => {
                 primary={true}
                 rounded={true}
                 block={true}
-                disabled={!amount || amount.isZero()}
+                disabled={!amount || amount.isZero() || error.length > 0}
                 style={preset.marginTopNormal}
                 onPress={useCallback(() => onNext(amount!), [amount])}>
                 <Text>{t("common:next")}</Text>

@@ -140,7 +140,10 @@
         "notAValidAddress": "Not a valid address.",
         "notAValidValue": "Not a valid value.",
         "transferSuccess": "Successfully transferred!",
-        "transferError": "Transfer Error"
+        "transferError": "Transfer Error",
+        "ethRecommend" : "We recommend that you leave a amount of 0.01 ETH or smaller.",
+        "willNotEnoughEthereum": "The amount of ETH remaining may not be sufficient for the next transfer.",
+        "notEnoughEthereum": "The amount of ETH remaining is not enough."
     },
     "profile": {
         "myProfile": "My Profile",
