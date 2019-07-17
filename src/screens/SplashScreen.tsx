@@ -1,11 +1,9 @@
 import React, { useContext } from "react";
-import { useTranslation } from "react-i18next";
-import { Alert } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
 import EthereumChain from "@alice-finance/alice.js/dist/chains/EthereumChain";
 import LoomChain from "@alice-finance/alice.js/dist/chains/LoomChain";
-import { AppLoading, SplashScreen as ExpoSplashScreen, Updates } from "expo";
+import { AppLoading, SplashScreen as ExpoSplashScreen } from "expo";
 import { Asset } from "expo-asset";
 import * as Font from "expo-font";
 import * as SecureStore from "expo-secure-store";
@@ -16,6 +14,7 @@ import { SavingsContext } from "../contexts/SavingsContext";
 import * as Analytics from "../helpers/Analytics";
 import useTokenBalanceUpdater from "../hooks/useTokenBalanceUpdater";
 import useUpdateChecker from "../hooks/useUpdateChecker";
+import { getGasPrice } from "../utils/ether-gas-utils";
 
 const SplashScreen = () => {
     const { load, onError, onFinish } = useLoader();
@@ -47,6 +46,11 @@ const useLoader = () => {
                 token.loomAddress.local.equals(LocalAddress.fromHexString(assetAddress))
             );
             const decimals = Number((await market.DECIMALS()).toString());
+
+            // Patch getGasPrice function
+            ethereumChain.getProvider().getGasPrice = async () => {
+                return getGasPrice();
+            };
 
             setMnemonic(mnemonic);
             setEthereumChain(ethereumChain);
