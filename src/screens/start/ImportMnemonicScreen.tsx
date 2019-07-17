@@ -35,20 +35,22 @@ const ImportMnemonicScreen = () => {
     const onComplete = useCallback(async () => {
         if (confirmed) {
             setEncrypting(true);
-            try {
-                const ethereumPrivateKey = ethereumPrivateKeyFromMnemonic(mnemonic);
-                const loomPrivateKey = loomPrivateKeyFromMnemonic(mnemonic);
-                await SecureStore.setItemAsync("mnemonic", mnemonic);
-                await SecureStore.setItemAsync("ethereumPrivateKey", ethereumPrivateKey);
-                await SecureStore.setItemAsync("loomPrivateKey", loomPrivateKey);
-                const ethereumChain = new EthereumChain(ethereumPrivateKey, __DEV__);
-                const loomChain = new LoomChain(loomPrivateKey, __DEV__);
-                await mapAccounts(ethereumChain, loomChain);
-                Analytics.track(Analytics.events.KEY_IMPORTED);
-                push("Complete");
-            } finally {
-                setEncrypting(false);
-            }
+            setTimeout(async () => {
+                try {
+                    const ethereumPrivateKey = ethereumPrivateKeyFromMnemonic(mnemonic);
+                    const loomPrivateKey = loomPrivateKeyFromMnemonic(mnemonic);
+                    await SecureStore.setItemAsync("mnemonic", mnemonic);
+                    await SecureStore.setItemAsync("ethereumPrivateKey", ethereumPrivateKey);
+                    await SecureStore.setItemAsync("loomPrivateKey", loomPrivateKey);
+                    const ethereumChain = new EthereumChain(ethereumPrivateKey, __DEV__);
+                    const loomChain = new LoomChain(loomPrivateKey, __DEV__);
+                    await mapAccounts(ethereumChain, loomChain);
+                    Analytics.track(Analytics.events.KEY_IMPORTED);
+                    push("Complete");
+                } finally {
+                    setEncrypting(false);
+                }
+            }, 100);
         }
     }, [confirmed, mnemonic]);
     return (
