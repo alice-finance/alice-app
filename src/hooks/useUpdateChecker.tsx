@@ -22,8 +22,9 @@ const useUpdateChecker = () => {
         (options: UpdateCheckOption) => {
             Updates.checkForUpdateAsync()
                 .then(updateInfo => {
-                    if (updateInfo && updateInfo.hasOwnProperty("isAvailable")) {
-                        if (updateInfo.isAvailable) {
+                    const key = "isAvailable";
+                    if (updateInfo && updateInfo.hasOwnProperty(key)) {
+                        if (updateInfo[key]) {
                             Alert.alert(
                                 t("title"),
                                 t("description"),
