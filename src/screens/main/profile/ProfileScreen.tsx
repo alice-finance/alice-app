@@ -1,6 +1,6 @@
-import React, { useCallback, useContext } from "react";
+import React, { useCallback, useContext, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Clipboard, View } from "react-native";
+import { Clipboard, Platform, View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
 import { Linking } from "expo";
@@ -23,6 +23,21 @@ const ProfileScreen = () => {
     const onPressCustomerSupport = useCallback(() => Linking.openURL(t("common:telegramUrl")), []);
     const onPressResetAccount = useCallback(() => push("ResetAccount"), []);
     const { Dialog, openDialog } = useBackupSeedPhraseDialog();
+    const versionString = useMemo(() => {
+        return (
+            "Alice " +
+            app.expo.extra.aliceVersion +
+            "\nMobile " +
+            app.expo.version +
+            "(" +
+            (Platform.OS === "ios"
+                ? app.expo.ios.buildNumber
+                : Platform.OS === "android"
+                ? app.expo.android.versionCode
+                : "-") +
+            ")"
+        );
+    }, []);
     return (
         <Container>
             <View>
@@ -48,7 +63,7 @@ const ProfileScreen = () => {
                     iconName={"warning"}
                     onPress={onPressResetAccount}
                 />
-                <Item title={t("appVersion")} description={app.expo.version + "." + app.expo.extra.pubVersion} />
+                <Item title={t("appVersion")} description={versionString} numberOfLines={2} />
             </View>
             <Dialog />
         </Container>
@@ -74,15 +89,16 @@ interface ItemProps {
         | "Zocial";
     iconName?: string;
     onPress?: () => void;
+    numberOfLines?: number;
 }
 
-const Item = ({ title, description, iconType, iconName, onPress }: ItemProps) => {
+const Item = ({ title, description, iconType, iconName, onPress, numberOfLines = 1 }: ItemProps) => {
     return (
         <ListItem button={true} iconRight={true} style={{ height: 72 }} onPress={onPress}>
             <Body>
                 <Text style={{ fontSize: 20 }}>{title}</Text>
                 {description && (
-                    <Text note={true} ellipsizeMode="middle" numberOfLines={1}>
+                    <Text note={true} ellipsizeMode="middle" numberOfLines={numberOfLines}>
                         {description}
                     </Text>
                 )}

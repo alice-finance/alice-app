@@ -10,6 +10,7 @@
     ],
     "version": "1.0.1",
     "extra": {
+      "aliceVersion": "1.0.5",
       "pubVersion": 5
     },
     "orientation": "portrait",
