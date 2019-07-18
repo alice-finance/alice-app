@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Clipboard, Platform, View } from "react-native";
+import { Clipboard, View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
 import { Linking } from "expo";
@@ -23,21 +23,7 @@ const ProfileScreen = () => {
     const onPressCustomerSupport = useCallback(() => Linking.openURL(t("common:telegramUrl")), []);
     const onPressResetAccount = useCallback(() => push("ResetAccount"), []);
     const { Dialog, openDialog } = useBackupSeedPhraseDialog();
-    const versionString = useMemo(() => {
-        return (
-            "Alice " +
-            app.expo.extra.aliceVersion +
-            "\nMobile " +
-            app.expo.version +
-            "(" +
-            (Platform.OS === "ios"
-                ? app.expo.ios.buildNumber
-                : Platform.OS === "android"
-                ? app.expo.android.versionCode
-                : "-") +
-            ")"
-        );
-    }, []);
+    const versionString = useMemo(() => app.expo.version + "." + app.expo.extra.pubVersion, []);
     return (
         <Container>
             <View>
