@@ -20,6 +20,9 @@ const ProfileScreen = () => {
         Clipboard.setString(ethereumChain!.getAddress().toLocalAddressString());
         SnackBar.success(t("addressCopiedToTheClipboard"));
     }, []);
+    const onPressBackup = useCallback(() => {
+        push("Auth", { onSuccess: openDialog });
+    }, []);
     const onPressCustomerSupport = useCallback(() => Linking.openURL(t("common:telegramUrl")), []);
     const onPressResetAccount = useCallback(() => push("ResetAccount"), []);
     const { Dialog, openDialog } = useBackupSeedPhraseDialog();
@@ -41,7 +44,7 @@ const ProfileScreen = () => {
                     iconName="key"
                     onPress={onPressMyAddress}
                 />
-                <Item title={t("backupSeedPhrase")} iconName="note" onPress={openDialog} />
+                <Item title={t("backupSeedPhrase")} iconName="note" onPress={onPressBackup} />
                 <Item
                     title={t("resetAccount")}
                     description={t("resetAccount.description")}

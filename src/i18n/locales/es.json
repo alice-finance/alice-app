@@ -25,6 +25,17 @@
         "blogUrl": "https://medium.com/alice-finance",
         "telegramUrl": "https://t.me/alicefinance"
     },
+    "auth": {
+        "authentication": "Autenticación",
+        "pleaseEnterYourPassword": "Por favor, introduzca su contraseña.",
+        "registration": "Registro",
+        "pleaseEnterYourPasswordAgain": "Por favor ingrese su contraseña una vez más.",
+        "passwordRegistered": "Su contraseña ha sido registrada.",
+        "passwordNotMatched": "Contraseña no coincidente.",
+        "biometricAuthentication": "Autenticación biométrica",
+        "biometricAuthentication.description": "Autenticar utilizando la huella dactilar o el reconocimiento facial.",
+        "successful": "¡Autenticado con éxito!"
+    },
     "start": {
         "createNewWallet": "Crear Nueva Cartera",
         "importExistingWallet": "Importar Cartera Existente",

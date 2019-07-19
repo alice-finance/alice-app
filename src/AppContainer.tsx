@@ -13,6 +13,7 @@ import { fromRight } from "react-navigation-transitions";
 
 import platform from "../native-base-theme/variables/platform";
 import TabBarIcon from "./components/TabBarIcon";
+import AuthScreen from "./screens/AuthScreen";
 import AssetsScreen from "./screens/main/assets/AssetsScreen";
 import DepositScreen from "./screens/main/assets/DepositScreen";
 import ManageAssetScreen from "./screens/main/assets/ManageAssetScreen";
@@ -61,7 +62,8 @@ const StartNavigator = createDefaultStackNavigator(
         NewMnemonic: NewMnemonicScreen,
         ConfirmMnemonic: ConfirmMnemonicScreen,
         Complete: CompleteScreen,
-        ImportMnemonic: ImportMnemonicScreen
+        ImportMnemonic: ImportMnemonicScreen,
+        Auth: AuthScreen
     },
     {
         transitionConfig: () => fromRight()
@@ -118,7 +120,8 @@ const MainNavigator = createDefaultStackNavigator({
     ManageDeposits: ManageDepositsScreen,
     Deposit: DepositScreen,
     Withdrawal: WithdrawalScreen,
-    ResetAccount: ResetAccountScreen
+    ResetAccount: ResetAccountScreen,
+    Auth: AuthScreen
 });
 
 const AppNavigator = createSwitchNavigator({

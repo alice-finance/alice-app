@@ -8,6 +8,7 @@ const preset = StyleSheet.create({
     flex1: { flex: 1 },
     flexDirectionRow: { flexDirection: "row" },
     flexDirectionColumn: { flexDirection: "column" },
+    flexWrapWrap: { flexWrap: "wrap" },
     justifyContentCenter: { justifyContent: "center" },
     justifyContentFlexEnd: { justifyContent: "flex-end" },
     alignItemsCenter: { alignItems: "center" },

@@ -25,6 +25,17 @@
         "blogUrl": "https://medium.com/alice-finance-korean",
         "telegramUrl": "https://t.me/alicefinancekorean"
     },
+    "auth": {
+        "authentication": "비밀번호 인증",
+        "pleaseEnterYourPassword": "비밀번호를 입력해주세요.",
+        "registration": "비밀번호 등록",
+        "pleaseEnterYourPasswordAgain": "비밀번호를 한번 더 입력해주세요.",
+        "passwordRegistered": "비밀번호가 등록되었습니다.",
+        "passwordNotMatched": "비밀번호가 일치하지 않습니다.",
+        "biometricAuthentication": "생체 인증",
+        "biometricAuthentication.description": "지문 혹은 안면 인식 인증해주세요.",
+        "successful": "인증 성공!"
+    },
     "start": {
         "createNewWallet": "새로운 지갑 생성하기",
         "importExistingWallet": "지갑 불러오기",
