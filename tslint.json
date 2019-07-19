@@ -6,7 +6,8 @@
     "tslint-config-prettier"
   ],
   "rulesDirectory": [
-    "tslint-plugin-prettier"
+    "tslint-plugin-prettier",
+    "tslint-microsoft-contrib"
   ],
   "rules": {
     "prettier": true,
@@ -15,15 +16,28 @@
       true,
       {
         "grouped-imports": true,
-        "groups": [{
-          "name": "react",
-          "match": "react",
-          "order": 0
-        }]
+        "groups": [
+          {
+            "name": "react",
+            "match": "react",
+            "order": 0
+          }
+        ]
       }
     ],
     "object-literal-sort-keys": false,
-    "no-empty": false
+    "no-empty": false,
+    "max-func-body-length": [
+      true,
+      {
+        "func-body-length": 25,
+        "func-expression-body-length": 25,
+        "arrow-body-length": 25,
+        "method-body-length": 25,
+        "ctor-body-length": 25,
+        "ignore-comments": true
+      }
+    ]
   },
   "linterOptions": {
     "exclude": [
