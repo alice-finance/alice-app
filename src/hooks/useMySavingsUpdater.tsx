@@ -1,37 +1,22 @@
 import { useCallback, useContext } from "react";
 
 import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
-import { getLogs } from "@alice-finance/alice.js/dist/utils/ethers-utils";
 import { ChainContext } from "../contexts/ChainContext";
 import { SavingsContext } from "../contexts/SavingsContext";
+import useLogLoader from "./useLogLoader";
 
 const useMySavingsUpdater = () => {
     const { loomChain } = useContext(ChainContext);
-    const { setMyRecords } = useContext(SavingsContext);
+    const { setMyRecords, asset } = useContext(SavingsContext);
+    const { getSavingsLogs } = useLogLoader(asset!);
+
     const update = useCallback(async () => {
         if (loomChain) {
             const market = loomChain.getMoneyMarket();
-            const transaction = await loomChain
-                .getProvider()
-                .getTransaction(loomChain.config.moneyMarket.transactionHash);
-            const fromBlock = Number(transaction.blockNumber || 0);
-            const event = market.interface.events.SavingsWithdrawn;
-            const logs = await getLogs(loomChain.getProvider(), {
-                address: market.address,
-                topics: [event.topic],
-                fromBlock,
-                toBlock: "latest"
-            });
-            const events = logs
-                .map(log => event.decode(log.data))
-                .map(data => ({
-                    recordId: toBigNumber(data.recordId),
-                    amount: toBigNumber(data.amount),
-                    timestamp: new Date(data.timestamp.toNumber() * 1000)
-                }));
+            const events = await getSavingsLogs();
             const savingRecords = await market.getSavingsRecords(loomChain.getAddress().toLocalAddressString());
             savingRecords.forEach(r => {
-                r.withdrawals = events.filter(e => e.recordId.eq(r.id));
+                r.withdrawals = events.filter(e => toBigNumber(e.recordId).eq(r.id));
             });
             setMyRecords(savingRecords.filter(r => !r.balance.isZero()));
         }

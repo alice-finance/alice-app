@@ -31,7 +31,7 @@ const ManageAssetScreen = () => {
     const asset: ERC20Asset = getParam("asset");
     const { ethereumChain } = useContext(ChainContext);
     const [] = useState(false);
-    const { getCached } = useLogLoader(asset);
+    const { getCachedLogs } = useLogLoader(asset);
     const { getBalance } = useContext(BalancesContext);
     const [blockNumber, setBlockNumber] = useState(0);
     const balance = getBalance(asset.loomAddress);
@@ -42,7 +42,7 @@ const ManageAssetScreen = () => {
 
     useEffect(() => {
         InteractionManager.runAfterInteractions(async () => {
-            const cachedItems = await getCached();
+            const cachedItems = await getCachedLogs();
             const newItems = cachedItems
                 .sort((l1, l2) => (l2.log.blockNumber || 0) - (l1.log.blockNumber || 0))
                 .slice(0, 5);

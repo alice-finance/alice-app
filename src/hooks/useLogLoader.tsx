@@ -2,6 +2,10 @@ import { useCallback, useContext } from "react";
 import { AsyncStorage } from "react-native";
 
 import { ERC20Asset } from "@alice-finance/alice.js";
+import { ZERO_ADDRESS } from "@alice-finance/alice.js/dist/constants";
+import { getLogs } from "@alice-finance/alice.js/dist/utils/ethers-utils";
+import { ethers } from "ethers";
+import { Log } from "ethers/providers";
 import { ChainContext } from "../contexts/ChainContext";
 import useKyberSwap from "./useKyberSwap";
 
@@ -38,8 +42,48 @@ export const removeLogWrapper = async (symbol: string, type: string) => {
     await AsyncStorage.removeItem(key);
 };
 
+const getSavingsLogsAsync = async (loomChain, address, event, lastBlock, latestBlock) => {
+    let fromBlock = lastBlock;
+    let toBlock = latestBlock;
+
+    const promises: Array<Promise<Log[]>> = [];
+
+    while (fromBlock < latestBlock) {
+        if (latestBlock - lastBlock > 9999) {
+            toBlock = fromBlock + 9999;
+        }
+
+        if (toBlock > latestBlock) {
+            toBlock = latestBlock;
+        }
+
+        const pr = getLogs(loomChain.getProvider(), {
+            address,
+            topics: [event.topic, ethers.utils.hexZeroPad(loomChain.getAddress().toLocalAddressString(), 32)],
+            fromBlock,
+            toBlock
+        });
+
+        fromBlock = toBlock + 1;
+
+        promises.push(pr);
+    }
+
+    const result = await Promise.all(promises);
+    const returnValue = result.reduce((p, logs) => {
+        const newLogs = logs
+            .sort((l1, l2) => (l2.blockNumber || 0) - (l1.blockNumber || 0))
+            .map(log => ({
+                log,
+                ...event.decode(log.data)
+            }));
+        return [...p, ...newLogs];
+    });
+    return returnValue;
+};
+
 const useLogLoader = (asset: ERC20Asset) => {
-    const { ethereumChain } = useContext(ChainContext);
+    const { ethereumChain, loomChain } = useContext(ChainContext);
     const { getSwapLogsAsync } = useKyberSwap();
 
     const getGatewayDepositLogs = useCallback(async () => {
@@ -140,7 +184,37 @@ const useLogLoader = (asset: ERC20Asset) => {
         return logWrapper.logs;
     }, [asset, ethereumChain, getSwapLogsAsync]);
 
-    const getCached = useCallback(async () => {
+    const getSavingsLogs = useCallback(async () => {
+        const TYPE = "savings-record";
+        const logWrapper = await getLogWrapper(asset.symbol, TYPE);
+
+        if (loomChain !== null) {
+            const market = loomChain.getMoneyMarket();
+            const latestBlock = await loomChain.getProvider().getBlockNumber();
+            const event = market.interface.events.SavingsWithdrawn;
+            let lastBlock = logWrapper.lastBlockNumber;
+            if (lastBlock === 0) {
+                const transaction = await loomChain
+                    .getProvider()
+                    .getTransaction(loomChain.config.moneyMarket.transactionHash);
+                lastBlock = Number(transaction.blockNumber || 0);
+            }
+
+            if (lastBlock < latestBlock) {
+                const result = await getSavingsLogsAsync(loomChain, market.address, event, lastBlock, latestBlock);
+
+                if (result) {
+                    logWrapper.logs = removeDuplicate([...logWrapper.logs, ...result]);
+                    logWrapper.lastBlockNumber = latestBlock;
+                    await setLogWrapper(asset.symbol, TYPE, logWrapper);
+                }
+            }
+        }
+
+        return logWrapper.logs || [];
+    }, [asset, loomChain]);
+
+    const getCachedLogs = useCallback(async () => {
         const depositLogWrapper = await getLogWrapper(asset.symbol, "gateway-deposit");
         const withdrawLogWrapper = await getLogWrapper(asset.symbol, "gateway-withdraw");
         const swapLogWrapper = await getLogWrapper(asset.symbol, "kyber-swap");
@@ -156,7 +230,8 @@ const useLogLoader = (asset: ERC20Asset) => {
         getGatewayDepositLogs,
         getGatewayWithdrawLogs,
         getKyberSwapLogs,
-        getCached
+        getCachedLogs,
+        getSavingsLogs
     };
 };
 
