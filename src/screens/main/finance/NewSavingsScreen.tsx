@@ -28,7 +28,7 @@ const NewSavingsScreen = () => {
     const [aprText, setAprText] = useState(t("loading"));
     const [loadingAPR, setLoadingAPR] = useState(false);
     const myBalance = getBalance(asset!.loomAddress);
-    const myBalanceText = formatValue(myBalance, asset!.decimals, 2) + " " + asset!.symbol;
+    const myBalanceText = formatValue(myBalance, asset!.decimals) + " " + asset!.symbol;
     const { starting, start } = useSavingsStarter(asset, amount);
     const onPressManageAsset = useCallback(() => push("ManageAsset", { asset }), []);
     useEffect(() => {

@@ -90,7 +90,7 @@ const WithdrawalScreen = () => {
                             <View style={[preset.marginLeftNormal, preset.marginRightNormal]}>
                                 <Row
                                     label={t("available")}
-                                    value={formatValue(loomBalance, asset!.decimals, 2) + " " + asset!.symbol}
+                                    value={formatValue(loomBalance, asset!.decimals) + " " + asset!.symbol}
                                 />
                             </View>
                             <Button
@@ -152,9 +152,9 @@ const Confirm = ({ asset, change, onCancel, onOk }: ConfirmProps) => {
     );
 };
 
-const Value = ({ asset, value, style = {} }) => (
+const Value = ({ asset, value, style = {}, precision = 4 }) => (
     <Text style={[preset.fontSize36, preset.textAlignCenter, preset.paddingSmall, style]}>
-        {formatValue(value, asset.decimals, 2) + " " + asset.symbol}
+        {formatValue(value, asset.decimals, precision) + " " + asset.symbol}
     </Text>
 );
 

@@ -50,7 +50,7 @@ const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
                 <CardItem>
                     <Left>
                         <Text style={[preset.marginTopSmall, preset.fontSize24, preset.fontWeightBold]}>
-                            {formatValue(record.balance, asset!.decimals, 2)} {asset!.symbol}
+                            {formatValue(record.balance, asset!.decimals)} {asset!.symbol}
                         </Text>
                     </Left>
                 </CardItem>
@@ -65,13 +65,13 @@ const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
                         <Text note={true} style={preset.marginLeft0}>
                             {t("profit")}
                         </Text>
-                        <BigNumberText value={profit} decimalPlaces={2} suffix={""} prefix={"+"} />
+                        <BigNumberText value={profit} suffix={""} prefix={"+"} />
                     </View>
                     <View style={[preset.marginLeftSmall, preset.marginRightSmall, preset.flex0]}>
                         <Text note={true} style={preset.marginLeft0}>
                             {t("apr")}
                         </Text>
-                        <BigNumberText value={apr} suffix={"%"} />
+                        <BigNumberText value={apr} suffix={"%"} decimalPlaces={2} />
                     </View>
                 </CardItem>
                 <CardItem>
@@ -102,7 +102,7 @@ const WithdrawDialog = ({ visible, onCancel, onOk, record, apr }) => {
     const [amount, setAmount] = useState<BigNumber | null>(toBigNumber(0));
     const [inProgress, setInProgress] = useState(false);
     const aprText = formatValue(apr, decimals, 2) + " %";
-    const balanceText = formatValue(record.balance, asset!.decimals, 2) + " " + asset!.symbol;
+    const balanceText = formatValue(record.balance, asset!.decimals) + " " + asset!.symbol;
     const { update } = useMySavingsUpdater();
     const onWithdraw = useCallback(async () => {
         if (loomChain && amount) {

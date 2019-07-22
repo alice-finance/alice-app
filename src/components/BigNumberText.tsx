@@ -6,7 +6,7 @@ import { SavingsContext } from "../contexts/SavingsContext";
 import preset from "../styles/preset";
 import { formatValue } from "../utils/big-number-utils";
 
-const BigNumberText = ({ value, prefix = "", suffix = " ", decimalPlaces = 2, style = {} }) => {
+const BigNumberText = ({ value, prefix = "", suffix = " ", decimalPlaces = 4, style = {} }) => {
     const { t } = useTranslation("finance");
     const { asset, decimals } = useContext(SavingsContext);
     return (

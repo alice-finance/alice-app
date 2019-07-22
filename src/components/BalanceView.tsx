@@ -16,7 +16,7 @@ const BalanceView = ({
     style?: object;
 }) => (
     <View style={[style, preset.flexDirectionRow, preset.alignItemsCenter]}>
-        <Text style={[preset.fontSize32]}>{formatValue(balance, asset.decimals, 2)}</Text>
+        <Text style={[preset.fontSize32]}>{formatValue(balance, asset.decimals)}</Text>
         <Text style={[preset.fontSize24, preset.marginLeftSmall]}>{asset.symbol}</Text>
     </View>
 );

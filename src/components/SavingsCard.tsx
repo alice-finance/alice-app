@@ -39,7 +39,7 @@ const SavingsCard = () => {
                         <Text note={true} style={preset.marginLeft0}>
                             {t("totalBalance")}
                         </Text>
-                        <BigNumberText value={totalBalance} decimalPlaces={0} />
+                        <BigNumberText value={totalBalance} />
                     </View>
                     <View style={[preset.marginLeftSmall, preset.flex1]}>
                         <Text note={true} style={preset.marginLeft0}>
@@ -51,7 +51,7 @@ const SavingsCard = () => {
                         <Text note={true} style={preset.marginLeft0}>
                             {t("apr")}
                         </Text>
-                        <BigNumberText value={apr} suffix={"%"} />
+                        <BigNumberText value={apr} suffix={"%"} decimalPlaces={2} />
                     </View>
                 </CardItem>
                 <CardItem style={preset.marginBottomSmall}>
@@ -75,9 +75,7 @@ const MySavingsSummaryText = () => {
         profit = myTotalBalance.add(myTotalWithdrawal).sub(myTotalPrincipal);
     }
     const text =
-        myTotalPrincipal && !myTotalPrincipal.isZero()
-            ? "+" + formatValue(profit, 18, 2) + " DAI"
-            : t("startSavingsNow");
+        myTotalPrincipal && !myTotalPrincipal.isZero() ? "+" + formatValue(profit, 18) + " DAI" : t("startSavingsNow");
     return <Text style={profit.isZero() ? preset.colorGrey : preset.colorInfo}>{text}</Text>;
 };
 

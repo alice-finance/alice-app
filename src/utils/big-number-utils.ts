@@ -8,7 +8,7 @@ export const pow10 = (e: number) => toBigNumber(10).pow(e);
 export const formatValue = (
     value: string | ethers.utils.BigNumber,
     decimals: number = ERC20_MAX_PRECISION,
-    precision: number = ERC20_MAX_PRECISION,
+    precision: number = 4,
     useCommas: boolean = false
 ) => {
     const formatted = fromWei(

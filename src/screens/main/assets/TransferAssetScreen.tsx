@@ -39,7 +39,7 @@ const TransferAssetScreen = () => {
     const onTransfer = useCallback(async () => {
         Alert.alert(
             t("transfer"),
-            t("transfer.confirm", { address, symbol: asset.symbol, amount: formatValue(amount!, asset.decimals, 2) }),
+            t("transfer.confirm", { address, symbol: asset.symbol, amount: formatValue(amount!, asset.decimals) }),
             [{ text: t("common:cancel"), style: "cancel" }, { text: t("common:ok"), onPress: transfer }]
         );
     }, [address, asset, amount]);

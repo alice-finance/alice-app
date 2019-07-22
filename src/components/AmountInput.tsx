@@ -46,7 +46,7 @@ const AmountInput: FunctionComponent<AmountInputProps> = ({
         [asset, max]
     );
     const onPressMax = useCallback(() => {
-        const newValue = formatValue(max, asset!.decimals, 2);
+        const newValue = formatValue(max, asset!.decimals);
         setValue(newValue);
         onChangeAmount(max);
     }, [asset, max]);

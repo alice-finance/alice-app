@@ -223,7 +223,7 @@ const SwapButton = ({ assetTo, amountTo, onPress }) => {
                             ? t("tokenConversion.notAvailable", { symbol: assetTo.symbol })
                             : t("tokenConversion.available", {
                                   symbol: assetTo.symbol,
-                                  amount: formatValue(amountTo, assetTo.decimals, 2)
+                                  amount: formatValue(amountTo, assetTo.decimals)
                               })
                         : t("finance:loading")}
                 </Text>
@@ -278,7 +278,7 @@ const AmountControls = ({ asset, onNext }: AmountControlsProps) => {
             <View style={[preset.marginLeftNormal, preset.marginRightNormal]}>
                 <Row
                     label={t("available")}
-                    value={formatValue(ethereumBalance, asset!.decimals, 2) + " " + asset!.symbol}
+                    value={formatValue(ethereumBalance, asset!.decimals) + " " + asset!.symbol}
                 />
             </View>
             <Button
@@ -336,7 +336,7 @@ const Confirm = ({ assetFrom, amount, assetTo, amountTo, onCancel, onOk }: Confi
 
 const Value = ({ asset, value }: { asset: ERC20Asset; value: BigNumber }) => (
     <Text style={[preset.fontSize36, preset.textAlignCenter, preset.paddingSmall, preset.flex1]}>
-        {formatValue(value, asset.decimals, 2) + " " + asset.symbol}
+        {formatValue(value, asset.decimals) + " " + asset.symbol}
     </Text>
 );
 
