@@ -74,8 +74,7 @@ const MySavingsSummaryText = () => {
     if (myTotalPrincipal && myTotalBalance && myTotalWithdrawal && !myTotalPrincipal.isZero()) {
         profit = myTotalBalance.add(myTotalWithdrawal).sub(myTotalPrincipal);
     }
-    const text =
-        myTotalPrincipal && !myTotalPrincipal.isZero() ? "+" + formatValue(profit, 18) + " DAI" : t("startSavingsNow");
+    const text = myTotalPrincipal && !myTotalPrincipal.isZero() ? "$" + formatValue(profit, 18) : t("startSavingsNow");
     return <Text style={profit.isZero() ? preset.colorGrey : preset.colorInfo}>{text}</Text>;
 };
 

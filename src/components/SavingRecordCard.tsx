@@ -65,7 +65,7 @@ const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
                         <Text note={true} style={preset.marginLeft0}>
                             {t("profit")}
                         </Text>
-                        <BigNumberText value={profit} suffix={""} prefix={"+"} />
+                        <BigNumberText value={profit} suffix={""} prefix={"$"} />
                     </View>
                     <View style={[preset.marginLeftSmall, preset.marginRightSmall, preset.flex0]}>
                         <Text note={true} style={preset.marginLeft0}>
