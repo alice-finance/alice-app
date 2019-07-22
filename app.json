@@ -8,9 +8,9 @@
       "ios",
       "android"
     ],
-    "version": "1.0.2",
+    "version": "1.1",
     "extra": {
-      "pubVersion": 7
+      "pubVersion": 0
     },
     "orientation": "portrait",
     "primaryColor": "#8315d6",
@@ -30,13 +30,13 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "finance.alice.app",
-      "buildNumber": "6"
+      "buildNumber": "7"
     },
     "android": {
       "icon": "./src/assets/icon.android.png",
       "package": "finance.alice.app",
       "permissions": [],
-      "versionCode": 6
+      "versionCode": 7
     }
   }
 }
