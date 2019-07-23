@@ -2,7 +2,6 @@ import { useCallback, useContext } from "react";
 import { AsyncStorage } from "react-native";
 
 import { ERC20Asset } from "@alice-finance/alice.js";
-import { ZERO_ADDRESS } from "@alice-finance/alice.js/dist/constants";
 import { getLogs } from "@alice-finance/alice.js/dist/utils/ethers-utils";
 import { ethers } from "ethers";
 import { Log } from "ethers/providers";
@@ -12,6 +11,7 @@ import useKyberSwap from "./useKyberSwap";
 interface LogWrapper {
     lastBlockNumber: number;
     logs: any[];
+    migration: number;
 }
 
 interface LogObject {
@@ -22,13 +22,12 @@ interface LogObject {
 
 const removeDuplicate = (list: any[]) => {
     const hashSet = Array.from(new Set(list.map((a: LogObject) => a.log.transactionHash)));
-    const result = hashSet.map(hash => list.find((a: LogObject) => a.log.transactionHash === hash));
-    return result;
+    return hashSet.map(hash => list.find((a: LogObject) => a.log.transactionHash === hash));
 };
 
 const getLogWrapper = async (symbol: string, type: string): Promise<LogWrapper> => {
     const key = symbol + "-logs-" + type;
-    const logWrapperData = (await AsyncStorage.getItem(key)) || '{"lastBlockNumber": 0, "logs": []}';
+    const logWrapperData = (await AsyncStorage.getItem(key)) || '{"lastBlockNumber": 0, "logs": [], "migration": 0}';
     return JSON.parse(logWrapperData);
 };
 
@@ -47,6 +46,10 @@ const getSavingsLogsAsync = async (loomChain, address, event, lastBlock, latestB
     let toBlock = latestBlock;
 
     const promises: Array<Promise<Log[]>> = [];
+    const userAddress = loomChain
+        .getAddress()
+        .toLocalAddressString()
+        .toLowerCase();
 
     while (fromBlock < latestBlock) {
         if (latestBlock - lastBlock > 9999) {
@@ -59,7 +62,7 @@ const getSavingsLogsAsync = async (loomChain, address, event, lastBlock, latestB
 
         const pr = getLogs(loomChain.getProvider(), {
             address,
-            topics: [event.topic, ethers.utils.hexZeroPad(loomChain.getAddress().toLocalAddressString(), 32)],
+            topics: [event.topic, ethers.utils.hexZeroPad(userAddress, 32)],
             fromBlock,
             toBlock
         });
@@ -70,7 +73,7 @@ const getSavingsLogsAsync = async (loomChain, address, event, lastBlock, latestB
     }
 
     const result = await Promise.all(promises);
-    const returnValue = result.reduce((p, logs) => {
+    return result.reduce((p, logs) => {
         const newLogs = logs
             .sort((l1, l2) => (l2.blockNumber || 0) - (l1.blockNumber || 0))
             .map(log => ({
@@ -79,7 +82,6 @@ const getSavingsLogsAsync = async (loomChain, address, event, lastBlock, latestB
             }));
         return [...p, ...newLogs];
     });
-    return returnValue;
 };
 
 const useLogLoader = (asset: ERC20Asset) => {
@@ -193,6 +195,11 @@ const useLogLoader = (asset: ERC20Asset) => {
             const latestBlock = await loomChain.getProvider().getBlockNumber();
             const event = market.interface.events.SavingsWithdrawn;
             let lastBlock = logWrapper.lastBlockNumber;
+            if (!("migration" in logWrapper) || logWrapper.migration === 0) {
+                lastBlock = 0;
+                logWrapper.migration = 1;
+                logWrapper.logs = [];
+            }
             if (lastBlock === 0) {
                 const transaction = await loomChain
                     .getProvider()
