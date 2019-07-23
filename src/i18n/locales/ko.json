@@ -29,6 +29,7 @@
         "authentication": "비밀번호 인증",
         "pleaseEnterYourPassword": "비밀번호를 입력해주세요.",
         "registration": "비밀번호 등록",
+        "pleaseEnterYourNewPassword": "새로운 비밀번호를 입력해주세요.",
         "pleaseEnterYourPasswordAgain": "비밀번호를 한번 더 입력해주세요.",
         "passwordRegistered": "비밀번호가 등록되었습니다.",
         "passwordNotMatched": "비밀번호가 일치하지 않습니다.",

@@ -19,9 +19,10 @@ import { ChainContext } from "../../../contexts/ChainContext";
 import { SavingsContext } from "../../../contexts/SavingsContext";
 import useMySavingsUpdater from "../../../hooks/useMySavingsUpdater";
 import preset from "../../../styles/preset";
+import AuthScreen from "../../AuthScreen";
 
 const FinanceScreen = () => {
-    const { setParams } = useNavigation();
+    const { setParams, push } = useNavigation();
     const { t } = useTranslation(["finance", "common"]);
     const { totalBalance, myRecords } = useContext(SavingsContext);
     const sortedMyRecords = myRecords
@@ -37,6 +38,13 @@ const FinanceScreen = () => {
             update();
         }
     }, [totalBalance]);
+    useEffect(() => {
+        AuthScreen.getSavedPasscode().then(passcode => {
+            if (!passcode || passcode === "") {
+                push("Auth", { needsRegistration: true, firstTime: true });
+            }
+        });
+    }, []);
 
     return (
         <Container>

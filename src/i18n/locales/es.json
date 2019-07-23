@@ -29,6 +29,7 @@
         "authentication": "Autenticación",
         "pleaseEnterYourPassword": "Por favor, introduzca su contraseña.",
         "registration": "Registro",
+        "pleaseEnterYourNewPassword": "Por favor, ingrese su nueva contraseña",
         "pleaseEnterYourPasswordAgain": "Por favor ingrese su contraseña una vez más.",
         "passwordRegistered": "Su contraseña ha sido registrada.",
         "passwordNotMatched": "Contraseña no coincidente.",

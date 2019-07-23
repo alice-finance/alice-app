@@ -1,9 +1,10 @@
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { AsyncStorage, InteractionManager } from "react-native";
+import { AsyncStorage, InteractionManager, StyleSheet } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
 import { Button, Icon, Text, View } from "native-base";
+import platform from "../../native-base-theme/variables/platform";
 import CaptionText from "../components/CaptionText";
 import TitleText from "../components/TitleText";
 import useAsyncEffect from "../hooks/useAsyncEffect";
@@ -30,7 +31,15 @@ const AuthScreen = () => {
     return (
         <View style={preset.flex1}>
             <TitleText aboveText={true}>{t(needsRegistration ? "registration" : "authentication")}</TitleText>
-            <CaptionText>{t(confirming ? "pleaseEnterYourPasswordAgain" : "pleaseEnterYourPassword")}</CaptionText>
+            <CaptionText>
+                {t(
+                    confirming
+                        ? "pleaseEnterYourPasswordAgain"
+                        : needsRegistration
+                        ? "pleaseEnterYourNewPassword"
+                        : "pleaseEnterYourPassword"
+                )}
+            </CaptionText>
             <Circles passcode={confirming ? confirm : passcode} />
             <KeyPad appendPasscode={confirming ? appendConfirm : appendPasscode} />
         </View>
@@ -41,13 +50,25 @@ AuthScreen.getSavedPasscode = () => AsyncStorage.getItem("passcode");
 
 AuthScreen.savePasscode = passcode => AsyncStorage.setItem("passcode", passcode);
 
+AuthScreen.navigationOptions = ({ navigation }) => {
+    if (navigation.getParam("firstTime")) {
+        return {
+            headerLeft: null
+        };
+    }
+};
+
 const Circles = ({ passcode }) => (
     <View style={[preset.flex1, preset.flexDirectionRow, preset.justifyContentCenter, preset.marginTopHuge]}>
-        {new Array(PASSWORD_LENGTH).fill(0).map((value, index) => (
-            <Text key={index} style={[preset.colorPrimary, preset.fontSize24, preset.marginSmall]}>
-                {passcode.length - 1 >= index ? "●" : "○"}
-            </Text>
-        ))}
+        {new Array(PASSWORD_LENGTH)
+            .fill(0)
+            .map((value, index) =>
+                passcode.length - 1 >= index ? (
+                    <View key={index} style={styles.filledCircle} />
+                ) : (
+                    <View key={index} style={styles.emptyCircle} />
+                )
+            )}
     </View>
 );
 
@@ -121,5 +142,28 @@ const isConfirmed = (passcode, confirm) =>
 
 const isMatched = async passcode =>
     passcode.length >= PASSWORD_LENGTH ? (await AuthScreen.getSavedPasscode()) === passcode : null;
+
+const styles = StyleSheet.create({
+    filledCircle: {
+        width: 24,
+        height: 24,
+        borderRadius: 100 / 2,
+        borderColor: platform.brandPrimary,
+        borderWidth: 2,
+        backgroundColor: platform.brandPrimary,
+        marginLeft: 12,
+        marginRight: 12
+    },
+    emptyCircle: {
+        width: 24,
+        height: 24,
+        borderRadius: 100 / 2,
+        borderColor: platform.brandPrimary,
+        borderWidth: 2,
+        backgroundColor: "transparent",
+        marginLeft: 12,
+        marginRight: 12
+    }
+});
 
 export default AuthScreen;

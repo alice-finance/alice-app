@@ -28,7 +28,8 @@
     "auth": {
         "authentication": "Passcode Authentication",
         "pleaseEnterYourPassword": "Please enter your passcode.",
-        "registration": "Registration",
+        "registration": "Passcode Registration",
+        "pleaseEnterYourNewPassword": "Please enter your new passcode.",
         "pleaseEnterYourPasswordAgain": "Please enter your passcode once again.",
         "passwordRegistered": "Your password has been registered.",
         "passwordNotMatched": "Password not matched.",
