@@ -8,9 +8,9 @@
     "lint": "tslint -c tslint.json -p tsconfig.json"
   },
   "dependencies": {
-    "@alice-finance/alice.js": "^1.1.1",
+    "@alice-finance/alice.js": "^1.1.5",
     "@alice-finance/money-market": "^0.1.9",
-    "@dnextco/alice-proxies": "^1.0.7",
+    "@alice-finance/alice-proxies": "^1.0.1",
     "@expo/vector-icons": "^10.0.0",
     "bip39": "^3.0.2",
     "bn.js": "^4.11.8",
