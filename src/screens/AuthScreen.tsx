@@ -60,17 +60,14 @@ AuthScreen.navigationOptions = ({ navigation }) => {
 
 const Circles = ({ passcode }) => (
     <View style={[preset.flex1, preset.flexDirectionRow, preset.justifyContentCenter, preset.marginTopHuge]}>
-        {new Array(PASSWORD_LENGTH)
-            .fill(0)
-            .map((value, index) =>
-                passcode.length - 1 >= index ? (
-                    <View key={index} style={styles.filledCircle} />
-                ) : (
-                    <View key={index} style={styles.emptyCircle} />
-                )
-            )}
+        {new Array(PASSWORD_LENGTH).fill(0).map((value, index) => {
+            return passcode.length - 1 >= index ? <ActiveItem /> : <InactiveItem />;
+        })}
     </View>
 );
+
+const ActiveItem = () => <View style={styles.filledCircle} />;
+const InactiveItem = () => <View style={styles.emptyCircle} />;
 
 const KeyPad = ({ appendPasscode }) => (
     <View style={[preset.flexDirectionRow, preset.marginLarge, preset.alignItemsCenter, preset.flexWrapWrap]}>
