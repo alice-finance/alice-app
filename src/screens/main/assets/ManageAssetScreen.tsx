@@ -1,27 +1,21 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FlatList, InteractionManager, View } from "react-native";
+import { FlatList, View } from "react-native";
 import { useFocusState, useNavigation } from "react-navigation-hooks";
 import { defaultKeyExtractor } from "../../../utils/react-native-utils";
 
-import {
-    ERC20Received,
-    ERC20Withdrawn,
-    ETHReceived,
-    ETHWithdrawn
-} from "@alice-finance/alice.js/dist/chains/EthereumChain";
 import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
 import { Button, Container, Content, Text } from "native-base";
 import BalanceView from "../../../components/BalanceView";
 import CaptionText from "../../../components/CaptionText";
 import EmptyView from "../../../components/EmptyView";
 import HeadlineText from "../../../components/HeadlineText";
+import Spinner from "../../../components/Spinner";
 import TokenIcon from "../../../components/TokenIcon";
 import TransactionLogListItem from "../../../components/TransactionLogListItem";
 import { BalancesContext } from "../../../contexts/BalancesContext";
 import { ChainContext } from "../../../contexts/ChainContext";
-import { TokenSwapped } from "../../../hooks/useKyberSwap";
-import useLogLoader from "../../../hooks/useLogLoader";
+import useLogRefresher from "../../../hooks/useLogRefresher";
 import preset from "../../../styles/preset";
 
 const ManageAssetScreen = () => {
@@ -31,24 +25,11 @@ const ManageAssetScreen = () => {
     const asset: ERC20Asset = getParam("asset");
     const { ethereumChain } = useContext(ChainContext);
     const [] = useState(false);
-    const { getCachedLogs } = useLogLoader(asset);
     const { getBalance } = useContext(BalancesContext);
     const [blockNumber, setBlockNumber] = useState(0);
     const balance = getBalance(asset.loomAddress);
-    const [items, setItems] = useState<Array<
-        ETHReceived | ERC20Received | ETHWithdrawn | ERC20Withdrawn | TokenSwapped
-    > | null>(null);
+    const { items, refreshLogs } = useLogRefresher(asset);
     const renderItem = ({ item }) => <TransactionLogListItem asset={asset} item={item} blockNumber={blockNumber} />;
-
-    useEffect(() => {
-        InteractionManager.runAfterInteractions(async () => {
-            const cachedItems = await getCachedLogs();
-            const newItems = cachedItems
-                .sort((l1, l2) => (l2.log.blockNumber || 0) - (l1.log.blockNumber || 0))
-                .slice(0, 5);
-            setItems(newItems);
-        });
-    }, []);
 
     useEffect(() => {
         if (isFocused && ethereumChain != null) {
@@ -56,6 +37,7 @@ const ManageAssetScreen = () => {
                 .getProvider()
                 .getBlockNumber()
                 .then(setBlockNumber);
+            refreshLogs();
         }
     }, [isFocused, ethereumChain]);
 
@@ -104,12 +86,16 @@ const ManageAssetScreen = () => {
                         <Text>{t("manageDepositedAmount")}</Text>
                     </Button>
                     <HeadlineText aboveText={true}>{t("latestTransactions")}</HeadlineText>
-                    <FlatList
-                        data={items}
-                        keyExtractor={defaultKeyExtractor}
-                        renderItem={renderItem}
-                        ListEmptyComponent={<EmptyView />}
-                    />
+                    {items ? (
+                        <FlatList
+                            data={items.slice(0, 5)}
+                            keyExtractor={defaultKeyExtractor}
+                            renderItem={renderItem}
+                            ListEmptyComponent={<EmptyView />}
+                        />
+                    ) : (
+                        <Spinner compact={true} />
+                    )}
                 </Content>
             </Container>
         );
