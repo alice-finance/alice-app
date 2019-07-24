@@ -26,18 +26,18 @@ const removeDuplicate = (list: any[]) => {
 };
 
 const getLogWrapper = async (symbol: string, type: string): Promise<LogWrapper> => {
-    const key = symbol + "-logs-" + type;
+    const key = symbol + "-logs-" + type + (__DEV__ ? "-dev" : "");
     const logWrapperData = (await AsyncStorage.getItem(key)) || '{"lastBlockNumber": 0, "logs": [], "migration": 0}';
     return JSON.parse(logWrapperData);
 };
 
 const setLogWrapper = async (symbol: string, type: string, logWrapper: LogWrapper) => {
-    const key = symbol + "-logs-" + type;
+    const key = symbol + "-logs-" + type + (__DEV__ ? "-dev" : "");
     await AsyncStorage.setItem(key, JSON.stringify(logWrapper));
 };
 
 export const removeLogWrapper = async (symbol: string, type: string) => {
-    const key = symbol + "-logs-" + type;
+    const key = symbol + "-logs-" + type + (__DEV__ ? "-dev" : "");
     await AsyncStorage.removeItem(key);
 };
 
@@ -93,7 +93,12 @@ const useLogLoader = (asset: ERC20Asset) => {
         const logWrapper = await getLogWrapper(asset.symbol, TYPE);
 
         if (ethereumChain !== null) {
-            const lastBlock = logWrapper.lastBlockNumber;
+            let lastBlock = logWrapper.lastBlockNumber;
+            if (!("migration" in logWrapper) || logWrapper.migration === 0) {
+                lastBlock = 0;
+                logWrapper.migration = 1;
+                logWrapper.logs = [];
+            }
             const latestBlock = await ethereumChain.getProvider().getBlockNumber();
 
             if (asset.ethereumAddress.isZero()) {
@@ -130,7 +135,12 @@ const useLogLoader = (asset: ERC20Asset) => {
         const logWrapper = await getLogWrapper(asset.symbol, TYPE);
 
         if (ethereumChain !== null) {
-            const lastBlock = logWrapper.lastBlockNumber;
+            let lastBlock = logWrapper.lastBlockNumber;
+            if (!("migration" in logWrapper) || logWrapper.migration === 0) {
+                lastBlock = 0;
+                logWrapper.migration = 1;
+                logWrapper.logs = [];
+            }
             const latestBlock = await ethereumChain.getProvider().getBlockNumber();
 
             if (asset.ethereumAddress.isZero()) {
@@ -167,7 +177,12 @@ const useLogLoader = (asset: ERC20Asset) => {
         const logWrapper = await getLogWrapper(asset.symbol, TYPE);
 
         if (ethereumChain !== null) {
-            const lastBlock = logWrapper.lastBlockNumber;
+            let lastBlock = logWrapper.lastBlockNumber;
+            if (!("migration" in logWrapper) || logWrapper.migration === 0) {
+                lastBlock = 0;
+                logWrapper.migration = 1;
+                logWrapper.logs = [];
+            }
             const latestBlock = await ethereumChain.getProvider().getBlockNumber();
 
             if (lastBlock < latestBlock) {
