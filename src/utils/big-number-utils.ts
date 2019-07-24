@@ -43,7 +43,7 @@ export const formatValue = (
             realPart = realPart.substring(0, precision);
         } else {
             do {
-                realPart = "0" + realPart;
+                realPart = realPart + "0";
             } while (realPart.length < precision);
         }
 
