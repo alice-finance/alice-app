@@ -27,9 +27,9 @@ const useResetAccountDialog = () => {
                 await AsyncStorage.clear();
             }
         });
+        await Updates.reload();
         setEthereumChain(null);
         setLoomChain(null);
-        await Updates.reload();
     }, []);
     return {
         Dialog: (() => (
