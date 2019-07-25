@@ -40,7 +40,7 @@ const ProfileScreen = () => {
                 />
                 <Item
                     title={t("myAddress")}
-                    description={ethereumChain!.getAddress().toLocalAddressString()}
+                    description={ethereumChain ? ethereumChain!.getAddress().toLocalAddressString() : ""}
                     iconName="key"
                     onPress={onPressMyAddress}
                 />
