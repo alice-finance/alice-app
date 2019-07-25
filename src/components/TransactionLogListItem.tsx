@@ -43,7 +43,8 @@ const TransactionLogListItem = ({
     const withdraw = !!item.value;
     const swap = !!item.actualDestAmount;
     const blockConfirmNumber = __DEV__ ? 15 : 10;
-    const inProgress = blockNumber && item.log.blockNumber && blockNumber - item.log.blockNumber <= blockConfirmNumber;
+    const inProgress =
+        !swap && blockNumber && item.log.blockNumber && blockNumber - item.log.blockNumber <= blockConfirmNumber;
     const color = inProgress ? platform.brandWarning : withdraw ? platform.brandDanger : platform.brandInfo;
     const symbol = swap && getAssetByEthereumAddress(item.dest) ? getAssetByEthereumAddress(item.dest)!.symbol : "";
     return (
