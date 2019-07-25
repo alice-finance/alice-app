@@ -7,7 +7,6 @@ import { SecureStore, Updates } from "expo";
 import { Button, Icon, Text } from "native-base";
 import platform from "../../native-base-theme/variables/platform";
 import { Spacing } from "../constants/dimension";
-import { AssetContext } from "../contexts/AssetContext";
 import { ChainContext } from "../contexts/ChainContext";
 
 const useResetAccountDialog = () => {
@@ -20,10 +19,17 @@ const useResetAccountDialog = () => {
         setMnemonic("");
         await SecureStore.deleteItemAsync("ethereumPrivateKey");
         await SecureStore.deleteItemAsync("loomPrivateKey");
-        await Updates.reload();
-        await AsyncStorage.clear();
+        await AsyncStorage.getAllKeys(async (error, keys) => {
+            if (keys) {
+                await AsyncStorage.multiRemove(keys);
+            } else {
+                // something's wrong! attempt to clear all
+                await AsyncStorage.clear();
+            }
+        });
         setEthereumChain(null);
         setLoomChain(null);
+        await Updates.reload();
     }, []);
     return {
         Dialog: (() => (
