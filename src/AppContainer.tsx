@@ -22,6 +22,7 @@ import MyAddressScreen from "./screens/main/assets/MyAddressScreen";
 import TransferAssetScreen from "./screens/main/assets/TransferAssetScreen";
 import WithdrawalScreen from "./screens/main/assets/WithdrawalScreen";
 import FinanceScreen from "./screens/main/finance/FinanceScreen";
+import NewLoanScreen from "./screens/main/finance/NewLoanScreen";
 import NewSavingsScreen from "./screens/main/finance/NewSavingsScreen";
 import ProfileScreen from "./screens/main/profile/ProfileScreen";
 import ResetAccountScreen from "./screens/main/profile/ResetAccountScreen";
@@ -114,6 +115,7 @@ const AndroidTabNavigator = createMaterialBottomTabNavigator(tabs, {
 const MainNavigator = createDefaultStackNavigator({
     Tab: Platform.OS === "ios" ? IOSTabNavigator : AndroidTabNavigator,
     NewSavings: NewSavingsScreen,
+    NewLoan: NewLoanScreen,
     ManageAsset: ManageAssetScreen,
     MyAddress: MyAddressScreen,
     TransferAsset: TransferAssetScreen,

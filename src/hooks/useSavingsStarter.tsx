@@ -30,7 +30,6 @@ const useSavingsStarter = (asset: ERC20Asset | null, amount: ethers.utils.BigNum
                 await updateMySavings();
                 SnackBar.success(t("aNewSavingsStartToday"));
                 Analytics.track(Analytics.events.SAVINGS_DEPOSITED);
-                pop();
             } catch (e) {
                 SnackBar.danger(e.message);
             } finally {

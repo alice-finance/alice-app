@@ -10,7 +10,6 @@ import { Button, Container, Content, Icon } from "native-base";
 import platform from "../../../../native-base-theme/variables/platform";
 import CaptionText from "../../../components/CaptionText";
 import EmptyView from "../../../components/EmptyView";
-import LoansCard from "../../../components/LoansCard";
 import SavingRecordCard from "../../../components/SavingRecordCard";
 import SavingsCard from "../../../components/SavingsCard";
 import Spinner from "../../../components/Spinner";
@@ -30,11 +29,8 @@ const FinanceScreen = () => {
         ? myRecords.sort((a, b) => b.initialTimestamp.getTime() - a.initialTimestamp.getTime())
         : null;
     const onPress = useCallback(() => Linking.openURL(t("common:blogUrl")), []);
+    const renderItem = useCallback(({ item }) => <SavingRecordCard record={item} />, []);
     const { update } = useMySavingsUpdater();
-    const loans = [
-        { asset: { name: "Kyber Network", symbol: "KNC", decimals: 18 } },
-        { asset: { name: "0x", symbol: "ZRX", decimals: 18 } }
-    ];
     useScheduledUpdater();
     useEffect(() => {
         setParams({ onPress });
@@ -54,17 +50,19 @@ const FinanceScreen = () => {
         <Container>
             <Content>
                 <View>
-                    <TitleText>{t("common:finance")}</TitleText>
+                    <TitleText aboveText={true}>{t("savings")}</TitleText>
                     <CaptionText style={preset.marginBottomNormal}>{t("savings.description")}</CaptionText>
-                    <SubtitleText>{t("savings")}</SubtitleText>
                     <SavingsCard />
-                    <SubtitleText>{t("loan")}</SubtitleText>
-                    {loans ? (
-                        loans.length > 0 ? (
-                            loans.map((loan, index) => <LoansCard key={index} collateral={loan.asset} />)
-                        ) : (
-                            <EmptyView />
-                        )
+                    <SubtitleText aboveText={true} style={preset.marginTopNormal}>
+                        {t("mySavings")}
+                    </SubtitleText>
+                    {myRecords ? (
+                        <FlatList
+                            data={sortedMyRecords}
+                            keyExtractor={savingRecordKeyExtractor}
+                            renderItem={renderItem}
+                            ListEmptyComponent={<EmptyView text={t("noSavingsHistory")} />}
+                        />
                     ) : (
                         <Spinner compact={true} />
                     )}
@@ -73,6 +71,16 @@ const FinanceScreen = () => {
         </Container>
     );
 };
+
+const savingRecordKeyExtractor = (item: SavingsRecord) => item.id.toString();
+
+FinanceScreen.navigationOptions = ({ navigation }) => ({
+    headerRight: (
+        <Button rounded={true} transparent={true} onPress={navigation.getParam("onPress")}>
+            <Icon type="SimpleLineIcons" name="info" style={{ color: platform.brandPrimary }} />
+        </Button>
+    )
+});
 
 const useScheduledUpdater = () => {
     const { loomChain } = useContext(ChainContext);

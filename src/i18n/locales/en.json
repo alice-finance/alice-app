@@ -210,7 +210,20 @@
         "noWithdrawalHistory": "No withdrawal history",
         "withdrawalComplete": "Your withdrawal has completed.",
         "loan": "Mortgage Loan",
-        "loan.description": "Deposit tokens as collateral which you believe whose price will increase and you will get paid for your DAI stable coins."
+        "loan.description": "Deposit tokens as collateral which you believe whose price will increase and you will get paid for your DAI stable coins.",
+        "startBorrowing": "Start Borrowing",
+        "startBorrowing.description": "Deposit tokens as collateral which you believe whose price will increase and you will get paid for your DAI stable coins.",
+        "borrowToken": "Borrow {{symbol}}",
+        "repayLoan": "Repay",
+        "repayLoan.description": "You can repay some or all amounts.",
+        "supplyCollateral": "Add Collateral",
+        "supplyCollateral.description": "You can supply some amounts of collateral.",
+        "repayComplete": "Your repayment has completed",
+        "totalLoanAmount": "Total Loan",
+        "myLoan": "My Loan",
+        "loanStatus.danger": "Danger",
+        "loanStatus.caution": "Caution",
+        "loanStatus.safe": "Safe"
     },
     "update": {
         "title": "There is an essential update",

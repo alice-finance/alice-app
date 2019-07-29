@@ -1,49 +1,52 @@
-import React, { useCallback, useContext, useEffect } from "react";
+import React, { useCallback, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
 import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { Body, Button, Card, CardItem, Left, Right, Text } from "native-base";
-import TokenIcon from "../components/TokenIcon";
 import { SavingsContext } from "../contexts/SavingsContext";
-import useTokenBalanceUpdater from "../hooks/useTokenBalanceUpdater";
 import preset from "../styles/preset";
-import { formatValue } from "../utils/big-number-utils";
 import BigNumberText from "./BigNumberText";
+import TokenIcon from "./TokenIcon";
 
-const SavingsCard = () => {
+const LoansCard = collateral => {
     const { t } = useTranslation("finance");
     const { push } = useNavigation();
-    const { asset, totalBalance, myTotalBalance, apr } = useContext(SavingsContext);
-    const onPress = useCallback(() => push("NewSavings"), []);
-    const { updating, update } = useTokenBalanceUpdater();
-    const refreshing = !asset || !totalBalance || updating;
-    useEffect(() => {
-        update();
-    }, []);
+    const { asset } = useContext(SavingsContext);
+    const totalBalance = toBigNumber("10000000000000000000000");
+    const myTotalBalance = toBigNumber("120000000000000000000");
+    const apr = toBigNumber("14990000000000000000");
+    const onPress = useCallback(() => push("NewLoan", { collateral }), [collateral]);
     return (
-        <View style={[preset.marginNormal, preset.marginTop0]}>
+        <View style={[preset.marginNormal, preset.marginTopTiny]}>
             <Card>
                 <CardItem>
                     <Left>
-                        <TokenIcon address={asset!.ethereumAddress.toLocalAddressString()} width={56} height={56} />
+                        {/*<TokenIcon address={collateral!.ethereumAddress.toLocalAddressString()} width={56} height={56} />*/}
+                        <TokenIcon address={"0"} width={56} height={56} />
                         <Body style={preset.marginLeftNormal}>
-                            <Text style={[preset.fontSize24, preset.fontWeightBold]}>{asset!.name}</Text>
-                            <MySavingsSummaryText />
+                            <Text style={[preset.fontSize24, preset.fontWeightBold]}>{collateral.name}ASSET</Text>
+                            <View style={{ flexDirection: "row" }}>
+                                <Text style={[preset.colorDanger]}>{t("loanStatus.danger")} 3</Text>
+                                <Text> · </Text>
+                                <Text style={[preset.colorCaution]}>{t("loanStatus.caution")} 1</Text>
+                                <Text> · </Text>
+                                <Text style={[preset.colorSafe]}>{t("loanStatus.safe")} 5</Text>
+                            </View>
                         </Body>
                     </Left>
                 </CardItem>
                 <CardItem>
                     <View style={[preset.marginLeftSmall, preset.flex1]}>
                         <Text note={true} style={preset.marginLeft0}>
-                            {t("totalBalance")}
+                            {t("totalLoanAmount")}
                         </Text>
                         <BigNumberText value={totalBalance} />
                     </View>
                     <View style={[preset.marginLeftSmall, preset.flex1]}>
                         <Text note={true} style={preset.marginLeft0}>
-                            {t("mySavings")}
+                            {t("myLoan")}
                         </Text>
                         <BigNumberText value={myTotalBalance} />
                     </View>
@@ -57,8 +60,8 @@ const SavingsCard = () => {
                 <CardItem style={preset.marginBottomSmall}>
                     <Left />
                     <Right>
-                        <Button primary={true} bordered={true} rounded={true} disabled={refreshing} onPress={onPress}>
-                            <Text style={{ fontSize: 16 }}>{t("startSaving")}</Text>
+                        <Button primary={true} bordered={true} rounded={true} disabled={false} onPress={onPress}>
+                            <Text style={{ fontSize: 16 }}>{t("borrowToken", { symbol: asset!.symbol })}</Text>
                         </Button>
                     </Right>
                 </CardItem>
@@ -67,15 +70,4 @@ const SavingsCard = () => {
     );
 };
 
-const MySavingsSummaryText = () => {
-    const { t } = useTranslation("finance");
-    const { myTotalPrincipal, myTotalBalance, myTotalWithdrawal } = useContext(SavingsContext);
-    let profit = toBigNumber(0);
-    if (myTotalPrincipal && myTotalBalance && myTotalWithdrawal && !myTotalPrincipal.isZero()) {
-        profit = myTotalBalance.add(myTotalWithdrawal).sub(myTotalPrincipal);
-    }
-    const text = myTotalPrincipal && !myTotalPrincipal.isZero() ? "$" + formatValue(profit, 18) : t("startSavingsNow");
-    return <Text style={profit.isZero() ? preset.colorGrey : preset.colorInfo}>{text}</Text>;
-};
-
-export default SavingsCard;
+export default LoansCard;
