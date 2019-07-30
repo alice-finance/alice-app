@@ -29,43 +29,47 @@ const useLoader = () => {
     const { update } = useTokenBalanceUpdater();
     const { checkForUpdate } = useUpdateChecker();
     const load = async () => {
-        Analytics.track(Analytics.events.APP_START);
-        ExpoSplashScreen.preventAutoHide();
-        await loadFonts();
-        const mnemonic = await SecureStore.getItemAsync("mnemonic");
-        const ethereumPrivateKey = await SecureStore.getItemAsync("ethereumPrivateKey");
-        const loomPrivateKey = await SecureStore.getItemAsync("loomPrivateKey");
-        if (mnemonic && ethereumPrivateKey && loomPrivateKey) {
-            const ethereumChain = new EthereumChain(ethereumPrivateKey, __DEV__);
-            const loomChain = new LoomChain(loomPrivateKey, __DEV__);
+        try {
+            Analytics.track(Analytics.events.APP_START);
+            ExpoSplashScreen.preventAutoHide();
+            await loadFonts();
+            const mnemonic = await SecureStore.getItemAsync("mnemonic");
+            const ethereumPrivateKey = await SecureStore.getItemAsync("ethereumPrivateKey");
+            const loomPrivateKey = await SecureStore.getItemAsync("loomPrivateKey");
+            if (mnemonic && ethereumPrivateKey && loomPrivateKey) {
+                const ethereumChain = new EthereumChain(ethereumPrivateKey, __DEV__);
+                const loomChain = new LoomChain(loomPrivateKey, __DEV__);
 
-            const assets = await loomChain.getERC20AssetsAsync();
-            const market = loomChain.getMoneyMarket();
-            const assetAddress = await market.asset();
-            const asset = assets.find(token =>
-                token.loomAddress.local.equals(LocalAddress.fromHexString(assetAddress))
-            );
-            const decimals = Number((await market.DECIMALS()).toString());
+                const assets = await loomChain.getERC20AssetsAsync();
+                const market = loomChain.getMoneyMarket();
+                const assetAddress = await market.asset();
+                const asset = assets.find(token =>
+                    token.loomAddress.local.equals(LocalAddress.fromHexString(assetAddress))
+                );
+                const decimals = Number((await market.DECIMALS()).toString());
 
-            // Patch getGasPrice function
-            ethereumChain.getProvider().getGasPrice = async () => {
-                return getGasPrice();
-            };
+                // Patch getGasPrice function
+                ethereumChain.getProvider().getGasPrice = async () => {
+                    return getGasPrice();
+                };
 
-            setMnemonic(mnemonic);
-            setEthereumChain(ethereumChain);
-            setLoomChain(loomChain);
-            setAssets(assets);
-            setAsset(asset!); // Asset should not be undefined
-            setDecimals(decimals);
-            await update();
+                setMnemonic(mnemonic);
+                setEthereumChain(ethereumChain);
+                setLoomChain(loomChain);
+                setAssets(assets);
+                setAsset(asset!); // Asset should not be undefined
+                setDecimals(decimals);
+                await update();
 
-            checkForUpdate({ onlyOnWifi: true });
+                checkForUpdate({ onlyOnWifi: true });
 
-            navigate("Main");
-        } else {
-            await loadResources();
-            navigate("Start");
+                navigate("Main");
+            } else {
+                await loadResources();
+                navigate("Start");
+            }
+        } catch (e) {
+            console.log(e);
         }
     };
     const onFinish = () => ExpoSplashScreen.hide();
