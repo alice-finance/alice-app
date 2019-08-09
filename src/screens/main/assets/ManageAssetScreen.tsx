@@ -2,6 +2,9 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FlatList, View } from "react-native";
 import { useFocusState, useNavigation } from "react-navigation-hooks";
+import { AssetContext } from "../../../contexts/AssetContext";
+import { PendingTransactionsContext } from "../../../contexts/PendingTransactionsContext";
+import useEthereumBlockNumberListener from "../../../hooks/useEthereumBlockNumberListener";
 import { defaultKeyExtractor } from "../../../utils/react-native-utils";
 
 import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
@@ -26,20 +29,36 @@ const ManageAssetScreen = () => {
     const { ethereumChain } = useContext(ChainContext);
     const [] = useState(false);
     const { getBalance } = useContext(BalancesContext);
-    const [blockNumber, setBlockNumber] = useState(0);
+    const { blockNumber, activateListener, deactivateListener } = useEthereumBlockNumberListener();
     const balance = getBalance(asset.loomAddress);
     const { items, refreshLogs } = useLogRefresher(asset);
     const renderItem = ({ item }) => <TransactionLogListItem asset={asset} item={item} blockNumber={blockNumber} />;
-
     useEffect(() => {
         if (isFocused && ethereumChain != null) {
-            ethereumChain
-                .getProvider()
-                .getBlockNumber()
-                .then(setBlockNumber);
             refreshLogs();
         }
     }, [isFocused, ethereumChain]);
+
+    useEffect(() => {
+        if (isFocused && !!items) {
+            if (items.length > 0) {
+                const item: any = items[0];
+                const swap = !!item.actualDestAmount;
+                const blockConfirmNumber = __DEV__ ? 15 : 10;
+                const inProgress =
+                    !swap &&
+                    blockNumber &&
+                    item.log.blockNumber &&
+                    blockNumber - item.log.blockNumber <= blockConfirmNumber;
+                if (inProgress) {
+                    activateListener();
+                    return;
+                }
+            }
+        }
+
+        deactivateListener();
+    }, [isFocused, items, blockNumber, activateListener, deactivateListener]);
 
     if (asset) {
         return (

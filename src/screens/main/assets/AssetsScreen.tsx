@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FlatList, StyleSheet, Text, View } from "react-native";
-import { useNavigation } from "react-navigation-hooks";
+import { useFocusState, useNavigation } from "react-navigation-hooks";
 import { defaultKeyExtractor } from "../../../utils/react-native-utils";
 
 import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
@@ -27,6 +27,7 @@ const AssetsScreen = () => {
     const { assets } = useContext(AssetContext);
     const { getPendingWithdrawalTransactions } = useContext(PendingTransactionsContext);
     const { push, setParams } = useNavigation();
+    const { isFocused } = useFocusState();
     const onSort = useCallback(() => setSortedByName(!sortedByName), [sortedByName]);
     const onPress = useCallback((asset: ERC20Asset) => push("ManageAsset", { asset }), []);
     const renderItem = useCallback(({ item }) => <TokenListItem token={item} onPress={onPress} />, []);
@@ -40,10 +41,10 @@ const AssetsScreen = () => {
     }, []);
 
     useEffect(() => {
-        if (count && Number(count) > 0) {
+        if (isFocused && count && Number(count) > 0) {
             handlePendingWithdrawal();
         }
-    }, [count]);
+    }, [count, isFocused]);
     return (
         <Container>
             <FlatList
