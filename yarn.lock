@@ -1008,9 +1008,9 @@
   integrity sha512-Exw4yUWMBXM3X+8oqzJNRqZSwUAaS4+7NdvHqQuFi/d+synz++xmX3QIf+BFqneW8N31R8Ky+sikfZUXq07ggQ==
 
 "@types/node@^10.3.2":
-  version "10.14.14"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.14.14.tgz#a47955df2acf76ba7f0ac3b205d325da193dc9ad"
-  integrity sha512-xXD08vZsvpv4xptQXj1+ky22f7ZoKu5ZNI/4l+/BXG3X+XaeZsmaFbbTKuhSE3NjjvRuZFxFf9sQBMXIcZNFMQ==
+  version "10.14.15"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.14.15.tgz#e8f7729b631be1b02ae130ff0b61f3e018000640"
+  integrity sha512-CBR5avlLcu0YCILJiDIXeU2pTw7UK/NIxfC63m7d7CVamho1qDEzXKkOtEauQRPMy6MI8mLozth+JJkas7HY6g==
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.0"
@@ -1518,7 +1518,12 @@ balanced-match@^1.0.0:
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.0.tgz#89b4d199ab2bee49de164ea02b89ce462d71b767"
   integrity sha1-ibTRmasr7kneFk6gK4nORi1xt2c=
 
-base64-js@^1.0.2, base64-js@^1.1.2, base64-js@^1.2.3, base64-js@^1.3.0:
+base64-js@^1.0.2:
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.3.1.tgz#58ece8cb75dd07e71ed08c736abc5fac4dbf8df1"
+  integrity sha512-mLQ4i2QO1ytvGWFWmcngKO//JXAQueZvwEKtjgQFM4jIK0kU+ytMfplL8j+n5mspOfjHwoAg+9yhb7BwAHm36g==
+
+base64-js@^1.1.2, base64-js@^1.2.3, base64-js@^1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.3.0.tgz#cab1e6118f051095e58b5281aea8c1cd22bfc0e3"
   integrity sha512-ccav/yGvoa80BQDljCxsmmQ3Xvx60/UpBIij5QN21W3wBi/hhIC9OoO+KLpu9IJTS9j4DRVJ3aDDF9cMSoa2lw==
@@ -5095,32 +5100,6 @@ loom-js@^1.40.0:
     tweetnacl "^1.0.0"
     web3 "1.0.0-beta.33"
 
-loom-js@^1.54.1:
-  version "1.55.0"
-  resolved "https://registry.yarnpkg.com/loom-js/-/loom-js-1.55.0.tgz#283d3e20a2b3b01d6c00015f874f0fe49cfc820f"
-  integrity sha512-Vgfjl9Jq4lN76PdI9Fys4cPhRT5ZPBoZs/zFtB5941933ghPzjK9CrB+yDMiB841Kmlh5QlYax3hPqtpNcCjDA==
-  dependencies:
-    abi-decoder "^1.2.0"
-    axios "^0.18.0"
-    bn.js "^4.11.8"
-    crypto-browserify "^3.12.0"
-    debug "^3.1.0"
-    ethereumjs-tx "^1.3.7"
-    ethereumjs-util "^5.2.0"
-    ethers "^4.0.9"
-    google-protobuf "3.6"
-    lodash "^4.17.11"
-    lowdb "^1.0.0"
-    retry "^0.12.0"
-    ripemd160 "^2.0.1"
-    rlp "^2.1.0"
-    rpc-websockets "^4.1.1"
-    shelljs "^0.8.2"
-    tronweb "^2.5.3"
-    tslib "^1.9.3"
-    tweetnacl "^1.0.0"
-    web3 "1.0.0-beta.33"
-
 loom-truffle-provider@^0.13.0:
   version "0.13.0"
   resolved "https://registry.yarnpkg.com/loom-truffle-provider/-/loom-truffle-provider-0.13.0.tgz#eccdaf88388459f61312deec96b34891af89c88d"
@@ -6936,7 +6915,7 @@ react-native-screens@1.0.0-alpha.22:
   resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-1.0.0-alpha.22.tgz#7a120377b52aa9bbb94d0b8541a014026be9289b"
   integrity sha512-kSyAt0AeVU6N7ZonfV6dP6iZF8B7Bce+tk3eujXhzBGsLg0VSLnU7uE9VqJF0xdQrHR91ZjGgVMieo/8df9KTA==
 
-"react-native-screens@^1.0.0 || ^1.0.0-alpha", react-native-screens@^1.0.0-alpha.23:
+"react-native-screens@^1.0.0 || ^1.0.0-alpha":
   version "1.0.0-alpha.23"
   resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-1.0.0-alpha.23.tgz#25d7ea4d11bda4fcde2d1da7ae50271c6aa636e0"
   integrity sha512-tOxHGQUN83MTmQB4ghoQkibqOdGiX4JQEmeyEv96MKWO/x8T2PJv84ECUos9hD3blPRQwVwSpAid1PPPhrVEaw==
@@ -7458,9 +7437,9 @@ rn-snackbar@^1.0.6:
     static-container "^1.2.0"
 
 rpc-websockets@^4.1.1:
-  version "4.5.1"
-  resolved "https://registry.yarnpkg.com/rpc-websockets/-/rpc-websockets-4.5.1.tgz#33e104658924c9cceaf6fb79179e49c9788e1651"
-  integrity sha512-OoXnJAJ6tz2WC56l0SsWFHF0hrqVQk86aZ/bCQfKx5s5GvCWUW/xNVEUHyh6RwHIgEnSnKq00fTbRD8E9Yw3Dw==
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/rpc-websockets/-/rpc-websockets-4.6.0.tgz#28663fc3f52a0df28f4ad61a921004a2984c6e8a"
+  integrity sha512-FV920YUR8bTDFac5hO5h7xt8P2sqBo4WdlvEv1eD5p2H1z7zTJnwt3GOyV+ZhhY+Ef4OxbVm/V4Nbg37+WK64w==
   dependencies:
     "@babel/runtime" "^7.4.5"
     assert-args "^1.2.1"
