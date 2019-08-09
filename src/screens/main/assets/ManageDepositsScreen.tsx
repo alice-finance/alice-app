@@ -2,8 +2,6 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FlatList } from "react-native-gesture-handler";
 import { useFocusState, useNavigation } from "react-navigation-hooks";
-import { AssetContext } from "../../../contexts/AssetContext";
-import { PendingTransactionsContext } from "../../../contexts/PendingTransactionsContext";
 import { defaultKeyExtractor } from "../../../utils/react-native-utils";
 
 import {
@@ -55,7 +53,6 @@ const ManageDepositsScreen = () => {
     const { handlePendingWithdrawal } = usePendingWithdrawalHandler();
     const [isHandling, setHandling] = useState(false);
     const { ready } = useKyberSwap();
-    const [processingCount, setProcessingCount] = useState(0);
 
     useEffect(() => {
         setReceived(undefined);
@@ -98,7 +95,7 @@ const ManageDepositsScreen = () => {
         }
 
         deactivateListener();
-    }, [isFocused, items, blockNumber, processingCount, activateListener, deactivateListener]);
+    }, [isFocused, items, blockNumber, activateListener, deactivateListener]);
 
     const refreshLog = useCallback(() => {
         if (!isRefreshingLogs) {
@@ -135,7 +132,7 @@ const ManageDepositsScreen = () => {
                             refreshLog();
                             setHandling(false);
                         })
-                        .catch(e => {
+                        .catch(() => {
                             setHandling(false);
                         });
                 }

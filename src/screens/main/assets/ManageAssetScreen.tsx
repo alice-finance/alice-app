@@ -2,9 +2,6 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FlatList, View } from "react-native";
 import { useFocusState, useNavigation } from "react-navigation-hooks";
-import { AssetContext } from "../../../contexts/AssetContext";
-import { PendingTransactionsContext } from "../../../contexts/PendingTransactionsContext";
-import useEthereumBlockNumberListener from "../../../hooks/useEthereumBlockNumberListener";
 import { defaultKeyExtractor } from "../../../utils/react-native-utils";
 
 import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
@@ -18,6 +15,7 @@ import TokenIcon from "../../../components/TokenIcon";
 import TransactionLogListItem from "../../../components/TransactionLogListItem";
 import { BalancesContext } from "../../../contexts/BalancesContext";
 import { ChainContext } from "../../../contexts/ChainContext";
+import useEthereumBlockNumberListener from "../../../hooks/useEthereumBlockNumberListener";
 import useLogRefresher from "../../../hooks/useLogRefresher";
 import preset from "../../../styles/preset";
 
