@@ -53,7 +53,7 @@ const FinanceScreen = () => {
                     <TitleText aboveText={true}>{t("savings")}</TitleText>
                     <CaptionText style={preset.marginBottomNormal}>{t("savings.description")}</CaptionText>
                     <SavingsCard />
-                    <SubtitleText aboveText={true} style={preset.marginTopNormal}>
+                    <SubtitleText aboveText={true} style={[preset.flex1, preset.marginTopNormal]}>
                         {t("mySavings")}
                     </SubtitleText>
                     {myRecords ? (

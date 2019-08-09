@@ -9,6 +9,7 @@
         "goToLink": "Go to link",
         "exchange": "Exchanges",
         "assets": "Assets",
+        "home": "Home",
         "finance": "Finance",
         "profile": "Profile",
         "searchForTokens": "Search for tokens",
@@ -210,7 +211,15 @@
         "noWithdrawalHistory": "No withdrawal history",
         "withdrawalComplete": "Your withdrawal has completed.",
         "loan": "Mortgage Loan",
-        "loan.description": "Deposit tokens as collateral which you believe whose price will increase and you will get paid for your DAI stable coins."
+        "loan.description": "Deposit tokens as collateral which you believe whose price will increase and you will get paid for your DAI stable coins.",
+        "withdrawalHistory": "Withdrawal History",
+        "aliceClaimHistory": "ALICE Claim History",
+        "calculatingClaim": "Calculating ALICE reward...",
+        "youCanClaimNow": "Claim {{amount}} ALICE now!",
+        "timeLeftUntilClaim": "{{time}} left until {{amount}} ALICE",
+        "claimAlice": "Claim",
+        "claimingAlice": "Claiming...",
+        "claimedAlice": "You've received {{amount}} ALICE"
     },
     "update": {
         "title": "There is an essential update",

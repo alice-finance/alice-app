@@ -9,6 +9,7 @@
         "goToLink": "링크로 이동",
         "exchange": "거래",
         "assets": "자산",
+        "home": "홈",
         "finance": "금융",
         "profile": "프로필",
         "searchForTokens": "토큰 검색",
@@ -210,7 +211,15 @@
         "noWithdrawalHistory": "출금 내역이 없습니다.",
         "withdrawalComplete": "출금이 완료되었습니다.",
         "loan": "담보 대출",
-        "loan.description": "가격이 오를 것으로 기대되는 암호화폐를 담보로 묶어놓고 DAI 스테이블 코인을 대출받으세요."
+        "loan.description": "가격이 오를 것으로 기대되는 암호화폐를 담보로 묶어놓고 DAI 스테이블 코인을 대출받으세요.",
+        "withdrawalHistory": "출금 내역",
+        "aliceClaimHistory": "ALICE 보상 내역",
+        "calculatingClaim": "ALICE 보상 계산 중...",
+        "youCanClaimNow": "지금 {{amount}} ALICE 보상을 받으세요!",
+        "timeLeftUntilClaim": "{{amount}} ALICE 보상까지 {{time}}",
+        "claimAlice": "보상받기",
+        "claimingAlice": "ALICE 받는중...",
+        "claimedAlice": "{{amount}} ALICE 보상을 받았습니다."
     },
     "update": {
         "title": "필수 업데이트가 있습니다",

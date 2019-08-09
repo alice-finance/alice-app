@@ -5,10 +5,13 @@ import { ERC20_MAX_PRECISION } from "../constants/token";
 
 export const pow10 = (e: number) => toBigNumber(10).pow(e);
 
+const numberSeparator = ",";
+const decimalPoint = ".";
+
 export const formatValue = (
     value: string | ethers.utils.BigNumber,
-    decimals: number = ERC20_MAX_PRECISION,
-    precision: number = 4,
+    decimals: number,
+    precision: number = ERC20_MAX_PRECISION,
     useCommas: boolean = false
 ) => {
     const formatted = fromWei(
@@ -17,27 +20,15 @@ export const formatValue = (
             .toString(),
         "ether"
     );
-
-    const numberSeparator = ",";
-    const decimalPoint = ".";
-
     let [intPart, realPart] = formatted.split(".");
-
-    if (intPart === undefined) {
-        intPart = "0";
-    }
-
-    if (realPart === undefined) {
-        realPart = "";
-    }
-
+    intPart = intPart || "0";
+    realPart = realPart || "0";
     if (useCommas) {
         const reg = /(^[+-]?\d+)(\d{3})/;
         while (reg.test(intPart)) {
             intPart = intPart.replace(reg, "$1" + numberSeparator + "$2");
         }
     }
-
     if (precision > 0) {
         if (realPart && realPart.length >= precision) {
             realPart = realPart.substring(0, precision);
@@ -46,7 +37,6 @@ export const formatValue = (
                 realPart = realPart + "0";
             } while (realPart.length < precision);
         }
-
         return [intPart, realPart].join(decimalPoint);
     } else {
         return intPart;

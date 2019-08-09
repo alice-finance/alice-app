@@ -73,7 +73,7 @@ const StartNavigator = createDefaultStackNavigator(
 const tabs = {
     FinanceTab: {
         screen: FinanceScreen,
-        navigationOptions: tabBarNavigationOptions("finance", "present")
+        navigationOptions: tabBarNavigationOptions("home", "home")
     },
     AssetsTab: {
         screen: AssetsScreen,

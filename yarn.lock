@@ -41,6 +41,11 @@
   resolved "https://registry.yarnpkg.com/@alice-finance/money-market/-/money-market-0.1.9.tgz#30912cf4ea3058f859b270d77deb721a486df0e3"
   integrity sha512-8N/CuKEzSOzWQNUJEBkqnobpQJA6TDDSZ2H9qrD3Qgd/IXDFRwVex+3om0pM8FMCtSVSBJ0JTOgv7rTxOCaBKg==
 
+"@alice-finance/token@^0.9.9":
+  version "0.9.9"
+  resolved "https://registry.yarnpkg.com/@alice-finance/token/-/token-0.9.9.tgz#61102ccbb5cc99a2236490eaacab8a01313ac1bc"
+  integrity sha512-rOlq4jzfzW0WTAcv2QtpCIgAex7MykIw28PcaEu++QBEB5724blffnj4aPfb431TUQig7kAsZc2uxgEdivNGZA==
+
 "@babel/code-frame@^7.0.0":
   version "7.5.5"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.5.5.tgz#bc0782f6d69f7b7d49531219699b988f669a8f9d"
@@ -6861,6 +6866,13 @@ react-native-maps@*, react-native-maps@0.24.2:
   version "0.24.2"
   resolved "https://registry.yarnpkg.com/react-native-maps/-/react-native-maps-0.24.2.tgz#19974f967cb0c2e24dab74ca879118e0932571b2"
   integrity sha512-1iNIDikp2dkCG+8DguaEviYZiMSYyvwqYT7pO2YTZvuFRDSc/P9jXMhTUnSh4wNDlEeQ47OJ09l0pwWVBZ7wxg==
+
+react-native-material-menu@^0.6.6:
+  version "0.6.6"
+  resolved "https://registry.yarnpkg.com/react-native-material-menu/-/react-native-material-menu-0.6.6.tgz#65518d544401de1642f02600964ee13489b01348"
+  integrity sha512-9H2dUNgpD0RxwpUsnMnCRkNCThENfoqoXTv0CGS9DTTaqe5B4h95IuGoIF7MikcCCFtXucNucbm47aCaz4410Q==
+  dependencies:
+    prop-types "^15.6.0"
 
 react-native-paper@^2.15.2:
   version "2.16.0"

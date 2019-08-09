@@ -9,6 +9,7 @@
         "goToLink": "Ir al enlace",
         "exchange": "Intercambios",
         "assets": "Bienes",
+        "home": "Casa",
         "finance": "Finanzas",
         "profile": "Perfil",
         "searchForTokens": "Búsqueda de fichas",
@@ -209,7 +210,15 @@
         "noWithdrawalHistory": "Sin historial de retiro",
         "withdrawalComplete": "Su retiro se ha completado.",
         "loan": "Préstamo hipotecario",
-        "loan.description": "Deposite las fichas como garantía que usted cree cuyo precio aumentará y que se le pagará por sus monedas estables DAI."
+        "loan.description": "Deposite las fichas como garantía que usted cree cuyo precio aumentará y que se le pagará por sus monedas estables DAI.",
+        "withdrawalHistory": "Historial de retiro",
+        "aliceClaimHistory": "Historial de ALICE reclamos",
+        "calculatingClaim": "Cálculo de la recompensa ALICE...",
+        "youCanClaimNow": "¡Reclama {{amount}} ALICE ahora!",
+        "timeLeftUntilClaim": "Queda {{time}} hasta que {{cantidad}} ALICE",
+        "claimAlice": "Reclamar",
+        "claimingAlice": "Reclamando...",
+        "claimedAlice": "Has recibido {{amount}} ALICE"
     },
     "update": {
         "title": "Hay una actualización esencial",
