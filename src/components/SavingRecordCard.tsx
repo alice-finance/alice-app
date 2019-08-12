@@ -23,8 +23,11 @@ import BigNumberText from "./BigNumberText";
 import Row from "./Row";
 import Spinner from "./Spinner";
 
+const IFO_STARTED_AT = new Date(2019, 7, 15);
+
 const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
     const { decimals } = useContext(SavingsContext);
+    const ifoStarted = new Date() >= IFO_STARTED_AT;
     const [apr] = useState(() => {
         const multiplier = toBigNumber(10).pow(decimals);
         const rate = record.interestRate.add(multiplier);
@@ -37,7 +40,7 @@ const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
     return (
         <View style={[preset.marginNormal]} key={record.id.toString()}>
             <Card>
-                <Header record={record} />
+                <Header record={record} ifoStarted={ifoStarted} />
                 <Body record={record} apr={apr} />
                 <Actions record={record} apr={apr} />
             </Card>
@@ -45,7 +48,7 @@ const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
     );
 };
 
-const Header = ({ record }) => {
+const Header = ({ record, ifoStarted }) => {
     const { t } = useTranslation("finance");
     const { decimals } = useContext(SavingsContext);
     const { asset } = useContext(SavingsContext);
@@ -63,9 +66,9 @@ const Header = ({ record }) => {
                     <Text style={[preset.fontSize24, preset.fontWeightBold]}>
                         {formatValue(record.balance, asset!.decimals)} {asset!.symbol}
                     </Text>
-                    <Text note={true}>{t(text, { amount, time })}</Text>
+                    {ifoStarted && <Text note={true}>{t(text, { amount, time })}</Text>}
                 </View>
-                <ClaimButton claimable={claimable} claim={claim} claiming={claiming} />
+                {ifoStarted && <ClaimButton claimable={claimable} claim={claim} claiming={claiming} />}
             </View>
         </CardItem>
     );
