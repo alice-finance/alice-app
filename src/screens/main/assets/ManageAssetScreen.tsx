@@ -5,7 +5,7 @@ import { useFocusState, useNavigation } from "react-navigation-hooks";
 import { defaultKeyExtractor } from "../../../utils/react-native-utils";
 
 import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
-import { Button, Container, Content, Text } from "native-base";
+import { Button, Container, Content, Icon, Text } from "native-base";
 import BalanceView from "../../../components/BalanceView";
 import CaptionText from "../../../components/CaptionText";
 import EmptyView from "../../../components/EmptyView";
@@ -36,27 +36,6 @@ const ManageAssetScreen = () => {
             refreshLogs();
         }
     }, [isFocused, ethereumChain]);
-
-    useEffect(() => {
-        if (isFocused && !!items) {
-            if (items.length > 0) {
-                const item: any = items[0];
-                const swap = !!item.actualDestAmount;
-                const blockConfirmNumber = __DEV__ ? 15 : 10;
-                const inProgress =
-                    !swap &&
-                    blockNumber &&
-                    item.log.blockNumber &&
-                    blockNumber - item.log.blockNumber <= blockConfirmNumber;
-                if (inProgress) {
-                    activateListener();
-                    return;
-                }
-            }
-        }
-
-        deactivateListener();
-    }, [isFocused, items, blockNumber, activateListener, deactivateListener]);
 
     if (asset) {
         return (
@@ -89,18 +68,20 @@ const ManageAssetScreen = () => {
                             preset.alignCenter,
                             preset.flexDirectionColumn,
                             preset.alignItemsCenter,
-                            preset.marginTopNormal
+                            preset.marginTopLarge,
+                            preset.marginBottomNormal
                         ]}>
                         <BalanceView asset={asset} balance={balance} />
-                        <Text style={[preset.marginLeftTiny, preset.fontSize24]}>{t("deposited")}</Text>
                     </View>
                     <Button
                         primary={true}
                         rounded={true}
                         transparent={true}
+                        iconRight={true}
                         style={preset.alignFlexEnd}
                         onPress={useCallback(() => push("ManageDeposits", { asset }), [asset])}>
-                        <Text>{t("manageDepositedAmount")}</Text>
+                        <Text style={{ paddingRight: 0 }}>{t("manageAssetsInAliceNetwork")}</Text>
+                        <Icon type={"MaterialIcons"} name={"keyboard-arrow-right"} />
                     </Button>
                     <HeadlineText aboveText={true}>{t("latestTransactions")}</HeadlineText>
                     {items ? (

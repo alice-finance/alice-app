@@ -145,18 +145,20 @@ const ManageDepositsScreen = () => {
             <Content>
                 <TitleText aboveText={true}>{t("manageDepositedAmount")}</TitleText>
                 <BalanceCard
-                    title={t("ethereumWallet")}
-                    description={t("ethereumWallet.description")}
+                    title={t("ethereumNetwork")}
+                    description={t("ethereumNetwork.description")}
                     balance={getBalance(asset.ethereumAddress)}
                     asset={asset}
+                    buttonBordered={false}
                     buttonText={t("deposit")}
                     onPressButton={useCallback(() => push("Deposit", { asset }), [asset])}
                 />
                 <BalanceCard
-                    title={t("aliceWallet")}
-                    description={t("aliceWallet.description")}
+                    title={t("aliceNetwork")}
+                    description={t("aliceNetwork.description")}
                     balance={getBalance(asset.loomAddress)}
                     asset={asset}
+                    buttonBordered={true}
                     buttonText={t("withdrawal")}
                     onPressButton={useCallback(() => push("Withdrawal", { asset }), [asset])}
                 />
@@ -179,7 +181,7 @@ const ManageDepositsScreen = () => {
     );
 };
 
-const BalanceCard = ({ title, description, balance, asset, buttonText, onPressButton }) => {
+const BalanceCard = ({ title, description, balance, asset, buttonText, buttonBordered, onPressButton }) => {
     return (
         <View style={[preset.marginNormal]}>
             <Card>
@@ -202,7 +204,7 @@ const BalanceCard = ({ title, description, balance, asset, buttonText, onPressBu
                         />
                         <Button
                             primary={true}
-                            bordered={true}
+                            bordered={buttonBordered}
                             rounded={true}
                             onPress={onPressButton}
                             style={[preset.alignFlexEnd, preset.marginSmall]}>
