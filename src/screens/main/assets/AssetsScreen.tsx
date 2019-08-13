@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FlatList, StyleSheet, Text, View } from "react-native";
-import { useNavigation } from "react-navigation-hooks";
+import { useFocusState, useNavigation } from "react-navigation-hooks";
 import { defaultKeyExtractor } from "../../../utils/react-native-utils";
 
 import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
@@ -15,6 +15,7 @@ import { ERC20_MAX_PRECISION } from "../../../constants/token";
 import { AssetContext } from "../../../contexts/AssetContext";
 import { BalancesContext } from "../../../contexts/BalancesContext";
 import { PendingTransactionsContext } from "../../../contexts/PendingTransactionsContext";
+import useDepositionRecovery from "../../../hooks/useDepositionRecovery";
 import usePendingWithdrawalHandler from "../../../hooks/usePendingWithdrawalHandler";
 import useTokenBalanceUpdater from "../../../hooks/useTokenBalanceUpdater";
 import preset from "../../../styles/preset";
@@ -27,6 +28,8 @@ const AssetsScreen = () => {
     const { assets } = useContext(AssetContext);
     const { getPendingWithdrawalTransactions } = useContext(PendingTransactionsContext);
     const { push, setParams } = useNavigation();
+    const { isFocused } = useFocusState();
+    const { attemptToRecover } = useDepositionRecovery();
     const onSort = useCallback(() => setSortedByName(!sortedByName), [sortedByName]);
     const onPress = useCallback((asset: ERC20Asset) => push("ManageAsset", { asset }), []);
     const renderItem = useCallback(({ item }) => <TokenListItem token={item} onPress={onPress} />, []);
@@ -37,13 +40,14 @@ const AssetsScreen = () => {
     useEffect(() => {
         setParams({ onSort });
         update();
+        attemptToRecover();
     }, []);
 
     useEffect(() => {
-        if (count && Number(count) > 0) {
+        if (isFocused && count && Number(count) > 0) {
             handlePendingWithdrawal();
         }
-    }, [count]);
+    }, [count, isFocused]);
     return (
         <Container>
             <FlatList

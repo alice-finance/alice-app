@@ -1,4 +1,4 @@
-import { useCallback, useContext } from "react";
+import { useCallback, useContext, useState } from "react";
 import { AsyncStorage } from "react-native";
 
 import { ERC20Asset } from "@alice-finance/alice.js";
@@ -50,6 +50,7 @@ const getSavingsLogsAsync = async (loomChain, address, event, lastBlock, latestB
         .getAddress()
         .toLocalAddressString()
         .toLowerCase();
+    const result: Log[][] = [];
 
     while (fromBlock < latestBlock) {
         if (latestBlock - lastBlock > 9999) {
@@ -70,9 +71,19 @@ const getSavingsLogsAsync = async (loomChain, address, event, lastBlock, latestB
         fromBlock = toBlock + 1;
 
         promises.push(pr);
+
+        if (promises.length === 10) {
+            const r = await Promise.all(promises);
+            result.push(...r);
+            promises.splice(0, promises.length);
+        }
     }
 
-    const result = await Promise.all(promises);
+    if (promises.length > 0) {
+        const r = await Promise.all(promises);
+        result.push(...r);
+    }
+
     return result.reduce((p, logs) => {
         const newLogs = logs
             .sort((l1, l2) => (l2.blockNumber || 0) - (l1.blockNumber || 0))
@@ -87,154 +98,178 @@ const getSavingsLogsAsync = async (loomChain, address, event, lastBlock, latestB
 const useLogLoader = (asset: ERC20Asset) => {
     const { ethereumChain, loomChain } = useContext(ChainContext);
     const { getSwapLogsAsync } = useKyberSwap();
+    const [isLoadingDeposit, setLoadingDeposit] = useState(false);
+    const [isLoadingWithdraw, setLoadingWithdraw] = useState(false);
+    const [isLoadingSwap, setLoadingSwap] = useState(false);
+    const [isLoadingSavings, setLoadingSavings] = useState(false);
 
     const getGatewayDepositLogs = useCallback(async () => {
         const TYPE = "gateway-deposit";
         const logWrapper = await getLogWrapper(asset.symbol, TYPE);
 
-        if (ethereumChain !== null) {
-            let lastBlock = logWrapper.lastBlockNumber;
-            if (!("migration" in logWrapper) || logWrapper.migration === 0) {
-                lastBlock = 0;
-                logWrapper.migration = 1;
-                logWrapper.logs = [];
-            }
-            const latestBlock = await ethereumChain.getProvider().getBlockNumber();
-
-            if (asset.ethereumAddress.isZero()) {
-                if (lastBlock < latestBlock) {
-                    const result = await ethereumChain.getETHReceivedLogsAsync(lastBlock, latestBlock);
-
-                    if (result) {
-                        logWrapper.logs = removeDuplicate([...logWrapper.logs, ...result]);
-                        logWrapper.lastBlockNumber = latestBlock;
-                        await setLogWrapper(asset.symbol, TYPE, logWrapper);
-                    }
+        if (ethereumChain !== null && !isLoadingDeposit) {
+            try {
+                setLoadingDeposit(true);
+                let lastBlock = logWrapper.lastBlockNumber;
+                if (!("migration" in logWrapper) || logWrapper.migration === 0) {
+                    lastBlock = 0;
+                    logWrapper.migration = 1;
+                    logWrapper.logs = [];
                 }
+                const latestBlock = await ethereumChain.getProvider().getBlockNumber();
 
-                return logWrapper.logs || [];
-            } else {
-                if (lastBlock < latestBlock) {
-                    const result = await ethereumChain.getERC20ReceivedLogsAsync(asset, lastBlock, latestBlock);
+                if (asset.ethereumAddress.isZero()) {
+                    if (lastBlock < latestBlock) {
+                        const result = await ethereumChain.getETHReceivedLogsAsync(lastBlock, latestBlock);
 
-                    if (result) {
-                        logWrapper.logs = removeDuplicate([...logWrapper.logs, ...result]);
-                        logWrapper.lastBlockNumber = latestBlock;
-                        await setLogWrapper(asset.symbol, TYPE, logWrapper);
+                        if (result) {
+                            logWrapper.logs = removeDuplicate([...logWrapper.logs, ...result]);
+                            logWrapper.lastBlockNumber = latestBlock;
+                            await setLogWrapper(asset.symbol, TYPE, logWrapper);
+                        }
                     }
+
+                    return logWrapper.logs || [];
+                } else {
+                    if (lastBlock < latestBlock) {
+                        const result = await ethereumChain.getERC20ReceivedLogsAsync(asset, lastBlock, latestBlock);
+
+                        if (result) {
+                            logWrapper.logs = removeDuplicate([...logWrapper.logs, ...result]);
+                            logWrapper.lastBlockNumber = latestBlock;
+                            await setLogWrapper(asset.symbol, TYPE, logWrapper);
+                        }
+                    }
+                    return logWrapper.logs || [];
                 }
-                return logWrapper.logs || [];
+            } finally {
+                setLoadingDeposit(false);
             }
         }
 
         return logWrapper.logs;
-    }, [asset, ethereumChain]);
+    }, [asset, ethereumChain, isLoadingDeposit]);
 
     const getGatewayWithdrawLogs = useCallback(async () => {
         const TYPE = "gateway-withdraw";
         const logWrapper = await getLogWrapper(asset.symbol, TYPE);
 
-        if (ethereumChain !== null) {
-            let lastBlock = logWrapper.lastBlockNumber;
-            if (!("migration" in logWrapper) || logWrapper.migration === 0) {
-                lastBlock = 0;
-                logWrapper.migration = 1;
-                logWrapper.logs = [];
-            }
-            const latestBlock = await ethereumChain.getProvider().getBlockNumber();
-
-            if (asset.ethereumAddress.isZero()) {
-                if (lastBlock < latestBlock) {
-                    const result = await ethereumChain.getETHWithdrawnLogsAsync(lastBlock, latestBlock);
-
-                    if (result) {
-                        logWrapper.logs = removeDuplicate([...logWrapper.logs, ...result]);
-                        logWrapper.lastBlockNumber = latestBlock;
-                        await setLogWrapper(asset.symbol, TYPE, logWrapper);
-                    }
+        if (ethereumChain !== null && !isLoadingWithdraw) {
+            try {
+                setLoadingWithdraw(true);
+                let lastBlock = logWrapper.lastBlockNumber;
+                if (!("migration" in logWrapper) || logWrapper.migration === 0) {
+                    lastBlock = 0;
+                    logWrapper.migration = 1;
+                    logWrapper.logs = [];
                 }
+                const latestBlock = await ethereumChain.getProvider().getBlockNumber();
 
-                return logWrapper.logs || [];
-            } else {
-                if (lastBlock < latestBlock) {
-                    const result = await ethereumChain.getERC20WithdrawnLogsAsync(asset, lastBlock, latestBlock);
+                if (asset.ethereumAddress.isZero()) {
+                    if (lastBlock < latestBlock) {
+                        const result = await ethereumChain.getETHWithdrawnLogsAsync(lastBlock, latestBlock);
 
-                    if (result) {
-                        logWrapper.logs = removeDuplicate([...logWrapper.logs, ...result]);
-                        logWrapper.lastBlockNumber = latestBlock;
-                        await setLogWrapper(asset.symbol, TYPE, logWrapper);
+                        if (result) {
+                            logWrapper.logs = removeDuplicate([...logWrapper.logs, ...result]);
+                            logWrapper.lastBlockNumber = latestBlock;
+                            await setLogWrapper(asset.symbol, TYPE, logWrapper);
+                        }
                     }
+
+                    return logWrapper.logs || [];
+                } else {
+                    if (lastBlock < latestBlock) {
+                        const result = await ethereumChain.getERC20WithdrawnLogsAsync(asset, lastBlock, latestBlock);
+
+                        if (result) {
+                            logWrapper.logs = removeDuplicate([...logWrapper.logs, ...result]);
+                            logWrapper.lastBlockNumber = latestBlock;
+                            await setLogWrapper(asset.symbol, TYPE, logWrapper);
+                        }
+                    }
+                    return logWrapper.logs || [];
                 }
-                return logWrapper.logs || [];
+            } finally {
+                setLoadingWithdraw(false);
             }
         }
 
         return logWrapper.logs;
-    }, [asset, ethereumChain]);
+    }, [asset, ethereumChain, isLoadingWithdraw]);
 
     const getKyberSwapLogs = useCallback(async () => {
         const TYPE = "kyber-swap";
         const logWrapper = await getLogWrapper(asset.symbol, TYPE);
 
-        if (ethereumChain !== null) {
-            let lastBlock = logWrapper.lastBlockNumber;
-            if (!("migration" in logWrapper) || logWrapper.migration === 0) {
-                lastBlock = 0;
-                logWrapper.migration = 1;
-                logWrapper.logs = [];
-            }
-            const latestBlock = await ethereumChain.getProvider().getBlockNumber();
-
-            if (lastBlock < latestBlock) {
-                const result = await getSwapLogsAsync(asset, lastBlock, latestBlock);
-
-                if (result) {
-                    logWrapper.logs = removeDuplicate([...logWrapper.logs, ...result]);
-                    logWrapper.lastBlockNumber = latestBlock;
-                    await setLogWrapper(asset.symbol, TYPE, logWrapper);
+        if (ethereumChain !== null && !isLoadingSwap) {
+            try {
+                setLoadingSwap(true);
+                let lastBlock = logWrapper.lastBlockNumber;
+                if (!("migration" in logWrapper) || logWrapper.migration === 0) {
+                    lastBlock = 0;
+                    logWrapper.migration = 1;
+                    logWrapper.logs = [];
                 }
+                const latestBlock = await ethereumChain.getProvider().getBlockNumber();
+
+                if (lastBlock < latestBlock) {
+                    const result = await getSwapLogsAsync(asset, lastBlock, latestBlock);
+
+                    if (result) {
+                        logWrapper.logs = removeDuplicate([...logWrapper.logs, ...result]);
+                        logWrapper.lastBlockNumber = latestBlock;
+                        await setLogWrapper(asset.symbol, TYPE, logWrapper);
+                    }
+                }
+            } finally {
+                setLoadingSwap(false);
             }
 
             return logWrapper.logs || [];
         }
 
         return logWrapper.logs;
-    }, [asset, ethereumChain, getSwapLogsAsync]);
+    }, [asset, ethereumChain, getSwapLogsAsync, isLoadingSwap]);
 
     const getSavingsLogs = useCallback(async () => {
         const TYPE = "savings-record";
         const logWrapper = await getLogWrapper(asset.symbol, TYPE);
 
-        if (loomChain !== null) {
-            const market = loomChain.getMoneyMarket();
-            const latestBlock = await loomChain.getProvider().getBlockNumber();
-            const event = market.interface.events.SavingsWithdrawn;
-            let lastBlock = logWrapper.lastBlockNumber;
-            if (!("migration" in logWrapper) || logWrapper.migration === 0) {
-                lastBlock = 0;
-                logWrapper.migration = 1;
-                logWrapper.logs = [];
-            }
-            if (lastBlock === 0) {
-                const transaction = await loomChain
-                    .getProvider()
-                    .getTransaction(loomChain.config.moneyMarket.transactionHash);
-                lastBlock = Number(transaction.blockNumber || 0);
-            }
-
-            if (lastBlock < latestBlock) {
-                const result = await getSavingsLogsAsync(loomChain, market.address, event, lastBlock, latestBlock);
-
-                if (result) {
-                    logWrapper.logs = removeDuplicate([...logWrapper.logs, ...result]);
-                    logWrapper.lastBlockNumber = latestBlock;
-                    await setLogWrapper(asset.symbol, TYPE, logWrapper);
+        if (loomChain !== null && !isLoadingSavings) {
+            try {
+                setLoadingSavings(true);
+                const market = loomChain.getMoneyMarket();
+                const latestBlock = await loomChain.getProvider().getBlockNumber();
+                const event = market.interface.events.SavingsWithdrawn;
+                let lastBlock = logWrapper.lastBlockNumber;
+                if (!("migration" in logWrapper) || logWrapper.migration === 0) {
+                    lastBlock = 0;
+                    logWrapper.migration = 1;
+                    logWrapper.logs = [];
                 }
+                if (lastBlock === 0) {
+                    const transaction = await loomChain
+                        .getProvider()
+                        .getTransaction(loomChain.config.moneyMarket.transactionHash);
+                    lastBlock = Number(transaction.blockNumber || 0);
+                }
+
+                if (lastBlock < latestBlock) {
+                    const result = await getSavingsLogsAsync(loomChain, market.address, event, lastBlock, latestBlock);
+
+                    if (result) {
+                        logWrapper.logs = removeDuplicate([...logWrapper.logs, ...result]);
+                        logWrapper.lastBlockNumber = latestBlock;
+                        await setLogWrapper(asset.symbol, TYPE, logWrapper);
+                    }
+                }
+            } finally {
+                setLoadingSavings(false);
             }
         }
 
         return logWrapper.logs || [];
-    }, [asset, loomChain]);
+    }, [asset, loomChain, isLoadingSavings]);
 
     const getCachedLogs = useCallback(async () => {
         const depositLogWrapper = await getLogWrapper(asset.symbol, "gateway-deposit");

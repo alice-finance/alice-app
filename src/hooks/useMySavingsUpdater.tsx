@@ -1,4 +1,4 @@
-import { useCallback, useContext } from "react";
+import { useCallback, useContext, useEffect } from "react";
 
 import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { ChainContext } from "../contexts/ChainContext";
@@ -20,7 +20,7 @@ const useMySavingsUpdater = () => {
             });
             setMyRecords(savingRecords.filter(r => !r.balance.isZero()));
         }
-    }, [loomChain]);
+    }, [loomChain, getSavingsLogs]);
     return { update };
 };
 

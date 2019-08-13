@@ -27,6 +27,7 @@ import { BalancesContext } from "../../../contexts/BalancesContext";
 import useEthereumBlockNumberListener from "../../../hooks/useEthereumBlockNumberListener";
 import useKyberSwap, { TokenSwapped } from "../../../hooks/useKyberSwap";
 import useLogLoader from "../../../hooks/useLogLoader";
+import usePendingWithdrawalHandler from "../../../hooks/usePendingWithdrawalHandler";
 import usePendingWithdrawalListener from "../../../hooks/usePendingWithdrawalListener";
 import useTokenBalanceUpdater from "../../../hooks/useTokenBalanceUpdater";
 import preset from "../../../styles/preset";
@@ -43,12 +44,14 @@ const ManageDepositsScreen = () => {
     const [isRefreshingLogs, setIsRefreshingLogs] = useState(false);
     const { getGatewayDepositLogs, getGatewayWithdrawLogs, getKyberSwapLogs } = useLogLoader(asset);
     const { update } = useTokenBalanceUpdater();
-    const { blockNumber } = useEthereumBlockNumberListener();
+    const { blockNumber, activateListener, deactivateListener } = useEthereumBlockNumberListener();
     const renderItem = ({ item }) => <TransactionLogListItem asset={asset} item={item} blockNumber={blockNumber} />;
     const [items, setItems] = useState<Array<
         ETHReceived | ERC20Received | ETHWithdrawn | ERC20Withdrawn | TokenSwapped
     > | null>(null);
-    const { receipt } = usePendingWithdrawalListener(asset);
+    const { receipt, setReceipt } = usePendingWithdrawalListener(asset);
+    const { handlePendingWithdrawal } = usePendingWithdrawalHandler();
+    const [isHandling, setHandling] = useState(false);
     const { ready } = useKyberSwap();
 
     useEffect(() => {
@@ -73,6 +76,27 @@ const ManageDepositsScreen = () => {
         }
     }, [isFocused]);
 
+    useEffect(() => {
+        if (isFocused && !!items) {
+            if (items.length > 0) {
+                const item: any = items[0];
+                const swap = !!item.actualDestAmount;
+                const blockConfirmNumber = __DEV__ ? 15 : 10;
+                const inProgress =
+                    !swap &&
+                    blockNumber &&
+                    item.log.blockNumber &&
+                    blockNumber - item.log.blockNumber <= blockConfirmNumber;
+                if (inProgress) {
+                    activateListener();
+                    return;
+                }
+            }
+        }
+
+        deactivateListener();
+    }, [isFocused, items, blockNumber, activateListener, deactivateListener]);
+
     const refreshLog = useCallback(() => {
         if (!isRefreshingLogs) {
             setIsRefreshingLogs(true);
@@ -80,31 +104,61 @@ const ManageDepositsScreen = () => {
                 getGatewayDepositLogs().then(setReceived),
                 getGatewayWithdrawLogs().then(setWithdrawn),
                 getKyberSwapLogs().then(setSwapped)
-            ]).then(() => {
-                update().then(() => {
+            ])
+                .then(() => {
+                    update()
+                        .then(() => {
+                            setIsRefreshingLogs(false);
+                        })
+                        .catch(() => {
+                            setIsRefreshingLogs(false);
+                        });
+                })
+                .catch(() => {
                     setIsRefreshingLogs(false);
                 });
-            });
         }
     }, [asset, isRefreshingLogs, setIsRefreshingLogs, getGatewayDepositLogs, getGatewayWithdrawLogs, getKyberSwapLogs]);
+
+    useEffect(() => {
+        if (isFocused) {
+            if (receipt) {
+                if (!isHandling) {
+                    setHandling(true);
+                    handlePendingWithdrawal()
+                        .then(() => {
+                            setReceipt(null);
+                            setIsRefreshingLogs(false);
+                            refreshLog();
+                            setHandling(false);
+                        })
+                        .catch(() => {
+                            setHandling(false);
+                        });
+                }
+            }
+        }
+    }, [isFocused, receipt, isHandling, refreshLog]);
 
     return (
         <Container>
             <Content>
                 <TitleText aboveText={true}>{t("manageDepositedAmount")}</TitleText>
                 <BalanceCard
-                    title={t("ethereumWallet")}
-                    description={t("ethereumWallet.description")}
+                    title={t("ethereumNetwork")}
+                    description={t("ethereumNetwork.description")}
                     balance={getBalance(asset.ethereumAddress)}
                     asset={asset}
+                    buttonBordered={false}
                     buttonText={t("deposit")}
                     onPressButton={useCallback(() => push("Deposit", { asset }), [asset])}
                 />
                 <BalanceCard
-                    title={t("aliceWallet")}
-                    description={t("aliceWallet.description")}
+                    title={t("aliceNetwork")}
+                    description={t("aliceNetwork.description")}
                     balance={getBalance(asset.loomAddress)}
                     asset={asset}
+                    buttonBordered={true}
                     buttonText={t("withdrawal")}
                     onPressButton={useCallback(() => push("Withdrawal", { asset }), [asset])}
                 />
@@ -127,7 +181,7 @@ const ManageDepositsScreen = () => {
     );
 };
 
-const BalanceCard = ({ title, description, balance, asset, buttonText, onPressButton }) => {
+const BalanceCard = ({ title, description, balance, asset, buttonText, buttonBordered, onPressButton }) => {
     return (
         <View style={[preset.marginNormal]}>
             <Card>
@@ -150,7 +204,7 @@ const BalanceCard = ({ title, description, balance, asset, buttonText, onPressBu
                         />
                         <Button
                             primary={true}
-                            bordered={true}
+                            bordered={buttonBordered}
                             rounded={true}
                             onPress={onPressButton}
                             style={[preset.alignFlexEnd, preset.marginSmall]}>

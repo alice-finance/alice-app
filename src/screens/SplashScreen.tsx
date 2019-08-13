@@ -15,6 +15,7 @@ import * as Analytics from "../helpers/Analytics";
 import useTokenBalanceUpdater from "../hooks/useTokenBalanceUpdater";
 import useUpdateChecker from "../hooks/useUpdateChecker";
 import { getGasPrice } from "../utils/ether-gas-utils";
+import { mapAccounts } from "../utils/loom-utils";
 
 const SplashScreen = () => {
     const { load, onError, onFinish } = useLoader();
@@ -38,6 +39,7 @@ const useLoader = () => {
         if (mnemonic && ethereumPrivateKey && loomPrivateKey) {
             const ethereumChain = new EthereumChain(ethereumPrivateKey, __DEV__);
             const loomChain = new LoomChain(loomPrivateKey, __DEV__);
+            await mapAccounts(ethereumChain, loomChain);
 
             const assets = await loomChain.getERC20AssetsAsync();
             const market = loomChain.getMoneyMarket();
@@ -60,7 +62,7 @@ const useLoader = () => {
             setDecimals(decimals);
             await update();
 
-            checkForUpdate({ onlyOnWifi: true });
+            checkForUpdate();
 
             navigate("Main");
         } else {

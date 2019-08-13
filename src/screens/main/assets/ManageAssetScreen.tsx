@@ -5,7 +5,7 @@ import { useFocusState, useNavigation } from "react-navigation-hooks";
 import { defaultKeyExtractor } from "../../../utils/react-native-utils";
 
 import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
-import { Button, Container, Content, Text } from "native-base";
+import { Button, Container, Content, Icon, Text } from "native-base";
 import BalanceView from "../../../components/BalanceView";
 import CaptionText from "../../../components/CaptionText";
 import EmptyView from "../../../components/EmptyView";
@@ -15,6 +15,7 @@ import TokenIcon from "../../../components/TokenIcon";
 import TransactionLogListItem from "../../../components/TransactionLogListItem";
 import { BalancesContext } from "../../../contexts/BalancesContext";
 import { ChainContext } from "../../../contexts/ChainContext";
+import useEthereumBlockNumberListener from "../../../hooks/useEthereumBlockNumberListener";
 import useLogRefresher from "../../../hooks/useLogRefresher";
 import preset from "../../../styles/preset";
 
@@ -26,17 +27,12 @@ const ManageAssetScreen = () => {
     const { ethereumChain } = useContext(ChainContext);
     const [] = useState(false);
     const { getBalance } = useContext(BalancesContext);
-    const [blockNumber, setBlockNumber] = useState(0);
+    const { blockNumber, activateListener, deactivateListener } = useEthereumBlockNumberListener();
     const balance = getBalance(asset.loomAddress);
     const { items, refreshLogs } = useLogRefresher(asset);
     const renderItem = ({ item }) => <TransactionLogListItem asset={asset} item={item} blockNumber={blockNumber} />;
-
     useEffect(() => {
         if (isFocused && ethereumChain != null) {
-            ethereumChain
-                .getProvider()
-                .getBlockNumber()
-                .then(setBlockNumber);
             refreshLogs();
         }
     }, [isFocused, ethereumChain]);
@@ -72,18 +68,20 @@ const ManageAssetScreen = () => {
                             preset.alignCenter,
                             preset.flexDirectionColumn,
                             preset.alignItemsCenter,
-                            preset.marginTopNormal
+                            preset.marginTopLarge,
+                            preset.marginBottomNormal
                         ]}>
                         <BalanceView asset={asset} balance={balance} />
-                        <Text style={[preset.marginLeftTiny, preset.fontSize24]}>{t("deposited")}</Text>
                     </View>
                     <Button
                         primary={true}
                         rounded={true}
                         transparent={true}
+                        iconRight={true}
                         style={preset.alignFlexEnd}
                         onPress={useCallback(() => push("ManageDeposits", { asset }), [asset])}>
-                        <Text>{t("manageDepositedAmount")}</Text>
+                        <Text style={{ paddingRight: 0 }}>{t("manageAssetsInAliceNetwork")}</Text>
+                        <Icon type={"MaterialIcons"} name={"keyboard-arrow-right"} />
                     </Button>
                     <HeadlineText aboveText={true}>{t("latestTransactions")}</HeadlineText>
                     {items ? (

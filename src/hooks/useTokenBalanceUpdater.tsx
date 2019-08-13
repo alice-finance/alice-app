@@ -11,6 +11,7 @@ const useTokenBalanceUpdater = () => {
     const [updating, setUpdating] = useState(true);
     const update = useCallback(async () => {
         try {
+            setUpdating(true);
             if (ethereumChain && loomChain) {
                 await Promise.all([
                     ethereumChain.updateAssetBalancesAsync(assets, updateBalance),
