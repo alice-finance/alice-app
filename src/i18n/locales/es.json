@@ -216,7 +216,7 @@
         "aliceClaimHistory": "Historial de ALICE reclamos",
         "calculatingClaim": "Cálculo de la recompensa ALICE...",
         "youCanClaimNow": "¡Reclama {{amount}} ALICE ahora!",
-        "timeLeftUntilClaim": "Queda {{time}} hasta que {{cantidad}} ALICE",
+        "youCanClaim": "{{amount}} ALICE ",
         "claimAlice": "Reclamar",
         "claimingAlice": "Reclamando...",
         "claimedAlice": "Has recibido {{amount}} ALICE"

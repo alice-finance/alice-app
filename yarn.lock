@@ -41,6 +41,11 @@
   resolved "https://registry.yarnpkg.com/@alice-finance/money-market/-/money-market-0.1.9.tgz#30912cf4ea3058f859b270d77deb721a486df0e3"
   integrity sha512-8N/CuKEzSOzWQNUJEBkqnobpQJA6TDDSZ2H9qrD3Qgd/IXDFRwVex+3om0pM8FMCtSVSBJ0JTOgv7rTxOCaBKg==
 
+"@alice-finance/token@^0.9.11":
+  version "0.9.11"
+  resolved "https://registry.yarnpkg.com/@alice-finance/token/-/token-0.9.11.tgz#50a1b57942fec0f4ce27e9f9514244edc3de0087"
+  integrity sha512-ozzWG0fFGxhD6fcSiDlh1ipIH/VpYf5iysxBIgtWTGHzBc+rcOnRuecwdDRZU/Wr63jEnhiwAYoWCdpwM1UdOA==
+
 "@babel/code-frame@^7.0.0":
   version "7.5.5"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.5.5.tgz#bc0782f6d69f7b7d49531219699b988f669a8f9d"
