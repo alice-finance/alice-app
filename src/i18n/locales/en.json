@@ -108,6 +108,7 @@
         "send": "Send",
         "myAssetsInAliceNetwork": "My Assets In Alice Network",
         "myAssetsInAliceNetwork.description": "Alice Network is compatible with Ethereum but offers much faster performance. Deposit your assets now and utilize financial services!",
+        "manageAssetsInAliceNetwork": "Manage assets in Alice Network",
         "deposited": "Deposited",
         "manageDepositedAmount": "Transfer Assets To Alice Network",
         "myAssets": "My Assets",
