@@ -26,7 +26,8 @@ const IFO_STARTED_AT = new Date(2019, 7, 15);
 
 const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
     const { decimals } = useContext(SavingsContext);
-    const ifoStarted = new Date() >= IFO_STARTED_AT;
+    const { claimableAt, claimableAmount, claim, claiming, ifo } = useAliceClaimer(record);
+    const ifoStarted = new Date() >= IFO_STARTED_AT && ifo !== null;
     const [apr] = useState(() => {
         const multiplier = toBigNumber(10).pow(decimals);
         const rate = record.interestRate.add(multiplier);
@@ -39,7 +40,14 @@ const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
     return (
         <View style={[preset.marginNormal]} key={record.id.toString()}>
             <Card>
-                <Header record={record} ifoStarted={ifoStarted} />
+                <Header
+                    record={record}
+                    ifoStarted={ifoStarted}
+                    claimableAt={claimableAt}
+                    claimableAmount={claimableAmount}
+                    claim={claim}
+                    claiming={claiming}
+                />
                 <Body record={record} apr={apr} />
                 <Actions record={record} apr={apr} />
             </Card>
@@ -47,9 +55,8 @@ const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
     );
 };
 
-const Header = ({ record, ifoStarted }) => {
+const Header = ({ record, ifoStarted, claimableAt, claimableAmount, claim, claiming }) => {
     const { asset } = useContext(SavingsContext);
-    const { claimableAt, claimableAmount, claim, claiming } = useAliceClaimer(record);
     const [claimable, setClaimable] = useState(claimableAt && claimableAt.getTime() <= Date.now());
     useEffect(() => {
         setClaimable(claimableAt && claimableAt.getTime() <= Date.now());
