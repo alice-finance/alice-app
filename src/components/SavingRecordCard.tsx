@@ -22,7 +22,7 @@ import MomentText from "./MomentText";
 import Row from "./Row";
 import Spinner from "./Spinner";
 
-const IFO_STARTED_AT = new Date(2019, 6, 15);
+const IFO_STARTED_AT = new Date(2019, 7, 15);
 
 const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
     const { decimals } = useContext(SavingsContext);
