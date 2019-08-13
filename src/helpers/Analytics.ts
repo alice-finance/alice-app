@@ -5,13 +5,15 @@ import * as Amplitude from "expo-analytics-amplitude";
 let isInitialized = false;
 
 export const events = {
+    ERROR: "ERROR",
     APP_START: "APP_START",
     KEY_IMPORTED: "KEY_IMPORTED",
     KEY_CREATED: "KEY_CREATED",
     ASSET_DEPOSITED: "ASSET_DEPOSITED",
     ASSET_WITHDRAWN: "ASSET_WITHDRAWN",
     SAVINGS_DEPOSITED: "SAVINGS_DEPOSITED",
-    SAVINGS_WITHDRAWN: "SAVINGS_WITHDRAWN"
+    SAVINGS_WITHDRAWN: "SAVINGS_WITHDRAWN",
+    ACCOUNT_MAPPED: "ACCOUNT_MAPPED"
 };
 
 export function initialize(): void {
@@ -44,7 +46,8 @@ export function track(event: string, options?: object): void {
     initialize();
 
     if (isInitialized) {
-        const properties = options;
+        const properties: { [k: string]: any } = options || {};
+        properties.production = !__DEV__;
 
         if (properties) {
             Amplitude.logEventWithProperties(event, properties);

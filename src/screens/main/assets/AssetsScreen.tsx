@@ -15,6 +15,7 @@ import { ERC20_MAX_PRECISION } from "../../../constants/token";
 import { AssetContext } from "../../../contexts/AssetContext";
 import { BalancesContext } from "../../../contexts/BalancesContext";
 import { PendingTransactionsContext } from "../../../contexts/PendingTransactionsContext";
+import useDepositionRecovery from "../../../hooks/useDepositionRecovery";
 import usePendingWithdrawalHandler from "../../../hooks/usePendingWithdrawalHandler";
 import useTokenBalanceUpdater from "../../../hooks/useTokenBalanceUpdater";
 import preset from "../../../styles/preset";
@@ -28,6 +29,7 @@ const AssetsScreen = () => {
     const { getPendingWithdrawalTransactions } = useContext(PendingTransactionsContext);
     const { push, setParams } = useNavigation();
     const { isFocused } = useFocusState();
+    const { attemptToRecover } = useDepositionRecovery();
     const onSort = useCallback(() => setSortedByName(!sortedByName), [sortedByName]);
     const onPress = useCallback((asset: ERC20Asset) => push("ManageAsset", { asset }), []);
     const renderItem = useCallback(({ item }) => <TokenListItem token={item} onPress={onPress} />, []);
@@ -38,6 +40,7 @@ const AssetsScreen = () => {
     useEffect(() => {
         setParams({ onSort });
         update();
+        attemptToRecover();
     }, []);
 
     useEffect(() => {

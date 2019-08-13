@@ -61,7 +61,7 @@ AuthScreen.navigationOptions = ({ navigation }) => {
 const Circles = ({ passcode }) => (
     <View style={[preset.flex1, preset.flexDirectionRow, preset.justifyContentCenter, preset.marginTopHuge]}>
         {new Array(PASSWORD_LENGTH).fill(0).map((value, index) => {
-            return passcode.length - 1 >= index ? <ActiveItem /> : <InactiveItem />;
+            return passcode.length - 1 >= index ? <ActiveItem key={index} /> : <InactiveItem key={index} />;
         })}
     </View>
 );

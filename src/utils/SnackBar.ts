@@ -1,6 +1,7 @@
+import { Dimensions, Platform } from "react-native";
+
 import NativeSnackBar from "rn-snackbar";
 import platform from "../../native-base-theme/variables/platform";
-import { Dimensions, Platform } from "react-native";
 
 // See https://mydevice.io/devices/ for device dimensions
 const X_WIDTH = 375;
@@ -34,7 +35,8 @@ export default class SnackBar {
         NativeSnackBar.show(text, {
             style: { paddingBottom },
             backgroundColor: platform.brandSuccess,
-            textColor: platform.brandLight
+            textColor: platform.brandLight,
+            tapToClose: true
         });
     };
 
@@ -42,7 +44,8 @@ export default class SnackBar {
         NativeSnackBar.show(text, {
             style: { paddingBottom },
             backgroundColor: platform.brandDanger,
-            textColor: platform.brandLight
+            textColor: platform.brandLight,
+            tapToClose: true
         });
     };
 }
