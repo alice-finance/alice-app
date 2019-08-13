@@ -4,8 +4,11 @@
     "start": "NODE_OPTIONS=--max_old_space_size=32768 expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "eject": "expo eject",
-    "lint": "tslint -c tslint.json -p tsconfig.json"
+    "lint": "tslint -c tslint.json -p tsconfig.json",
+    "expo:publish": "./scripts/publish.sh",
+    "expo:build:ios": "./scripts/build.sh ios",
+    "expo:build:android": "./scripts/build.sh android",
+    "expo:upload:ios": "expo upload:ios"
   },
   "dependencies": {
     "@alice-finance/alice-proxies": "^1.0.1",
