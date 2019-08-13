@@ -31,20 +31,19 @@ const useAliceClaimer = (record: SavingsRecord) => {
         timestamp = timestamp.isZero() ? record.initialTimestamp.getTime() : timestamp.toNumber() * 1000;
         const interval = await ifo.getInterval();
         setClaimableAt(new Date(timestamp + interval * 1000));
-        await update();
     };
     const claim = useCallback(async () => {
         try {
             setClaiming(true);
             await ifo.claim(record.id, { gasLimit: 0 });
-            refresh();
+            refresh().then(update);
         } catch (e) {
             throw e;
         } finally {
             setClaiming(false);
         }
     }, [record]);
-    useAsyncEffect(refresh, []);
+    useAsyncEffect(refresh, [record]);
     return { claimableAt, claimableAmount, claim, claiming };
 };
 export default useAliceClaimer;

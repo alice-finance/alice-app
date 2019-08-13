@@ -216,7 +216,7 @@
         "aliceClaimHistory": "ALICE Claim History",
         "calculatingClaim": "Calculating ALICE reward...",
         "youCanClaimNow": "Claim {{amount}} ALICE now!",
-        "timeLeftUntilClaim": "{{time}} left until {{amount}} ALICE",
+        "youCanClaim": "{{amount}} ALICE ",
         "claimAlice": "Claim",
         "claimingAlice": "Claiming...",
         "claimedAlice": "You've received {{amount}} ALICE"

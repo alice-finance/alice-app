@@ -216,7 +216,7 @@
         "aliceClaimHistory": "ALICE 보상 내역",
         "calculatingClaim": "ALICE 보상 계산 중...",
         "youCanClaimNow": "지금 {{amount}} ALICE 보상을 받으세요!",
-        "timeLeftUntilClaim": "{{amount}} ALICE 보상까지 {{time}}",
+        "youCanClaim": "{{amount}} ALICE 보상 ",
         "claimAlice": "보상받기",
         "claimingAlice": "ALICE 받는중...",
         "claimedAlice": "{{amount}} ALICE 보상을 받았습니다."

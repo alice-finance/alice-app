@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { Portal } from "react-native-paper";
@@ -12,18 +12,17 @@ import { ChainContext } from "../contexts/ChainContext";
 import { SavingsContext } from "../contexts/SavingsContext";
 import Analytics from "../helpers/Analytics";
 import useAliceClaimer from "../hooks/useAliceClaimer";
-import useCountdown from "../hooks/useCountdown";
 import useMySavingsUpdater from "../hooks/useMySavingsUpdater";
 import preset from "../styles/preset";
 import { formatValue } from "../utils/big-number-utils";
 import SnackBar from "../utils/SnackBar";
-import AgoText from "./AgoText";
 import AmountInput from "./AmountInput";
 import BigNumberText from "./BigNumberText";
+import MomentText from "./MomentText";
 import Row from "./Row";
 import Spinner from "./Spinner";
 
-const IFO_STARTED_AT = new Date(2019, 7, 15);
+const IFO_STARTED_AT = new Date(2019, 6, 15);
 
 const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
     const { decimals } = useContext(SavingsContext);
@@ -49,16 +48,17 @@ const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
 };
 
 const Header = ({ record, ifoStarted }) => {
-    const { t } = useTranslation("finance");
-    const { decimals } = useContext(SavingsContext);
     const { asset } = useContext(SavingsContext);
     const { claimableAt, claimableAmount, claim, claiming } = useAliceClaimer(record);
-    const { hours, minutes, seconds } = useCountdown(claimableAt || new Date());
-    const claimable = claimableAt && hours <= 0 && minutes <= 0 && seconds <= 0;
-    const text = claimableAt ? (claimable ? "youCanClaimNow" : "timeLeftUntilClaim") : "calculatingClaim";
-    const amount = claimableAmount ? formatValue(claimableAmount, decimals) : "";
-    const format = (s: string) => (s.length > 1 ? s : "0" + s);
-    const time = format(hours.toString()) + ":" + format(minutes.toString()) + ":" + format(seconds.toString());
+    const [claimable, setClaimable] = useState(claimableAt && claimableAt.getTime() <= Date.now());
+    useEffect(() => {
+        setClaimable(claimableAt && claimableAt.getTime() <= Date.now());
+        let handle = 0;
+        if (claimableAt) {
+            handle = setTimeout(() => setClaimable(true), claimableAt.getTime() - Date.now());
+        }
+        return () => clearTimeout(handle);
+    }, [claimableAt]);
     return (
         <CardItem>
             <View style={preset.flexDirectionRow}>
@@ -66,11 +66,26 @@ const Header = ({ record, ifoStarted }) => {
                     <Text style={[preset.fontSize24, preset.fontWeightBold]}>
                         {formatValue(record.balance, asset!.decimals)} {asset!.symbol}
                     </Text>
-                    {ifoStarted && <Text note={true}>{t(text, { amount, time })}</Text>}
+                    {ifoStarted && (
+                        <ClaimText claimableAt={claimableAt} claimableAmount={claimableAmount} claimable={claimable} />
+                    )}
                 </View>
                 {ifoStarted && <ClaimButton claimable={claimable} claim={claim} claiming={claiming} />}
             </View>
         </CardItem>
+    );
+};
+
+const ClaimText = ({ claimableAt, claimableAmount, claimable }) => {
+    const { t } = useTranslation("finance");
+    const { decimals } = useContext(SavingsContext);
+    const text = claimableAt ? (claimable ? "youCanClaimNow" : "youCanClaim") : "calculatingClaim";
+    const amount = claimableAmount ? formatValue(claimableAmount, decimals) : "";
+    return (
+        <View style={preset.flexDirectionRow}>
+            <Text note={true}>{t(text, { amount })}</Text>
+            {claimableAt && !claimable && <MomentText date={claimableAt} note={true} />}
+        </View>
     );
 };
 
@@ -117,7 +132,7 @@ const Body = ({ record, apr }: { record: SavingsRecord; apr: BigNumber }) => {
                 <Text note={true} style={preset.marginLeft0}>
                     {t("elapsed")}
                 </Text>
-                <AgoText date={record.initialTimestamp} />
+                <MomentText date={record.initialTimestamp} ago={true} />
             </View>
             <View style={[preset.marginLeftSmall, preset.flex3]}>
                 <Text note={true} style={preset.marginLeft0}>

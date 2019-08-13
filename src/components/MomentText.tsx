@@ -19,19 +19,19 @@ const filterLocale = (locale: string): string => {
     return "en";
 };
 
-const AgoText = ({ date }: { date: Date }) => {
+const MomentText = ({ date, ago = false, note = false }: { date: Date; ago?: boolean; note?: boolean }) => {
     const [locale, setLocale] = useState<string>(() => filterLocale(Localization.locale));
     Localization.getLocalizationAsync().then(({ locale: l }) => setLocale(filterLocale(l)));
     return (
         <Moment
             locale={locale}
             fromNow={true}
-            ago={true}
+            ago={ago}
             element={Text}
-            style={{ fontSize: 20, textTransform: "capitalize" }}>
+            style={note ? { color: "grey", fontSize: 14 } : { fontSize: 20, textTransform: "capitalize" }}>
             {date.getTime()}
         </Moment>
     );
 };
 
-export default AgoText;
+export default MomentText;
