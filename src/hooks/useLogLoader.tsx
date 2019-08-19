@@ -7,6 +7,7 @@ import { ethers } from "ethers";
 import { Log } from "ethers/providers";
 import { ChainContext } from "../contexts/ChainContext";
 import useKyberSwap from "./useKyberSwap";
+import Analytics from "../helpers/Analytics";
 
 interface LogWrapper {
     lastBlockNumber: number;
@@ -42,57 +43,70 @@ export const removeLogWrapper = async (symbol: string, type: string) => {
 };
 
 const getSavingsLogsAsync = async (loomChain, address, event, lastBlock, latestBlock) => {
-    let fromBlock = lastBlock;
-    let toBlock = latestBlock;
+    try {
+        let fromBlock = lastBlock;
+        let toBlock = latestBlock;
 
-    const promises: Array<Promise<Log[]>> = [];
-    const userAddress = loomChain
-        .getAddress()
-        .toLocalAddressString()
-        .toLowerCase();
-    const result: Log[][] = [];
+        const promises: Array<Promise<Log[]>> = [];
+        const userAddress = loomChain
+            .getAddress()
+            .toLocalAddressString()
+            .toLowerCase();
+        const result: Log[][] = [];
 
-    while (fromBlock < latestBlock) {
-        if (latestBlock - lastBlock > 9999) {
-            toBlock = fromBlock + 9999;
+        while (fromBlock < latestBlock) {
+            if (latestBlock - lastBlock > 9999) {
+                toBlock = fromBlock + 9999;
+            }
+
+            if (toBlock > latestBlock) {
+                toBlock = latestBlock;
+            }
+
+            const pr = getLogs(loomChain.getProvider(), {
+                address,
+                topics: [event.topic, ethers.utils.hexZeroPad(userAddress, 32)],
+                fromBlock,
+                toBlock
+            });
+
+            fromBlock = toBlock + 1;
+
+            promises.push(pr);
+
+            if (promises.length === 10) {
+                const r = await Promise.all(promises);
+                result.push(...r);
+                promises.splice(0, promises.length);
+            }
         }
 
-        if (toBlock > latestBlock) {
-            toBlock = latestBlock;
-        }
-
-        const pr = getLogs(loomChain.getProvider(), {
-            address,
-            topics: [event.topic, ethers.utils.hexZeroPad(userAddress, 32)],
-            fromBlock,
-            toBlock
-        });
-
-        fromBlock = toBlock + 1;
-
-        promises.push(pr);
-
-        if (promises.length === 10) {
+        if (promises.length > 0) {
             const r = await Promise.all(promises);
             result.push(...r);
-            promises.splice(0, promises.length);
         }
-    }
 
-    if (promises.length > 0) {
-        const r = await Promise.all(promises);
-        result.push(...r);
-    }
-
-    return result.reduce((p, logs) => {
-        const newLogs = logs
+        return result
+            .reduce((p, logs) => {
+                if (logs.length > 0) {
+                    return [...p, ...logs];
+                }
+                return [...p];
+            })
             .sort((l1, l2) => (l2.blockNumber || 0) - (l1.blockNumber || 0))
-            .map(log => ({
-                log,
-                ...event.decode(log.data)
-            }));
-        return [...p, ...newLogs];
-    });
+            .map(log => {
+                return {
+                    log,
+                    ...event.decode(log.data)
+                };
+            });
+    } catch (e) {
+        Analytics.track(Analytics.events.ERROR, {
+            trace: e.stack,
+            message: e.message
+        });
+        return null;
+    }
 };
 
 const useLogLoader = (asset: ERC20Asset) => {
