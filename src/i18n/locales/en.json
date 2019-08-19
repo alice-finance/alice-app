@@ -229,5 +229,9 @@
         "error": "Error",
         "fetchInfoError": "Unable to get update information.",
         "latestVersion": "Alice is up to date"
+    },
+    "notification": {
+        "claimTitle": "Claim ALICE now!",
+        "claimBody": "You can claim {{amount}} ALICE"
     }
 }
