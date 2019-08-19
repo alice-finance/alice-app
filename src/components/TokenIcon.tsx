@@ -16,7 +16,7 @@ const TokenIcon: React.FunctionComponent<TokenIconProps> = ({ address, width, he
     const uri =
         address === ZERO_ADDRESS
             ? "https://raw.githubusercontent.com/ethereum/ethereum-org/master/public/images/logos/ETHEREUM-ICON_Black.png"
-            : `https://raw.githubusercontent.com/TrustWallet/tokens/master/tokens/${address}.png`;
+            : `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${address}/logo.png`;
     return (
         <View style={[{ width, height }, style]}>
             {(!address || !loaded) && <View style={styles(width, height).placeholder} />}
