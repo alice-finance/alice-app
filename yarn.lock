@@ -22,16 +22,16 @@
     readline-sync "^1.4.9"
     truffle "^5.0.19"
 
-"@alice-finance/alice.js@^1.1.5":
-  version "1.1.6"
-  resolved "https://registry.yarnpkg.com/@alice-finance/alice.js/-/alice.js-1.1.6.tgz#ad7ac576bb56ef1afa90e9775197a3705fd907e7"
-  integrity sha512-uYUVj0YiOYp6CgGpFSY7bqMTvJ22ocRpurFGH1hwh/XbkNOosv6ennTYS3MC1nlC4j9D0d8F1rji75T6BcfDoA==
+"@alice-finance/alice.js@1.1.7":
+  version "1.1.7"
+  resolved "https://registry.yarnpkg.com/@alice-finance/alice.js/-/alice.js-1.1.7.tgz#aba3fab43c9fbd1c858d43932f81d7cb814ccf23"
+  integrity sha512-yI+8Nn8Qqb5JNVTadMf3F/ohv+5Bim2i8oQEb4yL9GqGczCBz2BNWVaQLAus0O5BY5t/k7CQ8xD/uT8aZ1Xj5Q==
   dependencies:
     "@alice-finance/alice-proxies" "^1.0.1"
     "@alice-finance/money-market" "^0.1.9"
     bn.js "^4.11.8"
     dotenv "^8.0.0"
-    ethers "^4.0.30"
+    ethers "https://github.com/alice-finance/ethers.js/archive/ethers-4.0.34.tar.gz"
     hdkey "^1.1.1"
     loom-js "1.54.2"
     openzeppelin-solidity "^2.3.0"
@@ -2899,10 +2899,9 @@ ethereumjs-util@^5.0.0, ethereumjs-util@^5.2.0:
     safe-buffer "^5.1.1"
     secp256k1 "^3.0.1"
 
-ethers@^4.0.30, ethers@^4.0.7, ethers@^4.0.9:
-  version "4.0.33"
-  resolved "https://registry.yarnpkg.com/ethers/-/ethers-4.0.33.tgz#f7b88d2419d731a39aefc37843a3f293e396f918"
-  integrity sha512-lAHkSPzBe0Vj+JrhmkEHLtUEKEheVktIjGDyE9gbzF4zf1vibjYgB57LraDHu4/ItqWVkztgsm8GWqcDMN+6vQ==
+ethers@^4.0.7, ethers@^4.0.9, "ethers@https://github.com/alice-finance/ethers.js/archive/ethers-4.0.34.tar.gz":
+  version "4.0.34"
+  resolved "https://github.com/alice-finance/ethers.js/archive/ethers-4.0.34.tar.gz#26191eef998c278bbc15c9d88bac33f04c106a2d"
   dependencies:
     "@types/node" "^10.3.2"
     aes-js "3.0.0"

@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@alice-finance/alice-proxies": "^1.0.1",
-    "@alice-finance/alice.js": "^1.1.5",
+    "@alice-finance/alice.js": "1.1.7",
     "@alice-finance/money-market": "^0.1.9",
     "@alice-finance/token": "^0.9.11",
     "@expo/vector-icons": "^10.0.0",
@@ -20,7 +20,7 @@
     "bn.js": "^4.11.8",
     "color": "^3.1.1",
     "crypto-browserify": "3.12.0",
-    "ethers": "^4.0.30",
+    "ethers": "https://github.com/alice-finance/ethers.js/archive/ethers-4.0.34.tar.gz",
     "expo": "^33.0.0",
     "expo-localization": "~5.0.1",
     "expo-task-manager": "~5.0.1",
