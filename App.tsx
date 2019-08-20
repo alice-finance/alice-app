@@ -15,6 +15,7 @@ import { Portal } from "react-native-paper";
 import { ethers } from "ethers";
 import { YellowBox, Platform, StatusBar } from "react-native";
 import { useScreens } from "react-native-screens";
+import Sentry from "./src/utils/sentry-utils";
 
 if (__DEV__) {
     YellowBox.ignoreWarnings(["Setting a timer"]);
@@ -23,6 +24,7 @@ ethers.errors.setLogLevel("error");
 
 if (!__DEV__) {
     Analytics.initialize();
+    Sentry.initialize();
 }
 useScreens();
 

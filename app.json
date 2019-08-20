@@ -37,6 +37,13 @@
       "package": "finance.alice.app",
       "permissions": [],
       "versionCode": 9
+    },
+    "hooks": {
+      "postPublish": [
+        {
+          "file": "sentry-expo/upload-sourcemaps",
+        }
+      ]
     }
   }
 }
