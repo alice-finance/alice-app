@@ -10,7 +10,7 @@
     ],
     "version": "1.2",
     "extra": {
-      "pubVersion": 1
+      "pubVersion": 2
     },
     "orientation": "portrait",
     "primaryColor": "#8315d6",
@@ -41,7 +41,7 @@
     "hooks": {
       "postPublish": [
         {
-          "file": "sentry-expo/upload-sourcemaps",
+          "file": "sentry-expo/upload-sourcemaps"
         }
       ]
     }
