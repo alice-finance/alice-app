@@ -146,7 +146,7 @@ const ConversionControls = ({ asset, amount, setAmountTo, onNext }: ConversionCo
     const { t } = useTranslation(["asset", "common"]);
     const { assets } = useContext(AssetContext);
     const [amountToList, setAmountToList] = useState<{}>({});
-    const totalCount = assets.filter(a => a.symbol !== asset.symbol).length;
+    const totalCount = assets.filter(a => a.symbol !== asset.symbol && a.symbol === "DAI").length;
     const [loadCount, setLoadCount] = useState(0);
     const { ready, checkRate } = useKyberSwap();
 
@@ -165,7 +165,7 @@ const ConversionControls = ({ asset, amount, setAmountTo, onNext }: ConversionCo
     useEffect(() => {
         if (ready) {
             assets
-                .filter(a => a.symbol !== asset.symbol)
+                .filter(a => a.symbol !== asset.symbol && a.symbol === "DAI")
                 .forEach(e => {
                     getRate(e);
                 });
@@ -188,7 +188,7 @@ const ConversionControls = ({ asset, amount, setAmountTo, onNext }: ConversionCo
             </Button>
             {asset.ethereumAddress.isZero() &&
                 assets
-                    .filter(a => a.symbol !== asset.symbol)
+                    .filter(a => a.symbol !== asset.symbol && a.symbol === "DAI") // TODO: Allow DAI only for swap.
                     .map((a, key) => (
                         <SwapButton
                             key={key}
