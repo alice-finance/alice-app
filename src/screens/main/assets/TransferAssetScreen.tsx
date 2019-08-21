@@ -33,7 +33,7 @@ const TransferAssetScreen = () => {
     const asset: ERC20Asset = getParam("asset");
     const onChangeAddress = useCallback(newAddress => {
         const valid = newAddress.startsWith("0x") && newAddress.length === 42;
-        setError(valid ? "" : "notAValidAddress");
+        setError(valid ? "" : t("notAValidAddress"));
         setAddress(newAddress);
     }, []);
     const onTransfer = useCallback(async () => {
@@ -98,7 +98,7 @@ const TransferAssetScreen = () => {
                         style={preset.marginBottomLarge}
                     />
                     <TextInput
-                        keyboardType={"numeric"}
+                        keyboardType={"ascii-capable"}
                         placeholder={t("receiver")}
                         value={address}
                         editable={!inProgress}
