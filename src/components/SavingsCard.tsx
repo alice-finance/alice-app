@@ -14,9 +14,7 @@ import BigNumberText from "./BigNumberText";
 
 const SavingsCard = () => {
     const { t } = useTranslation("finance");
-    const { push } = useNavigation();
     const { asset, totalBalance, myTotalBalance, apr } = useContext(SavingsContext);
-    const onPress = useCallback(() => push("NewSavings"), []);
     const { updating, update } = useTokenBalanceUpdater();
     const refreshing = !asset || !totalBalance || updating;
     useEffect(() => {
@@ -34,36 +32,50 @@ const SavingsCard = () => {
                         </Body>
                     </Left>
                 </CardItem>
-                <CardItem>
-                    <View style={[preset.marginLeftSmall, preset.flex1]}>
-                        <Text note={true} style={preset.marginLeft0}>
-                            {t("totalBalance")}
-                        </Text>
-                        <BigNumberText value={totalBalance} />
-                    </View>
-                    <View style={[preset.marginLeftSmall, preset.flex1]}>
-                        <Text note={true} style={preset.marginLeft0}>
-                            {t("mySavings")}
-                        </Text>
-                        <BigNumberText value={myTotalBalance} />
-                    </View>
-                    <View style={[preset.marginLeftSmall, preset.marginRightSmall, preset.flex0]}>
-                        <Text note={true} style={preset.marginLeft0}>
-                            {t("apr")}
-                        </Text>
-                        <BigNumberText value={apr} suffix={"%"} decimalPlaces={2} />
-                    </View>
+                <CardItem style={preset.marginRightSmall}>
+                    <Column label={t("totalBalance")} value={totalBalance} />
+                    <Column label={t("mySavings")} value={myTotalBalance} />
+                    <Column label={t("apr")} value={apr} small={true} />
                 </CardItem>
-                <CardItem style={preset.marginBottomSmall}>
-                    <Left />
-                    <Right>
-                        <Button primary={true} bordered={true} rounded={true} disabled={refreshing} onPress={onPress}>
-                            <Text style={{ fontSize: 16 }}>{t("startSaving")}</Text>
-                        </Button>
-                    </Right>
-                </CardItem>
+                <Footer refreshing={refreshing} />
             </Card>
         </View>
+    );
+};
+
+const Column = ({ label, value, small = false }) => (
+    <View style={[preset.marginLeftSmall, small ? preset.flex0 : preset.flex1]}>
+        <Text note={true} style={preset.marginLeft0}>
+            {label}
+        </Text>
+        <BigNumberText value={value} decimalPlaces={small ? 2 : 4} />
+    </View>
+);
+
+const Footer = ({ refreshing }) => {
+    const { t } = useTranslation("finance");
+    const { push } = useNavigation();
+    const onShowLeaderboard = useCallback(() => push("SavingsLeaderboard"), []);
+    const onStart = useCallback(() => push("NewSavings"), []);
+    return (
+        <CardItem style={preset.marginBottomSmall}>
+            <Left />
+            <Right>
+                <View style={preset.flexDirectionRow}>
+                    <Button primary={true} bordered={true} rounded={true} onPress={onShowLeaderboard}>
+                        <Text style={preset.fontSize16}>{t("leaderboard")}</Text>
+                    </Button>
+                    <Button
+                        primary={true}
+                        rounded={true}
+                        disabled={refreshing}
+                        onPress={onStart}
+                        style={preset.marginLeftSmall}>
+                        <Text style={preset.fontSize16}>{t("startSaving")}</Text>
+                    </Button>
+                </View>
+            </Right>
+        </CardItem>
     );
 };
 

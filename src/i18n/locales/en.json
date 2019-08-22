@@ -194,6 +194,7 @@
         "mySavings": "My Savings",
         "apr": "APR",
         "loading": "Loading",
+        "leaderboard": "Leaderboard",
         "startSaving": "Start Saving",
         "startSaving.description": "Savings on Alice, powered by smart contracts, guarantee you can withdraw your assets at any time.",
         "noSavingsHistory": "No savings history",

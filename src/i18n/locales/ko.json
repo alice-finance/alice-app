@@ -193,6 +193,7 @@
         "mySavings": "나의 저축",
         "apr": "APR(연이율)",
         "loading": "로딩 중",
+        "leaderboard": "순위표",
         "startSaving": "저축 시작하기",
         "startSaving.description": "Alice의 저축은 원하는 시점에 언제든 출금할 수 있는 것이 보장된 스마트 계약 시스템입니다.",
         "noSavingsHistory": "저축 내역이 없습니다.",
