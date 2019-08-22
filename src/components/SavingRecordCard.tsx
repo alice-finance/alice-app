@@ -38,7 +38,7 @@ const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
         return value.sub(multiplier.mul(100));
     });
     return (
-        <View style={[preset.marginNormal, preset.marginRightTiny]} key={record.id.toString()}>
+        <View style={[preset.marginNormal]} key={record.id.toString()}>
             <Card>
                 <Header
                     record={record}
