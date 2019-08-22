@@ -40,6 +40,7 @@
     "react-native-progress-webview": "^1.1.2",
     "react-native-qrcode": "latest",
     "react-native-screens": "1.0.0-alpha.22",
+    "react-native-snap-carousel": "^3.8.0",
     "react-navigation": "^3.11.0",
     "react-navigation-hooks": "^1.0.0-alpha.2",
     "react-navigation-material-bottom-tabs": "^1.0.0",

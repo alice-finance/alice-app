@@ -1,9 +1,9 @@
-import React, { useCallback, useContext, useEffect } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FlatList, View } from "react-native";
+import { Dimensions, View } from "react-native";
+import Carousel, { Pagination } from "react-native-snap-carousel";
 import { useNavigation } from "react-navigation-hooks";
 
-import { SavingsRecord } from "@alice-finance/alice.js/dist/contracts/MoneyMarket";
 import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { Linking } from "expo";
 import { Button, Container, Content, Icon } from "native-base";
@@ -22,30 +22,14 @@ import preset from "../../../styles/preset";
 import AuthScreen from "../../AuthScreen";
 
 const FinanceScreen = () => {
-    const { setParams, push } = useNavigation();
-    const { t } = useTranslation(["finance", "common"]);
-    const { totalBalance, myRecords } = useContext(SavingsContext);
-    const sortedMyRecords = myRecords
-        ? myRecords.sort((a, b) => b.initialTimestamp.getTime() - a.initialTimestamp.getTime())
-        : null;
+    const { setParams } = useNavigation();
+    const { t } = useTranslation("finance");
     const onPress = useCallback(() => Linking.openURL(t("common:blogUrl")), []);
-    const renderItem = useCallback(({ item }) => <SavingRecordCard record={item} />, []);
-    const { update } = useMySavingsUpdater();
     useScheduledUpdater();
+    usePasscodeRegistration();
     useEffect(() => {
         setParams({ onPress });
-        if (totalBalance) {
-            update();
-        }
-    }, [totalBalance]);
-    useEffect(() => {
-        AuthScreen.getSavedPasscode().then(passcode => {
-            if (!passcode || passcode === "") {
-                push("Auth", { needsRegistration: true, firstTime: true });
-            }
-        });
     }, []);
-
     return (
         <Container>
             <Content>
@@ -53,26 +37,12 @@ const FinanceScreen = () => {
                     <TitleText aboveText={true}>{t("savings")}</TitleText>
                     <CaptionText style={preset.marginBottomNormal}>{t("savings.description")}</CaptionText>
                     <SavingsCard />
-                    <SubtitleText aboveText={true} style={[preset.flex1, preset.marginTopNormal]}>
-                        {t("mySavings")}
-                    </SubtitleText>
-                    {myRecords ? (
-                        <FlatList
-                            data={sortedMyRecords}
-                            keyExtractor={savingRecordKeyExtractor}
-                            renderItem={renderItem}
-                            ListEmptyComponent={<EmptyView text={t("noSavingsHistory")} />}
-                        />
-                    ) : (
-                        <Spinner compact={true} />
-                    )}
+                    <MySavings />
                 </View>
             </Content>
         </Container>
     );
 };
-
-const savingRecordKeyExtractor = (item: SavingsRecord) => item.id.toString();
 
 FinanceScreen.navigationOptions = ({ navigation }) => ({
     headerRight: (
@@ -81,6 +51,55 @@ FinanceScreen.navigationOptions = ({ navigation }) => ({
         </Button>
     )
 });
+
+const MySavings = () => {
+    const { t } = useTranslation("finance");
+    const { totalBalance, myRecords } = useContext(SavingsContext);
+    const { update } = useMySavingsUpdater();
+    useEffect(() => {
+        if (totalBalance) {
+            update();
+        }
+    }, [totalBalance]);
+    return (
+        <View>
+            <SubtitleText aboveText={true} style={[preset.flex1, preset.marginTopNormal]}>
+                {t("mySavings")}
+            </SubtitleText>
+            <MySavingsCarousel myRecords={myRecords} />
+        </View>
+    );
+};
+
+const MySavingsCarousel = ({ myRecords }) => {
+    const { t } = useTranslation("finance");
+    const sortedMyRecords = myRecords
+        ? myRecords.sort((a, b) => b.initialTimestamp.getTime() - a.initialTimestamp.getTime())
+        : null;
+    const renderItem = useCallback(({ item }) => <SavingRecordCard record={item} />, []);
+    const [sliderWidth] = useState(Dimensions.get("window").width);
+    const [selection, setSelection] = useState(0);
+    return myRecords ? (
+        myRecords.length > 0 ? (
+            <View>
+                <Carousel
+                    data={sortedMyRecords}
+                    renderItem={renderItem}
+                    sliderWidth={sliderWidth}
+                    itemWidth={sliderWidth * 0.9}
+                    activeSlideAlignment={"start"}
+                    inactiveSlideScale={1.0}
+                    onSnapToItem={setSelection}
+                />
+                <Pagination dotsLength={myRecords.length} activeDotIndex={selection} dotColor={platform.colorPrimary} />
+            </View>
+        ) : (
+            <EmptyView text={t("noSavingsHistory")} />
+        )
+    ) : (
+        <Spinner compact={true} />
+    );
+};
 
 const useScheduledUpdater = () => {
     const { loomChain } = useContext(ChainContext);
@@ -96,6 +115,17 @@ const useScheduledUpdater = () => {
         return () => clearInterval(handle);
     }, []);
     return { apr, totalSavings: totalBalance };
+};
+
+const usePasscodeRegistration = () => {
+    const { push } = useNavigation();
+    useEffect(() => {
+        AuthScreen.getSavedPasscode().then(passcode => {
+            if (!passcode || passcode === "") {
+                push("Auth", { needsRegistration: true, firstTime: true });
+            }
+        });
+    }, []);
 };
 
 export default FinanceScreen;
