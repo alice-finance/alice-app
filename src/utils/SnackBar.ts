@@ -31,10 +31,6 @@ const isIPhoneX = (() => {
 const padding = isIPhoneX ? 34 : 0;
 
 const getOption = (backgroundColor, position) => {
-    if (position !== "bottom" && position !== "top") {
-        throw Error("position should be bottom or top");
-    }
-
     return {
         style: position === "bottom" ? { paddingBottom: padding } : { paddingTop: padding },
         backgroundColor,
@@ -45,15 +41,15 @@ const getOption = (backgroundColor, position) => {
 };
 
 export default class SnackBar {
-    public static success = (text: string, position: string = "bottom") => {
+    public static success = (text: string, position: "bottom" | "top" = "bottom") => {
         NativeSnackBar.show(text, getOption(platform.brandSuccess, position));
     };
 
-    public static danger = (text: string, position: string = "bottom") => {
+    public static danger = (text: string, position: "bottom" | "top" = "bottom") => {
         NativeSnackBar.show(text, getOption(platform.brandDanger, position));
     };
 
-    public static info = (text: string, position: string = "bottom") => {
+    public static info = (text: string, position: "bottom" | "top" = "bottom") => {
         NativeSnackBar.show(text, getOption(platform.brandInfo, position));
     };
 }

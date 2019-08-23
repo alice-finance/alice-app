@@ -9,6 +9,7 @@ import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils
 import { BigNumber } from "ethers/utils";
 import { Button, Card, CardItem, Icon, Left, Spinner as NativeSpinner, Text } from "native-base";
 import { ChainContext } from "../contexts/ChainContext";
+import { NotificationContext } from "../contexts/NotificationContext";
 import { SavingsContext } from "../contexts/SavingsContext";
 import Analytics from "../helpers/Analytics";
 import useAliceClaimer from "../hooks/useAliceClaimer";
@@ -21,7 +22,6 @@ import BigNumberText from "./BigNumberText";
 import MomentText from "./MomentText";
 import Row from "./Row";
 import Spinner from "./Spinner";
-import { NotificationContext } from "../contexts/NotificationContext";
 
 const IFO_STARTED_AT = new Date(2019, 7, 15);
 
