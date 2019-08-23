@@ -230,5 +230,9 @@
         "error": "Error",
         "fetchInfoError": "No se pudo obtener información de actualización.",
         "latestVersion": "Alice está al día"
+    },
+    "notification": {
+        "claimTitle": "¡Reclama a ALICE ahora!",
+        "claimBody": "Puedes reclamar {{amount}} ALICE"
     }
 }
