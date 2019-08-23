@@ -8,7 +8,7 @@ const useRecentSavingsLoader = () => {
         setRecentSavings(
             await fetchCollection(firestore =>
                 firestore
-                    .collection("extdev")
+                    .collection(__DEV__ ? "extdev" : "plasma")
                     .doc("events")
                     .collection("SavingsDeposited")
                     .orderBy("timestamp", "desc")

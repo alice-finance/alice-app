@@ -8,7 +8,7 @@ const useSavingsLeaderboardLoader = () => {
         setSavingsLeaderboard(
             await fetchCollection(firestore =>
                 firestore
-                    .collection("extdev")
+                    .collection(__DEV__ ? "extdev" : "plasma")
                     .doc("leaderboard")
                     .collection("savings")
                     .orderBy("rank", "asc")
