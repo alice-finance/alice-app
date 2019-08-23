@@ -7,7 +7,7 @@ import { ethers } from "ethers";
 import { ChainContext } from "../contexts/ChainContext";
 import Analytics from "../helpers/Analytics";
 import SnackBar from "../utils/SnackBar";
-import useMySavingsUpdater from "./useMySavingsUpdater";
+import useMySavingsLoader from "./useMySavingsLoader";
 import useTokenBalanceUpdater from "./useTokenBalanceUpdater";
 
 const useSavingsStarter = (asset: ERC20Asset | null, amount: ethers.utils.BigNumber | null) => {
@@ -15,8 +15,8 @@ const useSavingsStarter = (asset: ERC20Asset | null, amount: ethers.utils.BigNum
     const { t } = useTranslation("finance");
     const { loomChain } = useContext(ChainContext);
     const [starting, setStarting] = useState(false);
-    const { update: updateTokenBalances } = useTokenBalanceUpdater();
-    const { update: updateMySavings } = useMySavingsUpdater();
+    const { update } = useTokenBalanceUpdater();
+    const { load } = useMySavingsLoader();
     const start = async () => {
         if (loomChain && asset && amount) {
             setStarting(true);
@@ -26,8 +26,8 @@ const useSavingsStarter = (asset: ERC20Asset | null, amount: ethers.utils.BigNum
                 await approveTx.wait();
                 const depositTx = await market.deposit(amount);
                 await depositTx.wait();
-                await updateTokenBalances();
-                await updateMySavings();
+                await update();
+                await load();
                 SnackBar.success(t("aNewSavingsStartToday"));
                 Analytics.track(Analytics.events.SAVINGS_DEPOSITED);
                 pop();

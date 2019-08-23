@@ -12,7 +12,7 @@ import { ChainContext } from "../contexts/ChainContext";
 import { SavingsContext } from "../contexts/SavingsContext";
 import Analytics from "../helpers/Analytics";
 import useAliceClaimer from "../hooks/useAliceClaimer";
-import useMySavingsUpdater from "../hooks/useMySavingsUpdater";
+import useMySavingsLoader from "../hooks/useMySavingsLoader";
 import preset from "../styles/preset";
 import { formatValue } from "../utils/big-number-utils";
 import SnackBar from "../utils/SnackBar";
@@ -235,7 +235,7 @@ const DialogContent = ({ record, apr, onChangeAmount, inProgress }) => {
 const WithdrawButton = ({ record, onOk, amount, inProgress, setInProgress }) => {
     const { t } = useTranslation(["finance", "common"]);
     const { loomChain } = useContext(ChainContext);
-    const { update } = useMySavingsUpdater();
+    const { load } = useMySavingsLoader();
     const { setTotalBalance } = useContext(SavingsContext);
     const onWithdraw = useCallback(async () => {
         if (loomChain && amount) {
@@ -245,7 +245,7 @@ const WithdrawButton = ({ record, onOk, amount, inProgress, setInProgress }) => 
                 const tx = await market.withdraw(record.id, amount);
                 await tx.wait();
                 setTotalBalance(toBigNumber(await market.totalFunds()));
-                await update();
+                await load();
                 SnackBar.success(t("withdrawalComplete"));
                 Analytics.track(Analytics.events.SAVINGS_WITHDRAWN);
                 onOk();

@@ -20,7 +20,7 @@ import TitleText from "../../../components/TitleText";
 import { ChainContext } from "../../../contexts/ChainContext";
 import { SavingsContext } from "../../../contexts/SavingsContext";
 import useAsyncEffect from "../../../hooks/useAsyncEffect";
-import useMySavingsUpdater from "../../../hooks/useMySavingsUpdater";
+import useMySavingsLoader from "../../../hooks/useMySavingsLoader";
 import useRecentSavingsLoader from "../../../hooks/useRecentSavingsLoader";
 import preset from "../../../styles/preset";
 import { formatValue } from "../../../utils/big-number-utils";
@@ -62,10 +62,10 @@ FinanceScreen.navigationOptions = ({ navigation }) => ({
 const MySavings = () => {
     const { t } = useTranslation("finance");
     const { totalBalance, myRecords } = useContext(SavingsContext);
-    const { update } = useMySavingsUpdater();
+    const { load } = useMySavingsLoader();
     useEffect(() => {
         if (totalBalance) {
-            update();
+            load();
         }
     }, [totalBalance]);
     return (
