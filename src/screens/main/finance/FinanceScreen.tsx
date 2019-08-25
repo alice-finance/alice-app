@@ -69,21 +69,23 @@ const MySavings = () => {
             load();
         }
     }, [totalBalance]);
+    const sortedMyRecords = myRecords
+        ? myRecords
+              .filter(r => !r.balance.isZero())
+              .sort((a, b) => b.initialTimestamp.getTime() - a.initialTimestamp.getTime())
+        : null;
     return (
         <View>
             <SubtitleText aboveText={true} style={[preset.flex1, preset.marginTopNormal]}>
                 {t("mySavings")}
             </SubtitleText>
-            <MySavingsCarousel myRecords={myRecords} />
+            <MySavingsCarousel myRecords={sortedMyRecords} />
         </View>
     );
 };
 
 const MySavingsCarousel = ({ myRecords }) => {
     const { t } = useTranslation("finance");
-    const sortedMyRecords = myRecords
-        ? myRecords.sort((a, b) => b.initialTimestamp.getTime() - a.initialTimestamp.getTime())
-        : null;
     const renderItem = useCallback(({ item }) => <SavingRecordCard record={item} />, []);
     const [sliderWidth] = useState(Dimensions.get("window").width);
     const [selection, setSelection] = useState(0);
@@ -91,7 +93,7 @@ const MySavingsCarousel = ({ myRecords }) => {
         myRecords.length > 0 ? (
             <View>
                 <Carousel
-                    data={sortedMyRecords}
+                    data={myRecords}
                     renderItem={renderItem}
                     sliderWidth={sliderWidth}
                     itemWidth={sliderWidth}

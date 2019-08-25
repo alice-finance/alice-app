@@ -6,9 +6,8 @@ const useRecentSavingsLoader = () => {
     const [recentSavings, setRecentSavings] = useState<object[] | null>(null);
     const loadRecentSavings = useCallback(async () => {
         setRecentSavings(
-            await fetchCollection(firestore =>
-                firestore
-                    .collection(__DEV__ ? "extdev" : "plasma")
+            await fetchCollection(ref =>
+                ref
                     .doc("events")
                     .collection("SavingsDeposited")
                     .orderBy("timestamp", "desc")

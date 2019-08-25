@@ -6,9 +6,8 @@ const useSavingsLeaderboardLoader = () => {
     const [savingsLeaderboard, setSavingsLeaderboard] = useState<object[] | null>(null);
     const loadSavingsLeaderboard = useCallback(async () => {
         setSavingsLeaderboard(
-            await fetchCollection(firestore =>
-                firestore
-                    .collection(__DEV__ ? "extdev" : "plasma")
+            await fetchCollection(ref =>
+                ref
                     .doc("leaderboard")
                     .collection("savings")
                     .orderBy("rank", "asc")

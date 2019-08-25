@@ -15,6 +15,7 @@ import useAliceClaimer from "../hooks/useAliceClaimer";
 import useMySavingsLoader from "../hooks/useMySavingsLoader";
 import preset from "../styles/preset";
 import { formatValue } from "../utils/big-number-utils";
+import { compoundToAPR } from "../utils/interest-rate-utils";
 import SnackBar from "../utils/SnackBar";
 import AmountInput from "./AmountInput";
 import BigNumberText from "./BigNumberText";
@@ -28,15 +29,7 @@ const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
     const { decimals } = useContext(SavingsContext);
     const { claimableAt, claimableAmount, claim, claiming, ifo } = useAliceClaimer(record);
     const ifoStarted = new Date() >= IFO_STARTED_AT && ifo !== null;
-    const [apr] = useState(() => {
-        const multiplier = toBigNumber(10).pow(decimals);
-        const rate = record.interestRate.add(multiplier);
-        let value = multiplier.mul(100);
-        for (let i = 0; i < 365; i++) {
-            value = value.mul(rate).div(multiplier);
-        }
-        return value.sub(multiplier.mul(100));
-    });
+    const [apr] = useState(() => compoundToAPR(record.interestRate, decimals));
     return (
         <View style={[preset.marginNormal]} key={record.id.toString()}>
             <Card>

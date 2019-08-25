@@ -8,17 +8,16 @@ import { fetchCollection } from "../utils/firebase-utils";
 const useMySavingsLoader = () => {
     const { loomChain } = useContext(ChainContext);
     const { setMyRecords } = useContext(SavingsContext);
-
     const load = useCallback(async () => {
         if (loomChain) {
             const market = loomChain.getMoneyMarket();
             const savingRecords = await market.getSavingsRecords(loomChain.getAddress().toLocalAddressString());
-            const withdrawals = await fetchCollection(firestore =>
-                firestore
-                    .collection(__DEV__ ? "extdev" : "plasma")
+            const myAddress = loomChain.getAddress().toLocalAddressString();
+            const withdrawals = await fetchCollection(ref =>
+                ref
                     .doc("events")
                     .collection("SavingsWithdrawn")
-                    .where("owner", "==", loomChain!.getAddress().toLocalAddressString())
+                    .where("owner", "==", myAddress.toLowerCase())
                     .orderBy("timestamp", "desc")
             );
             const savingsWithdrawals = withdrawals.map(withdrawal => ({
@@ -27,7 +26,7 @@ const useMySavingsLoader = () => {
                 timestamp: new Date(withdrawal.timestamp * 1000)
             }));
             savingRecords.forEach(r => {
-                r.withdrawals = savingsWithdrawals.filter(e => toBigNumber(e.recordId).eq(r.id));
+                r.withdrawals = savingsWithdrawals.filter(e => e.recordId.eq(r.id));
             });
             setMyRecords(savingRecords.filter(r => !r.balance.isZero()));
         }
