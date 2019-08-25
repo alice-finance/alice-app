@@ -208,6 +208,7 @@
         "elapsed": "Elapsed",
         "days": "days",
         "profit": "Profit",
+        "interestEarned": "Interest Earned",
         "principal": "Principal",
         "withdrawSavings": "Withdraw",
         "withdrawSavings.description": "You can withdraw some or all amounts.",

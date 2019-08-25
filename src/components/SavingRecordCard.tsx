@@ -163,7 +163,7 @@ const Body = ({ record, apr }: { record: SavingsRecord; apr: BigNumber }) => {
             </View>
             <View style={[preset.marginLeftSmall, preset.flex3]}>
                 <Text note={true} style={preset.marginLeft0}>
-                    {t("profit")}
+                    {t("interestEarned")}
                 </Text>
                 <BigNumberText value={profit} suffix={""} prefix={"$"} />
             </View>
