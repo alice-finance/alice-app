@@ -9,6 +9,7 @@ import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils
 import { BigNumber } from "ethers/utils";
 import { Button, Card, CardItem, Icon, Left, Spinner as NativeSpinner, Text } from "native-base";
 import { ChainContext } from "../contexts/ChainContext";
+import { NotificationContext } from "../contexts/NotificationContext";
 import { SavingsContext } from "../contexts/SavingsContext";
 import Analytics from "../helpers/Analytics";
 import useAliceClaimer from "../hooks/useAliceClaimer";
@@ -25,7 +26,9 @@ import Spinner from "./Spinner";
 const IFO_STARTED_AT = new Date(2019, 7, 15);
 
 const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
+    const { t } = useTranslation("notification");
     const { decimals } = useContext(SavingsContext);
+    const { useNotification, scheduleLocalNotification } = useContext(NotificationContext);
     const { claimableAt, claimableAmount, claim, claiming, ifo } = useAliceClaimer(record);
     const ifoStarted = new Date() >= IFO_STARTED_AT && ifo !== null;
     const [apr] = useState(() => {
@@ -37,6 +40,23 @@ const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
         }
         return value.sub(multiplier.mul(100));
     });
+
+    useEffect(() => {
+        if (
+            useNotification &&
+            claimableAt &&
+            claimableAmount &&
+            claimableAt > new Date() &&
+            !claimableAmount.isZero()
+        ) {
+            scheduleLocalNotification({
+                path: "/savings/" + record.id,
+                title: t("claimTitle"),
+                body: t("claimBody", { amount: formatValue(claimableAmount, decimals) }),
+                time: claimableAt
+            });
+        }
+    }, [record, useNotification, claimableAt, claimableAmount]);
     return (
         <View style={[preset.marginNormal]} key={record.id.toString()}>
             <Card>

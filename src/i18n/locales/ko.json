@@ -155,7 +155,7 @@
         "notAValidValue": "유효한 금액이 아닙니다.",
         "transferSuccess": "전송 성공!",
         "transferError": "전송 에러",
-        "ethRecommend" : "0.01 ETH 이하의 양을 남겨 두실 것을 권장합니다.",
+        "ethRecommend": "0.01 ETH 이하의 양을 남겨 두실 것을 권장합니다.",
         "willNotEnoughEthereum": "남은 ETH의 양이 다음 전송시 부족할 수 있습니다.",
         "notEnoughEthereum": "남은 ETH 양이 충분하지 않습니다."
     },
@@ -232,5 +232,9 @@
         "error": "오류",
         "fetchInfoError": "업데이트 정보를 가져올 수 없습니다.",
         "latestVersion": "최신버전의 앨리스입니다."
+    },
+    "notification": {
+        "claimTitle": "ALICE 보상을 받으세요!",
+        "claimBody": "{{amount}} ALICE를 보상 받을 수 있습니다."
     }
 }
