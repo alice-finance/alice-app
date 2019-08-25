@@ -4,7 +4,6 @@ import { AssetConsumer, AssetProvider } from "./AssetContext";
 import { BalancesConsumer, BalancesProvider } from "./BalancesContext";
 import { ChainConsumer, ChainProvider } from "./ChainContext";
 import { ConfigConsumer, ConfigProvider } from "./ConfigContext";
-import { NotificationConsumer, NotificationProvider } from "./NotificationContext";
 import { PendingTransactionsConsumer, PendingTransactionsProvider } from "./PendingTransactionsContext";
 import { SavingsConsumer, SavingsProvider } from "./SavingsContext";
 
@@ -15,9 +14,7 @@ export const ContextProvider = ({ children }) => {
                 <BalancesProvider>
                     <SavingsProvider>
                         <PendingTransactionsProvider>
-                            <NotificationProvider>
-                                <ConfigProvider>{children}</ConfigProvider>
-                            </NotificationProvider>
+                            <ConfigProvider>{children}</ConfigProvider>
                         </PendingTransactionsProvider>
                     </SavingsProvider>
                 </BalancesProvider>
@@ -38,23 +35,18 @@ export const ContextConsumer = ({ children }) => {
                                     {balancesContext => (
                                         <PendingTransactionsConsumer>
                                             {pendingTransactionsContext => (
-                                                <NotificationConsumer>
-                                                    {notificationContext => (
-                                                        <ConfigConsumer>
-                                                            {configContext =>
-                                                                children({
-                                                                    ...tokensContext,
-                                                                    ...walletContext,
-                                                                    ...savingsContext,
-                                                                    ...balancesContext,
-                                                                    ...pendingTransactionsContext,
-                                                                    ...notificationContext,
-                                                                    ...configContext
-                                                                })
-                                                            }
-                                                        </ConfigConsumer>
-                                                    )}
-                                                </NotificationConsumer>
+                                                <ConfigConsumer>
+                                                    {configContext =>
+                                                        children({
+                                                            ...tokensContext,
+                                                            ...walletContext,
+                                                            ...savingsContext,
+                                                            ...balancesContext,
+                                                            ...pendingTransactionsContext,
+                                                            ...configContext
+                                                        })
+                                                    }
+                                                </ConfigConsumer>
                                             )}
                                         </PendingTransactionsConsumer>
                                     )}
