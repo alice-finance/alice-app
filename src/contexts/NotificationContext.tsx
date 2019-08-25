@@ -1,7 +1,8 @@
-import React, { useEffect, useReducer, useState } from "react";
-import { AsyncStorage, Platform } from "react-native";
+import React, { useCallback, useEffect, useReducer, useState } from "react";
+import { AsyncStorage } from "react-native";
 
 import { Notifications } from "expo";
+import Constants from "expo-constants";
 import * as Permissions from "expo-permissions";
 import SnackBar from "../utils/SnackBar";
 
@@ -28,7 +29,6 @@ export const NotificationContext = React.createContext({
 });
 
 export const NotificationProvider = ({ children }) => {
-    const channelId = "AliceFinanceNotification";
     const [useNotification, setUseNotification] = useState<boolean>(false);
     const [localNotificationsLoaded, setLocalNotificationsLoaded] = useState<boolean>(false);
     const [notifications, setNotifications] = useReducer(reducer, {});
@@ -52,22 +52,9 @@ export const NotificationProvider = ({ children }) => {
     const handleNotification = notification => {
         // if App is open and foregrounded
         if (notification.origin === "received") {
-            if (Platform.OS === "ios") {
-                SnackBar.info(notification.data.body, "top");
-            }
+            SnackBar.info(notification.data.body, "top");
         } else if (notification.origin === "selected") {
             // app is opened or foregrounded by selecting the push notification
-        }
-    };
-
-    const createChannel = () => {
-        if (Platform.OS === "android") {
-            Notifications.createChannelAndroidAsync(channelId, {
-                name: "Notification",
-                sound: true,
-                priority: "max",
-                vibrate: true
-            });
         }
     };
 
@@ -81,38 +68,35 @@ export const NotificationProvider = ({ children }) => {
     };
 
     const scheduleLocalNotification = async (params: LocalNotificationParams) => {
-        const id = await Notifications.scheduleLocalNotificationAsync(
-            {
-                title: params.title,
-                body: params.body,
-                data: {
+        try {
+            const id = await Notifications.scheduleLocalNotificationAsync(
+                {
                     title: params.title,
                     body: params.body,
-                    isLocal: true
+                    data: {
+                        title: params.title,
+                        body: params.body,
+                        isLocal: true
+                    }
                 },
-                ios: {
-                    sound: true
-                },
-                android: {
-                    channelId
+                {
+                    time: params.time,
+                    repeat: params.repeat,
+                    intervalMs: params.intervalMs
                 }
-            },
-            {
-                time: params.time,
-                repeat: params.repeat,
-                intervalMs: params.intervalMs
-            }
-        );
-        addNotification(params.path, id);
+            );
+            addNotification(params.path, id);
+        } catch (e) {
+            console.error(e);
+        }
     };
 
     useEffect(() => {
         if (!useNotification) {
             const requireNotification = async () => {
                 const result = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-                if (result.status === "granted") {
+                if (Constants.isDevice && result.status === "granted") {
                     setUseNotification(true);
-                    createChannel();
                     Notifications.addListener(handleNotification);
                 } else {
                     setUseNotification(false);
