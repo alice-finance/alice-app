@@ -25,6 +25,7 @@ import useRecentSavingsLoader from "../../../hooks/useRecentSavingsLoader";
 import preset from "../../../styles/preset";
 import { formatValue } from "../../../utils/big-number-utils";
 import { compoundToAPR } from "../../../utils/interest-rate-utils";
+import { openTx } from "../../../utils/loom-utils";
 import AuthScreen from "../../AuthScreen";
 
 const FinanceScreen = () => {
@@ -140,19 +141,22 @@ const RecentSavings = () => {
 
 const SavingsItem = ({ savings }) => {
     const { asset, decimals } = useContext(SavingsContext);
+    const onPress = useCallback(() => openTx(savings.transactionHash), []);
     const [apr] = useState(() => compoundToAPR(savings.rate, decimals));
     return (
-        <ListItem>
-            <Body style={preset.marginLeftTiny}>
+        <ListItem button={true} onPress={onPress}>
+            <Body>
                 <View style={[preset.flex1, preset.flexDirectionRow, preset.alignItemsCenter]}>
-                    <Text style={[preset.fontSize24, preset.fontWeightBold]}>#{savings.recordId}</Text>
-                    <Text style={[preset.flex1, preset.fontSize20, preset.marginLeftSmall]}>
+                    <Text style={[preset.fontSize20, preset.fontWeightBold]}>
+                        {formatValue(savings.balance, asset!.decimals)} {asset!.symbol}
+                    </Text>
+                    <Text style={[preset.flex1, preset.fontSize16, { marginLeft: 0 }]}>
                         {formatValue(toBigNumber(apr).mul(100), decimals, 2)}%
                     </Text>
                     <MomentText date={new Date(savings.timestamp * 1000)} note={true} />
                 </View>
-                <Text style={[preset.fontSize24]}>
-                    {formatValue(savings.balance, asset!.decimals)} {asset!.symbol}
+                <Text ellipsizeMode="middle" numberOfLines={1} style={preset.fontSize16}>
+                    {savings.owner}
                 </Text>
             </Body>
         </ListItem>

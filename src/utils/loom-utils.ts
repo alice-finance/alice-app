@@ -1,8 +1,17 @@
 import EthereumChain from "@alice-finance/alice.js/dist/chains/EthereumChain";
 import LoomChain from "@alice-finance/alice.js/dist/chains/LoomChain";
+import { Linking } from "expo";
 import { EthersSigner } from "loom-js/dist";
 import { AddressMapper } from "loom-js/dist/contracts";
 import Analytics from "../helpers/Analytics";
+
+const LOOM_EXPLORER_URL = __DEV__
+    ? "http://extdev-blockexplorer.dappchains.com"
+    : "https://loom-blockexplorer.dappchains.com";
+
+export const openTx = (txHash: string) => Linking.openURL(LOOM_EXPLORER_URL + "/tx/" + txHash);
+
+export const openAddress = (address: string) => Linking.openURL(LOOM_EXPLORER_URL + "/address/" + address);
 
 export const mapAccounts = async (ethereumChain: EthereumChain, loomChain: LoomChain): Promise<boolean> => {
     try {
