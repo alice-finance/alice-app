@@ -18,6 +18,8 @@ import SavingsCard from "../../../components/SavingsCard";
 import Spinner from "../../../components/Spinner";
 import SubtitleText from "../../../components/SubtitleText";
 import TitleText from "../../../components/TitleText";
+import TokenIcon from "../../../components/TokenIcon";
+import { AssetContext } from "../../../contexts/AssetContext";
 import { ChainContext } from "../../../contexts/ChainContext";
 import { SavingsContext } from "../../../contexts/SavingsContext";
 import useAsyncEffect from "../../../hooks/useAsyncEffect";
@@ -35,6 +37,8 @@ const FinanceScreen = () => {
     const { t } = useTranslation("finance");
     const { isReadOnly } = useContext(ChainContext);
     const { myTotalBalance } = useContext(SavingsContext);
+    const { assets } = useContext(AssetContext);
+    const alice = assets.find(a => a.symbol === "ALICE");
     const onPress = useCallback(() => Linking.openURL(t("common:blogUrl")), []);
     useScheduledUpdater();
     usePasscodeRegistration();
@@ -51,7 +55,7 @@ const FinanceScreen = () => {
                     <SavingsCard />
                     {!isReadOnly && <MySavings />}
                     <RecentSavings />
-                    <RecentClaims />
+                    <RecentClaims asset={alice} />
                 </View>
             </Content>
         </Container>
@@ -152,10 +156,13 @@ const SavingsItem = ({ savings }) => {
     const onPress = useCallback(() => openTx(savings.transactionHash), []);
     const [apr] = useState(() => compoundToAPR(savings.rate, decimals));
     return (
-        <ListItem button={true} onPress={onPress}>
+        <ListItem button={true} noBorder={true} iconRight={true} onPress={onPress}>
+            <Body style={[preset.flex0, preset.marginLeftSmall, preset.marginRightSmall]}>
+                <TokenIcon address={asset!.ethereumAddress.toLocalAddressString()} width={32} height={32} />
+            </Body>
             <Body>
                 <View style={[preset.flex1, preset.flexDirectionRow, preset.alignItemsCenter]}>
-                    <Text style={[preset.fontSize20, preset.fontWeightBold]}>
+                    <Text style={[preset.fontSize20]}>
                         {formatValue(savings.balance, asset!.decimals)} {asset!.symbol}
                     </Text>
                     <Text style={[preset.flex1, preset.fontSize16, { marginLeft: 0 }]}>
@@ -163,7 +170,7 @@ const SavingsItem = ({ savings }) => {
                     </Text>
                     <MomentText date={new Date(savings.timestamp * 1000)} note={true} />
                 </View>
-                <Text ellipsizeMode="middle" numberOfLines={1} style={preset.fontSize16}>
+                <Text ellipsizeMode="middle" numberOfLines={1} style={[preset.fontSize16, preset.colorGrey]}>
                     {savings.owner}
                 </Text>
             </Body>
@@ -171,15 +178,15 @@ const SavingsItem = ({ savings }) => {
     );
 };
 
-const RecentClaims = () => {
+const RecentClaims = ({ asset }) => {
     const { t } = useTranslation(["finance", "common"]);
-    const renderItem = useCallback(({ item }) => <ClaimItem claim={item} />, []);
+    const renderItem = useCallback(({ item }) => <ClaimItem claim={item} asset={asset} />, []);
     const { loadRecentClaims, recentClaims } = useRecentClaimsLoader();
     const onPress = loadRecentClaims;
     useAsyncEffect(loadRecentClaims, []);
     return (
         <View>
-            <View style={[preset.flexDirectionRow, preset.marginTopNormal]}>
+            <View style={[preset.flexDirectionRow, preset.marginTopLarge]}>
                 <SubtitleText aboveText={true} style={[preset.flex1]}>
                     {t("recentClaims")}
                 </SubtitleText>
@@ -201,18 +208,19 @@ const RecentClaims = () => {
     );
 };
 
-const ClaimItem = ({ claim }) => {
+const ClaimItem = ({ claim, asset }) => {
     const onPress = useCallback(() => openTx(claim.transactionHash), []);
     return (
         <ListItem button={true} onPress={onPress}>
+            <Body style={[preset.flex0, preset.marginLeftSmall, preset.marginRightSmall]}>
+                <TokenIcon address={asset!.ethereumAddress.toLocalAddressString()} width={32} height={32} />
+            </Body>
             <Body>
                 <View style={[preset.flex1, preset.flexDirectionRow, preset.alignItemsCenter]}>
-                    <Text style={[preset.flex1, preset.fontSize20, preset.fontWeightBold]}>
-                        {formatValue(claim.amount, 18)} ALICE
-                    </Text>
+                    <Text style={[preset.flex1, preset.fontSize20]}>{formatValue(claim.amount, 18)} ALICE</Text>
                     <MomentText date={new Date(claim.timestamp * 1000)} note={true} />
                 </View>
-                <Text ellipsizeMode="middle" numberOfLines={1} style={preset.fontSize16}>
+                <Text ellipsizeMode="middle" numberOfLines={1} style={[preset.fontSize16, preset.colorGrey]}>
                     {claim.user}
                 </Text>
             </Body>
