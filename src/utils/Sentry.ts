@@ -6,11 +6,12 @@ import Sentry from "sentry-expo";
 const initialize = () => {
     if (SENTRY_DSN !== null) {
         Sentry.enableInExpoDevelopment = true;
+        // noinspection JSIgnoredPromiseFromCall
         Sentry.config(SENTRY_DSN).install();
     }
 };
 
-const setContext = (ethereumAddress: string, plasmaAddress: string) => {
+const setTrackingInfo = (ethereumAddress: string, plasmaAddress: string) => {
     Sentry.setUserContext({
         extra: {
             ethereumAddress,
@@ -29,7 +30,7 @@ const error = (err: Error, option?: object) => {
 
 export default {
     initialize,
-    setContext,
+    setTrackingInfo,
     error,
     track,
     captureMessage: Sentry.captureMessage,

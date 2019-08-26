@@ -25,6 +25,14 @@ const SplashScreen = () => {
     return <AppLoading startAsync={load} onFinish={onFinish} onError={onError} />;
 };
 
+const trackAppStart = (ethereumAddress, plasmaAddress) => {
+    Analytics.track(Analytics.events.APP_START, {
+        ethereumAddress,
+        plasmaAddress
+    });
+    Sentry.setTrackingInfo(ethereumAddress, plasmaAddress);
+};
+
 const useLoader = () => {
     const { setMnemonic, setEthereumChain, setLoomChain } = useContext(ChainContext);
     const { setAssets } = useContext(AssetContext);
@@ -33,7 +41,6 @@ const useLoader = () => {
     const { update: updateAssetBalances } = useAssetBalancesUpdater();
     const { checkForUpdate } = useUpdateChecker();
     const load = async () => {
-        Analytics.track(Analytics.events.APP_START);
         ExpoSplashScreen.preventAutoHide();
         await loadFonts();
         await loadResources();
@@ -41,10 +48,7 @@ const useLoader = () => {
         setMnemonic(mnemonic);
         setLoomChain(loomChain);
         setEthereumChain(ethereumChain);
-        Sentry.setContext(
-            ethereumChain.getAddress().toLocalAddressString(),
-            loomChain.getAddress().toLocalAddressString()
-        );
+        trackAppStart(ethereumChain.getAddress().toLocalAddressString(), loomChain.getAddress().toLocalAddressString());
         // Patch getGasPrice function
         ethereumChain.getProvider().getGasPrice = getGasPrice;
         const assets = await loomChain.getERC20AssetsAsync();
