@@ -232,7 +232,8 @@
         "claimAlice": "보상받기",
         "claimingAlice": "ALICE 받는중...",
         "claimedAlice": "{{amount}} ALICE 보상을 받았습니다.",
-        "recentSavings": "최근 저축"
+        "recentSavings": "최근 저축",
+        "recentClaims": "최근 ALICE 보상 지급"
     },
     "update": {
         "title": "필수 업데이트가 있습니다",

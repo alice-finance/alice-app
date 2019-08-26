@@ -22,6 +22,7 @@ import { ChainContext } from "../../../contexts/ChainContext";
 import { SavingsContext } from "../../../contexts/SavingsContext";
 import useAsyncEffect from "../../../hooks/useAsyncEffect";
 import useMySavingsLoader from "../../../hooks/useMySavingsLoader";
+import useRecentClaimsLoader from "../../../hooks/useRecentClaimsLoader";
 import useRecentSavingsLoader from "../../../hooks/useRecentSavingsLoader";
 import preset from "../../../styles/preset";
 import { formatValue } from "../../../utils/big-number-utils";
@@ -50,6 +51,7 @@ const FinanceScreen = () => {
                     <SavingsCard />
                     {!isReadOnly && <MySavings />}
                     <RecentSavings />
+                    <RecentClaims />
                 </View>
             </Content>
         </Container>
@@ -163,6 +165,55 @@ const SavingsItem = ({ savings }) => {
                 </View>
                 <Text ellipsizeMode="middle" numberOfLines={1} style={preset.fontSize16}>
                     {savings.owner}
+                </Text>
+            </Body>
+        </ListItem>
+    );
+};
+
+const RecentClaims = () => {
+    const { t } = useTranslation(["finance", "common"]);
+    const renderItem = useCallback(({ item }) => <ClaimItem claim={item} />, []);
+    const { loadRecentClaims, recentClaims } = useRecentClaimsLoader();
+    const onPress = loadRecentClaims;
+    useAsyncEffect(loadRecentClaims, []);
+    return (
+        <View>
+            <View style={[preset.flexDirectionRow, preset.marginTopNormal]}>
+                <SubtitleText aboveText={true} style={[preset.flex1]}>
+                    {t("recentClaims")}
+                </SubtitleText>
+                <Button transparent={true} rounded={true} small={true} onPress={onPress} style={preset.marginNormal}>
+                    <Text>{t("common:refresh")}</Text>
+                </Button>
+            </View>
+            {recentClaims ? (
+                <FlatList
+                    data={recentClaims}
+                    keyExtractor={defaultKeyExtractor}
+                    renderItem={renderItem}
+                    ListEmptyComponent={<EmptyView text={t("noSavingsHistory")} />}
+                />
+            ) : (
+                <Spinner compact={true} />
+            )}
+        </View>
+    );
+};
+
+const ClaimItem = ({ claim }) => {
+    const onPress = useCallback(() => openTx(claim.transactionHash), []);
+    return (
+        <ListItem button={true} onPress={onPress}>
+            <Body>
+                <View style={[preset.flex1, preset.flexDirectionRow, preset.alignItemsCenter]}>
+                    <Text style={[preset.flex1, preset.fontSize20, preset.fontWeightBold]}>
+                        {formatValue(claim.amount, 18)} ALICE
+                    </Text>
+                    <MomentText date={new Date(claim.timestamp * 1000)} note={true} />
+                </View>
+                <Text ellipsizeMode="middle" numberOfLines={1} style={preset.fontSize16}>
+                    {claim.user}
                 </Text>
             </Body>
         </ListItem>
