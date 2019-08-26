@@ -159,14 +159,14 @@ const SavingsItem = ({ savings }) => {
         <ListItem button={true} noBorder={true} iconRight={true} onPress={onPress}>
             <Body style={[preset.flex0, preset.marginLeftSmall, preset.marginRightSmall]}>
                 <TokenIcon address={asset!.ethereumAddress.toLocalAddressString()} width={32} height={32} />
+                <Text style={[preset.fontSize16, preset.textAlignCenter, { marginLeft: 0 }]}>
+                    {formatValue(toBigNumber(apr), decimals, 2)}%
+                </Text>
             </Body>
             <Body>
                 <View style={[preset.flex1, preset.flexDirectionRow, preset.alignItemsCenter]}>
-                    <Text style={[preset.fontSize20]}>
+                    <Text style={[preset.flex1, preset.fontSize20]}>
                         {formatValue(savings.balance, asset!.decimals)} {asset!.symbol}
-                    </Text>
-                    <Text style={[preset.flex1, preset.fontSize16, { marginLeft: 0 }]}>
-                        {formatValue(toBigNumber(apr), decimals, 2)}%
                     </Text>
                     <MomentText date={new Date(savings.timestamp * 1000)} note={true} />
                 </View>
