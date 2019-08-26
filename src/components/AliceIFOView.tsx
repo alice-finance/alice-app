@@ -12,13 +12,13 @@ const AliceIFOView = () => {
     const { t } = useTranslation("finance");
     const onPress = useCallback(() => Linking.openURL(t("aliceIFO.blogUrl")), []);
     return (
-        <View style={preset.marginBottomNormal}>
+        <View style={preset.marginBottomSmall}>
             <TitleText aboveText={true}>{t("aliceIFO")}</TitleText>
             <View style={[preset.flexDirectionRow, preset.flex1, preset.marginNormal]}>
                 <Image
                     fadeDuration={0}
                     source={require("../assets/icon.png")}
-                    style={[{ width: 120, height: 120 }, preset.marginLeftNormal]}
+                    style={[{ width: 96, height: 96 }, preset.marginLeftSmall]}
                     resizeMode="contain"
                 />
                 <View style={preset.flex1}>
