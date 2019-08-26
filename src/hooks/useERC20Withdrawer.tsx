@@ -4,7 +4,6 @@ import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
 import { ethers } from "ethers";
 import { ChainContext } from "../contexts/ChainContext";
 import { PendingTransactionsContext } from "../contexts/PendingTransactionsContext";
-import Analytics from "../helpers/Analytics";
 import Sentry from "../utils/Sentry";
 import useAssetBalancesUpdater from "./useAssetBalancesUpdater";
 
@@ -33,7 +32,7 @@ const useERC20Withdrawer = (asset: ERC20Asset) => {
                     const withdrawTx = await loomChain.withdrawERC20Async(asset, amount);
                     addPendingWithdrawalTransaction(ethereumAddress, withdrawTx);
                     await withdrawTx.wait();
-                    Analytics.track(Analytics.events.ASSET_WITHDRAWN);
+                    Sentry.track(Sentry.trackingTopics.ASSET_WITHDRAWN);
                     // Step 3: listen to token withdrawal event
                     const signature = await loomChain.listenToTokenWithdrawal(
                         asset.ethereumAddress.toLocalAddressString(),

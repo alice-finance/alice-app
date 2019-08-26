@@ -60,6 +60,10 @@ const TransferAssetScreen = () => {
                 setAddress("");
                 setAmount(null);
                 SnackBar.success(t("transferSuccess"));
+                Sentry.track(Sentry.trackingTopics.ASSET_TRANSFERRED, {
+                    asset: asset.ethereumAddress.toLocalAddressString(),
+                    to: address
+                });
             } catch (e) {
                 SnackBar.danger(e.message);
                 Sentry.error(e);

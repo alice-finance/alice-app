@@ -13,7 +13,6 @@ import { EMPTY_MNEMONIC } from "../constants/bip39";
 import { AssetContext } from "../contexts/AssetContext";
 import { ChainContext } from "../contexts/ChainContext";
 import { SavingsContext } from "../contexts/SavingsContext";
-import * as Analytics from "../helpers/Analytics";
 import useAssetBalancesUpdater from "../hooks/useAssetBalancesUpdater";
 import useUpdateChecker from "../hooks/useUpdateChecker";
 import { getGasPrice } from "../utils/ether-gas-utils";
@@ -26,11 +25,8 @@ const SplashScreen = () => {
 };
 
 const trackAppStart = (ethereumAddress, plasmaAddress) => {
-    Analytics.track(Analytics.events.APP_START, {
-        ethereumAddress,
-        plasmaAddress
-    });
     Sentry.setTrackingInfo(ethereumAddress, plasmaAddress);
+    Sentry.track(Sentry.trackingTopics.APP_START);
 };
 
 const useLoader = () => {

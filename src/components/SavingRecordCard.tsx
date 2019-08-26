@@ -10,7 +10,6 @@ import { BigNumber } from "ethers/utils";
 import { Button, Card, CardItem, Icon, Left, Spinner as NativeSpinner, Text } from "native-base";
 import { ChainContext } from "../contexts/ChainContext";
 import { SavingsContext } from "../contexts/SavingsContext";
-import Analytics from "../helpers/Analytics";
 import useAliceClaimer from "../hooks/useAliceClaimer";
 import useMySavingsLoader from "../hooks/useMySavingsLoader";
 import preset from "../styles/preset";
@@ -236,7 +235,11 @@ const WithdrawButton = ({ record, onOk, amount, inProgress, setInProgress }) => 
                 setTotalBalance(toBigNumber(await market.totalFunds()));
                 await load();
                 SnackBar.success(t("withdrawalComplete"));
-                Analytics.track(Analytics.events.SAVINGS_WITHDRAWN);
+                Sentry.track(Sentry.trackingTopics.SAVINGS_WITHDRAWN, {
+                    recordId: record.id.toNumber(),
+                    tx: tx.hash,
+                    amount: amount.toString()
+                });
                 onOk();
             } catch (e) {
                 SnackBar.danger(e.message);

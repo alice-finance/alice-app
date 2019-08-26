@@ -59,6 +59,7 @@ const useAliceClaimer = (record: SavingsRecord) => {
                 await ifo.claim(record.id, { gasLimit: 0 });
                 setClaimableAt(null);
                 refresh().then(update);
+                Sentry.track(Sentry.trackingTopics.ALICE_CLAIMED, { recordId: record.id.toNumber() });
             }
         } catch (e) {
             Sentry.error(e);
