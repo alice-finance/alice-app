@@ -7,6 +7,7 @@ import { getLogs } from "@alice-finance/alice.js/dist/utils/ethers-utils";
 import { ethers } from "ethers";
 import { ChainContext } from "../contexts/ChainContext";
 import { PendingTransactionsContext } from "../contexts/PendingTransactionsContext";
+import Sentry from "../utils/Sentry";
 import useAssetBalancesUpdater from "./useAssetBalancesUpdater";
 
 const KYBER_NETWORK_PROXY_ADDRESS = {
@@ -168,6 +169,7 @@ const useKyberSwap = () => {
                     // Done!
                 } catch (e) {
                     clearPendingDepositTransactions(assetFrom.ethereumAddress);
+                    Sentry.error(e);
                     throw e;
                 }
             }

@@ -6,6 +6,7 @@ import { ethers } from "ethers";
 import { ChainContext } from "../contexts/ChainContext";
 import { PendingTransactionsContext } from "../contexts/PendingTransactionsContext";
 import Analytics from "../helpers/Analytics";
+import Sentry from "../utils/Sentry";
 import useAssetBalancesUpdater from "./useAssetBalancesUpdater";
 
 const useETHWithdrawer = () => {
@@ -43,6 +44,7 @@ const useETHWithdrawer = () => {
                     await update();
                 } catch (e) {
                     clearPendingWithdrawalTransactions(ethereumAddress);
+                    Sentry.error(e);
                     throw e;
                 }
             }

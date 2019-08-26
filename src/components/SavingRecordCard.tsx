@@ -16,6 +16,7 @@ import useMySavingsLoader from "../hooks/useMySavingsLoader";
 import preset from "../styles/preset";
 import { formatValue } from "../utils/big-number-utils";
 import { compoundToAPR } from "../utils/interest-rate-utils";
+import Sentry from "../utils/Sentry";
 import SnackBar from "../utils/SnackBar";
 import AmountInput from "./AmountInput";
 import BigNumberText from "./BigNumberText";
@@ -91,6 +92,7 @@ const ClaimButton = ({ claimable, claim, claiming }) => {
             SnackBar.success(t("claimedAlice"));
         } catch (e) {
             SnackBar.danger(e.message);
+            Sentry.error(e);
         }
     }, []);
     return claiming ? (
@@ -238,6 +240,7 @@ const WithdrawButton = ({ record, onOk, amount, inProgress, setInProgress }) => 
                 onOk();
             } catch (e) {
                 SnackBar.danger(e.message);
+                Sentry.error(e);
             } finally {
                 setInProgress(false);
             }

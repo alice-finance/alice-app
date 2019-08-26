@@ -18,6 +18,7 @@ import { ChainContext } from "../../../contexts/ChainContext";
 import preset from "../../../styles/preset";
 import { formatValue } from "../../../utils/big-number-utils";
 import { openTx } from "../../../utils/ether-scan-utils";
+import Sentry from "../../../utils/Sentry";
 import SnackBar from "../../../utils/SnackBar";
 
 const TransferAssetScreen = () => {
@@ -61,6 +62,7 @@ const TransferAssetScreen = () => {
                 SnackBar.success(t("transferSuccess"));
             } catch (e) {
                 SnackBar.danger(e.message);
+                Sentry.error(e);
             } finally {
                 setTxHash(null);
                 setInProgress(false);

@@ -6,6 +6,7 @@ import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
 import { ethers } from "ethers";
 import { ChainContext } from "../contexts/ChainContext";
 import Analytics from "../helpers/Analytics";
+import Sentry from "../utils/Sentry";
 import SnackBar from "../utils/SnackBar";
 import useAssetBalancesUpdater from "./useAssetBalancesUpdater";
 import useMySavingsLoader from "./useMySavingsLoader";
@@ -33,6 +34,7 @@ const useSavingsStarter = (asset: ERC20Asset | null, amount: ethers.utils.BigNum
                 pop();
             } catch (e) {
                 SnackBar.danger(e.message);
+                Sentry.error(e);
             } finally {
                 setStarting(false);
             }

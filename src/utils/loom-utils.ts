@@ -4,6 +4,7 @@ import { Linking } from "expo";
 import { EthersSigner } from "loom-js/dist";
 import { AddressMapper } from "loom-js/dist/contracts";
 import Analytics from "../helpers/Analytics";
+import Sentry from "./Sentry";
 
 const LOOM_EXPLORER_URL = __DEV__
     ? "http://extdev-blockexplorer.dappchains.com"
@@ -29,10 +30,7 @@ export const mapAccounts = async (ethereumChain: EthereumChain, loomChain: LoomC
 
         return true;
     } catch (e) {
-        Analytics.track(Analytics.events.ERROR, {
-            trace: e.stack,
-            message: e.message
-        });
+        Sentry.error(e);
         return false;
     }
 };

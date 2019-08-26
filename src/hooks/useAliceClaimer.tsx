@@ -6,6 +6,7 @@ import { SavingsRecord } from "@alice-finance/alice.js/dist/contracts/MoneyMarke
 import { ethers } from "ethers";
 import { BigNumber } from "ethers/utils";
 import { ChainContext } from "../contexts/ChainContext";
+import Sentry from "../utils/Sentry";
 import useAssetBalancesUpdater from "./useAssetBalancesUpdater";
 import useAsyncEffect from "./useAsyncEffect";
 
@@ -60,6 +61,7 @@ const useAliceClaimer = (record: SavingsRecord) => {
                 refresh().then(update);
             }
         } catch (e) {
+            Sentry.error(e);
             throw e;
         } finally {
             setClaiming(false);

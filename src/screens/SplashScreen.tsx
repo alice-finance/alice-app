@@ -18,6 +18,7 @@ import useAssetBalancesUpdater from "../hooks/useAssetBalancesUpdater";
 import useUpdateChecker from "../hooks/useUpdateChecker";
 import { getGasPrice } from "../utils/ether-gas-utils";
 import { mapAccounts } from "../utils/loom-utils";
+import Sentry from "../utils/Sentry";
 
 const SplashScreen = () => {
     const { load, onError, onFinish } = useLoader();
@@ -40,6 +41,10 @@ const useLoader = () => {
         setMnemonic(mnemonic);
         setLoomChain(loomChain);
         setEthereumChain(ethereumChain);
+        Sentry.setContext(
+            ethereumChain.getAddress().toLocalAddressString(),
+            loomChain.getAddress().toLocalAddressString()
+        );
         // Patch getGasPrice function
         ethereumChain.getProvider().getGasPrice = getGasPrice;
         const assets = await loomChain.getERC20AssetsAsync();

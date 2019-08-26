@@ -18,7 +18,7 @@ const useBackupSeedPhraseDialog = () => {
     const closeDialog = useCallback(() => setDialogOpen(false), []);
     const onOk = useCallback(() => {
         setDialogOpen(false);
-        Clipboard.setString(mnemonic);
+        Clipboard.setString(mnemonic!);
         SnackBar.success(t("seedPhraseCopiedToTheClipboard"));
     }, []);
     return {
@@ -46,7 +46,7 @@ const BackupSeedPhraseDialog = ({ visible, onCancel, onOk }) => {
                         {t("backupSeedPhrase.warning")}
                     </Text>
                     <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-                        {mnemonic.split(" ").map((word, index) => (
+                        {mnemonic!.split(" ").map((word, index) => (
                             <MnemonicChip key={index} word={word} />
                         ))}
                     </View>
