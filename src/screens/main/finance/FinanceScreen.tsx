@@ -166,7 +166,7 @@ const SavingsItem = ({ savings }) => {
                         {formatValue(savings.balance, asset!.decimals)} {asset!.symbol}
                     </Text>
                     <Text style={[preset.flex1, preset.fontSize16, { marginLeft: 0 }]}>
-                        {formatValue(toBigNumber(apr).mul(100), decimals, 2)}%
+                        {formatValue(toBigNumber(apr), decimals, 2)}%
                     </Text>
                     <MomentText date={new Date(savings.timestamp * 1000)} note={true} />
                 </View>
