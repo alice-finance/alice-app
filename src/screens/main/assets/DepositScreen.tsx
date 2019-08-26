@@ -23,6 +23,7 @@ import useETHDepositor from "../../../hooks/useETHDepositor";
 import useKyberSwap from "../../../hooks/useKyberSwap";
 import preset from "../../../styles/preset";
 import { formatValue } from "../../../utils/big-number-utils";
+import Sentry from "../../../utils/Sentry";
 import SnackBar from "../../../utils/SnackBar";
 
 const DepositScreen = () => {
@@ -60,6 +61,7 @@ const DepositScreen = () => {
                 } else {
                     SnackBar.danger(e.message);
                 }
+                Sentry.error(e);
             } finally {
                 setAmount(null);
                 setInProgress(false);
@@ -76,6 +78,7 @@ const DepositScreen = () => {
                 SnackBar.success(t("depositSuccess"));
             } catch (e) {
                 SnackBar.danger(e.message);
+                Sentry.error(e);
             } finally {
                 setAmount(null);
                 setInProgress(false);

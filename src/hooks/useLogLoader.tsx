@@ -6,8 +6,8 @@ import { getLogs } from "@alice-finance/alice.js/dist/utils/ethers-utils";
 import { ethers } from "ethers";
 import { Log } from "ethers/providers";
 import { ChainContext } from "../contexts/ChainContext";
+import Sentry from "../utils/Sentry";
 import useKyberSwap from "./useKyberSwap";
-import Analytics from "../helpers/Analytics";
 
 interface LogWrapper {
     lastBlockNumber: number;
@@ -101,10 +101,7 @@ const getSavingsLogsAsync = async (loomChain, address, event, lastBlock, latestB
                 };
             });
     } catch (e) {
-        Analytics.track(Analytics.events.ERROR, {
-            trace: e.stack,
-            message: e.message
-        });
+        Sentry.error(e);
         return null;
     }
 };

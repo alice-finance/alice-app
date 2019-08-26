@@ -20,6 +20,7 @@ import useERC20Withdrawer from "../../../hooks/useERC20Withdrawer";
 import useETHWithdrawer from "../../../hooks/useETHWithdrawer";
 import preset from "../../../styles/preset";
 import { formatValue } from "../../../utils/big-number-utils";
+import Sentry from "../../../utils/Sentry";
 import SnackBar from "../../../utils/SnackBar";
 
 const WithdrawalScreen = () => {
@@ -56,6 +57,7 @@ const WithdrawalScreen = () => {
             } else {
                 SnackBar.danger(e.message);
             }
+            Sentry.error(e);
         } finally {
             setAmount(null);
             setChange(null);

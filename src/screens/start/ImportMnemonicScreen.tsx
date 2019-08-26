@@ -12,10 +12,10 @@ import CaptionText from "../../components/CaptionText";
 import MnemonicInput from "../../components/MnemonicInput";
 import Spinner from "../../components/Spinner";
 import SubtitleText from "../../components/SubtitleText";
-import Analytics from "../../helpers/Analytics";
 import preset from "../../styles/preset";
 import { ethereumPrivateKeyFromMnemonic, loomPrivateKeyFromMnemonic } from "../../utils/crypto-utils";
 import { mapAccounts } from "../../utils/loom-utils";
+import Sentry from "../../utils/Sentry";
 
 const ImportMnemonicScreen = () => {
     const { t } = useTranslation(["start", "common"]);
@@ -46,7 +46,7 @@ const ImportMnemonicScreen = () => {
                         const ethereumChain = new EthereumChain(ethereumPrivateKey, __DEV__);
                         const loomChain = new LoomChain(loomPrivateKey, __DEV__);
                         await mapAccounts(ethereumChain, loomChain);
-                        Analytics.track(Analytics.events.KEY_IMPORTED);
+                        Sentry.track(Sentry.trackingTopics.KEY_IMPORTED);
                         push("Complete");
                     } finally {
                         setEncrypting(false);

@@ -6,6 +6,7 @@ import { SavingsRecord } from "@alice-finance/alice.js/dist/contracts/MoneyMarke
 import { ethers } from "ethers";
 import { BigNumber } from "ethers/utils";
 import { ChainContext } from "../contexts/ChainContext";
+import Sentry from "../utils/Sentry";
 import useAssetBalancesUpdater from "./useAssetBalancesUpdater";
 import useAsyncEffect from "./useAsyncEffect";
 
@@ -58,8 +59,10 @@ const useAliceClaimer = (record: SavingsRecord) => {
                 await ifo.claim(record.id, { gasLimit: 0 });
                 setClaimableAt(null);
                 refresh().then(update);
+                Sentry.track(Sentry.trackingTopics.ALICE_CLAIMED, { recordId: record.id.toNumber() });
             }
         } catch (e) {
+            Sentry.error(e);
             throw e;
         } finally {
             setClaiming(false);

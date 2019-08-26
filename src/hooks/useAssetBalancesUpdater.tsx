@@ -3,6 +3,7 @@ import { useCallback, useContext, useState } from "react";
 import { AssetContext } from "../contexts/AssetContext";
 import { BalancesContext } from "../contexts/BalancesContext";
 import { ChainContext } from "../contexts/ChainContext";
+import Sentry from "../utils/Sentry";
 
 const useAssetBalancesUpdater = () => {
     const { assets } = useContext(AssetContext);
@@ -21,6 +22,7 @@ const useAssetBalancesUpdater = () => {
             setUpdating(false);
         } catch (e) {
             setUpdating(false);
+            Sentry.error(e);
         }
     }, [assets, ethereumChain, loomChain]);
     return { updating, update };

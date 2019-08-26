@@ -10,12 +10,12 @@ import { BigNumber } from "ethers/utils";
 import { Button, Card, CardItem, Icon, Left, Spinner as NativeSpinner, Text } from "native-base";
 import { ChainContext } from "../contexts/ChainContext";
 import { SavingsContext } from "../contexts/SavingsContext";
-import Analytics from "../helpers/Analytics";
 import useAliceClaimer from "../hooks/useAliceClaimer";
 import useMySavingsLoader from "../hooks/useMySavingsLoader";
 import preset from "../styles/preset";
 import { formatValue } from "../utils/big-number-utils";
 import { compoundToAPR } from "../utils/interest-rate-utils";
+import Sentry from "../utils/Sentry";
 import SnackBar from "../utils/SnackBar";
 import AmountInput from "./AmountInput";
 import BigNumberText from "./BigNumberText";
@@ -91,6 +91,7 @@ const ClaimButton = ({ claimable, claim, claiming }) => {
             SnackBar.success(t("claimedAlice"));
         } catch (e) {
             SnackBar.danger(e.message);
+            Sentry.error(e);
         }
     }, []);
     return claiming ? (
@@ -234,10 +235,15 @@ const WithdrawButton = ({ record, onOk, amount, inProgress, setInProgress }) => 
                 setTotalBalance(toBigNumber(await market.totalFunds()));
                 await load();
                 SnackBar.success(t("withdrawalComplete"));
-                Analytics.track(Analytics.events.SAVINGS_WITHDRAWN);
+                Sentry.track(Sentry.trackingTopics.SAVINGS_WITHDRAWN, {
+                    recordId: record.id.toNumber(),
+                    tx: tx.hash,
+                    amount: amount.toString()
+                });
                 onOk();
             } catch (e) {
                 SnackBar.danger(e.message);
+                Sentry.error(e);
             } finally {
                 setInProgress(false);
             }

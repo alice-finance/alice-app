@@ -13,15 +13,20 @@ import { EMPTY_MNEMONIC } from "../constants/bip39";
 import { AssetContext } from "../contexts/AssetContext";
 import { ChainContext } from "../contexts/ChainContext";
 import { SavingsContext } from "../contexts/SavingsContext";
-import * as Analytics from "../helpers/Analytics";
 import useAssetBalancesUpdater from "../hooks/useAssetBalancesUpdater";
 import useUpdateChecker from "../hooks/useUpdateChecker";
 import { getGasPrice } from "../utils/ether-gas-utils";
 import { mapAccounts } from "../utils/loom-utils";
+import Sentry from "../utils/Sentry";
 
 const SplashScreen = () => {
     const { load, onError, onFinish } = useLoader();
     return <AppLoading startAsync={load} onFinish={onFinish} onError={onError} />;
+};
+
+const trackAppStart = (ethereumAddress, plasmaAddress) => {
+    Sentry.setTrackingInfo(ethereumAddress, plasmaAddress);
+    Sentry.track(Sentry.trackingTopics.APP_START);
 };
 
 const useLoader = () => {
@@ -32,7 +37,6 @@ const useLoader = () => {
     const { update: updateAssetBalances } = useAssetBalancesUpdater();
     const { checkForUpdate } = useUpdateChecker();
     const load = async () => {
-        Analytics.track(Analytics.events.APP_START);
         ExpoSplashScreen.preventAutoHide();
         await loadFonts();
         await loadResources();
@@ -40,6 +44,7 @@ const useLoader = () => {
         setMnemonic(mnemonic);
         setLoomChain(loomChain);
         setEthereumChain(ethereumChain);
+        trackAppStart(ethereumChain.getAddress().toLocalAddressString(), loomChain.getAddress().toLocalAddressString());
         // Patch getGasPrice function
         ethereumChain.getProvider().getGasPrice = getGasPrice;
         const assets = await loomChain.getERC20AssetsAsync();

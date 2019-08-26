@@ -8,6 +8,7 @@ import { Button, Icon, Text } from "native-base";
 import platform from "../../native-base-theme/variables/platform";
 import { Spacing } from "../constants/dimension";
 import { ChainContext } from "../contexts/ChainContext";
+import Sentry from "../utils/Sentry";
 
 const useResetAccountDialog = () => {
     const { setMnemonic, setEthereumChain, setLoomChain } = useContext(ChainContext);
@@ -27,6 +28,7 @@ const useResetAccountDialog = () => {
                 await AsyncStorage.clear();
             }
         });
+        Sentry.track(Sentry.trackingTopics.ACCOUNT_RESET);
         await Updates.reload();
         setEthereumChain(null);
         setLoomChain(null);

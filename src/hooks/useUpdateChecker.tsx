@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Alert, NetInfo } from "react-native";
 
 import { Updates } from "expo";
+import Sentry from "../utils/Sentry";
 
 interface UpdateCheckOption {
     alertOnError?: boolean;
@@ -48,6 +49,7 @@ const useUpdateChecker = () => {
                     }
                 })
                 .catch(error => {
+                    Sentry.error(error);
                     if (options.alertOnError) {
                         Alert.alert(t("error"), error);
                     }

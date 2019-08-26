@@ -11,12 +11,11 @@ import platform from "./native-base-theme/variables/platform";
 import AppContainer from "./src/AppContainer";
 import { ContextProvider } from "./src/contexts";
 import i18n from "./src/i18n";
-import * as Analytics from "./src/helpers/Analytics";
 import { Portal } from "react-native-paper";
 import { ethers } from "ethers";
 import { YellowBox, Platform, StatusBar } from "react-native";
 import { useScreens } from "react-native-screens";
-import Sentry from "./src/utils/sentry-utils";
+import Sentry from "./src/utils/Sentry";
 
 if (__DEV__) {
     YellowBox.ignoreWarnings(["Setting a timer"]);
@@ -24,7 +23,6 @@ if (__DEV__) {
 ethers.errors.setLogLevel("error");
 
 if (!__DEV__) {
-    Analytics.initialize();
     Sentry.initialize();
 }
 useScreens();

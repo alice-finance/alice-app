@@ -31,6 +31,7 @@ import useLogLoader from "../../../hooks/useLogLoader";
 import usePendingWithdrawalHandler from "../../../hooks/usePendingWithdrawalHandler";
 import usePendingWithdrawalListener from "../../../hooks/usePendingWithdrawalListener";
 import preset from "../../../styles/preset";
+import Sentry from "../../../utils/Sentry";
 
 const ManageDepositsScreen = () => {
     const { t } = useTranslation("asset");
@@ -110,12 +111,14 @@ const ManageDepositsScreen = () => {
                         .then(() => {
                             setIsRefreshingLogs(false);
                         })
-                        .catch(() => {
+                        .catch(e => {
                             setIsRefreshingLogs(false);
+                            Sentry.error(e);
                         });
                 })
-                .catch(() => {
+                .catch(e => {
                     setIsRefreshingLogs(false);
+                    Sentry.error(e);
                 });
         }
     }, [asset, isRefreshingLogs, setIsRefreshingLogs, getGatewayDepositLogs, getGatewayWithdrawLogs, getKyberSwapLogs]);
@@ -132,8 +135,9 @@ const ManageDepositsScreen = () => {
                             refreshLog();
                             setHandling(false);
                         })
-                        .catch(() => {
+                        .catch(e => {
                             setHandling(false);
+                            Sentry.error(e);
                         });
                 }
             }
