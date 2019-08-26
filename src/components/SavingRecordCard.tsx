@@ -23,19 +23,15 @@ import MomentText from "./MomentText";
 import Row from "./Row";
 import Spinner from "./Spinner";
 
-const IFO_STARTED_AT = new Date(2019, 7, 15);
-
 const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
     const { decimals } = useContext(SavingsContext);
-    const { claimableAt, claimableAmount, claim, claiming, ifo } = useAliceClaimer(record);
-    const ifoStarted = new Date() >= IFO_STARTED_AT && ifo !== null;
+    const { claimableAt, claimableAmount, claim, claiming } = useAliceClaimer(record);
     const [apr] = useState(() => compoundToAPR(record.interestRate, decimals));
     return (
         <View style={[preset.marginNormal]} key={record.id.toString()}>
             <Card>
                 <Header
                     record={record}
-                    ifoStarted={ifoStarted}
                     claimableAt={claimableAt}
                     claimableAmount={claimableAmount}
                     claim={claim}
@@ -48,7 +44,7 @@ const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
     );
 };
 
-const Header = ({ record, ifoStarted, claimableAt, claimableAmount, claim, claiming }) => {
+const Header = ({ record, claimableAt, claimableAmount, claim, claiming }) => {
     const { asset } = useContext(SavingsContext);
     const [claimable, setClaimable] = useState(claimableAt && claimableAt.getTime() <= Date.now());
     useEffect(() => {
@@ -66,11 +62,9 @@ const Header = ({ record, ifoStarted, claimableAt, claimableAmount, claim, claim
                     <Text style={[preset.fontSize24, preset.fontWeightBold]}>
                         {formatValue(record.balance, asset!.decimals)} {asset!.symbol}
                     </Text>
-                    {ifoStarted && (
-                        <ClaimText claimableAt={claimableAt} claimableAmount={claimableAmount} claimable={claimable} />
-                    )}
+                    <ClaimText claimableAt={claimableAt} claimableAmount={claimableAmount} claimable={claimable} />
                 </View>
-                {ifoStarted && <ClaimButton claimable={claimable} claim={claim} claiming={claiming} />}
+                <ClaimButton claimable={claimable} claim={claim} claiming={claiming} />
             </View>
         </CardItem>
     );
