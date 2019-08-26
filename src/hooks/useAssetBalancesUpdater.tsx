@@ -4,7 +4,7 @@ import { AssetContext } from "../contexts/AssetContext";
 import { BalancesContext } from "../contexts/BalancesContext";
 import { ChainContext } from "../contexts/ChainContext";
 
-const useTokenBalanceUpdater = () => {
+const useAssetBalancesUpdater = () => {
     const { assets } = useContext(AssetContext);
     const { updateBalance } = useContext(BalancesContext);
     const { ethereumChain, loomChain } = useContext(ChainContext);
@@ -26,4 +26,4 @@ const useTokenBalanceUpdater = () => {
     return { updating, update };
 };
 
-export default useTokenBalanceUpdater;
+export default useAssetBalancesUpdater;

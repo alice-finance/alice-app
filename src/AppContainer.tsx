@@ -9,7 +9,6 @@ import {
 } from "react-navigation";
 import { useNavigation } from "react-navigation-hooks";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
-import { fromRight } from "react-navigation-transitions";
 
 import platform from "../native-base-theme/variables/platform";
 import TabBarIcon from "./components/TabBarIcon";
@@ -56,20 +55,6 @@ const tabBarNavigationOptions = (name, iconName) => ({ screenProps }) => ({
     tabBarLabel: screenProps.t(name),
     tabBarIcon: ({ focused, horizontal, tintColor }) => <TabBarIcon name={iconName} tintColor={tintColor} />
 });
-
-const StartNavigator = createDefaultStackNavigator(
-    {
-        Start: StartScreen,
-        NewMnemonic: NewMnemonicScreen,
-        ConfirmMnemonic: ConfirmMnemonicScreen,
-        Complete: CompleteScreen,
-        ImportMnemonic: ImportMnemonicScreen,
-        Auth: AuthScreen
-    },
-    {
-        transitionConfig: () => fromRight()
-    }
-);
 
 const tabs = {
     FinanceTab: {
@@ -123,12 +108,16 @@ const MainNavigator = createDefaultStackNavigator({
     Deposit: DepositScreen,
     Withdrawal: WithdrawalScreen,
     ResetAccount: ResetAccountScreen,
+    Start: StartScreen,
+    NewMnemonic: NewMnemonicScreen,
+    ConfirmMnemonic: ConfirmMnemonicScreen,
+    Complete: CompleteScreen,
+    ImportMnemonic: ImportMnemonicScreen,
     Auth: AuthScreen
 });
 
 const AppNavigator = createSwitchNavigator({
     Splash: SplashScreen,
-    Start: StartNavigator,
     Main: MainNavigator
 });
 

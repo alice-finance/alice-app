@@ -7,15 +7,15 @@ import { ethers } from "ethers";
 import { ChainContext } from "../contexts/ChainContext";
 import Analytics from "../helpers/Analytics";
 import SnackBar from "../utils/SnackBar";
+import useAssetBalancesUpdater from "./useAssetBalancesUpdater";
 import useMySavingsLoader from "./useMySavingsLoader";
-import useTokenBalanceUpdater from "./useTokenBalanceUpdater";
 
 const useSavingsStarter = (asset: ERC20Asset | null, amount: ethers.utils.BigNumber | null) => {
     const { pop } = useNavigation();
     const { t } = useTranslation("finance");
     const { loomChain } = useContext(ChainContext);
     const [starting, setStarting] = useState(false);
-    const { update } = useTokenBalanceUpdater();
+    const { update } = useAssetBalancesUpdater();
     const { load } = useMySavingsLoader();
     const start = async () => {
         if (loomChain && asset && amount) {

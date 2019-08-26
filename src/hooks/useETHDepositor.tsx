@@ -6,12 +6,12 @@ import { ethers } from "ethers";
 import { ChainContext } from "../contexts/ChainContext";
 import { PendingTransactionsContext } from "../contexts/PendingTransactionsContext";
 import Analytics from "../helpers/Analytics";
-import useTokenBalanceUpdater from "./useTokenBalanceUpdater";
+import useAssetBalancesUpdater from "./useAssetBalancesUpdater";
 
 const useETHDepositor = () => {
     const { ethereumChain } = useContext(ChainContext);
     const { addPendingDepositTransaction, clearPendingDepositTransactions } = useContext(PendingTransactionsContext);
-    const { update } = useTokenBalanceUpdater();
+    const { update } = useAssetBalancesUpdater();
     const deposit = useCallback(
         async (amount: ethers.utils.BigNumber) => {
             if (ethereumChain) {

@@ -14,49 +14,106 @@ import SnackBar from "../../../utils/SnackBar";
 
 const ProfileScreen = () => {
     const { t } = useTranslation(["profile", "common"]);
+    const { isReadOnly } = useContext(ChainContext);
+    return (
+        <Container>
+            <View>
+                <TitleText>{t("myProfile")}</TitleText>
+                {isReadOnly && <CreateWalletItem />}
+                <CustomerSupportItem />
+                {!isReadOnly && (
+                    <>
+                        <MyAddressItem />
+                        <BackUpSeedPhraseItem />
+                        <ResetAccountItem />
+                    </>
+                )}
+                <AppVersionItem />
+            </View>
+        </Container>
+    );
+};
+
+const CreateWalletItem = () => {
+    const { t } = useTranslation(["profile", "common"]);
     const { push } = useNavigation();
+    const onPressCreateWallet = useCallback(() => push("Start"), []);
+    return (
+        <Item
+            title={t("createWallet")}
+            description={t("createWallet.description")}
+            iconType="AntDesign"
+            iconName="wallet"
+            onPress={onPressCreateWallet}
+        />
+    );
+};
+
+const CustomerSupportItem = () => {
+    const { t } = useTranslation(["profile", "common"]);
+    const onPressCustomerSupport = useCallback(() => Linking.openURL(t("common:telegramUrl")), []);
+    return (
+        <Item
+            title={t("customerSupport")}
+            description={t("customerSupport.description")}
+            iconType="AntDesign"
+            iconName="customerservice"
+            onPress={onPressCustomerSupport}
+        />
+    );
+};
+
+const MyAddressItem = () => {
+    const { t } = useTranslation(["profile", "common"]);
     const { ethereumChain } = useContext(ChainContext);
     const onPressMyAddress = useCallback(() => {
         Clipboard.setString(ethereumChain!.getAddress().toLocalAddressString());
         SnackBar.success(t("addressCopiedToTheClipboard"));
     }, []);
+    return (
+        <Item
+            title={t("myAddress")}
+            description={ethereumChain ? ethereumChain!.getAddress().toLocalAddressString() : ""}
+            iconName="key"
+            onPress={onPressMyAddress}
+        />
+    );
+};
+
+const BackUpSeedPhraseItem = () => {
+    const { t } = useTranslation(["profile", "common"]);
+    const { push } = useNavigation();
+    const { Dialog, openDialog } = useBackupSeedPhraseDialog();
     const onPressBackup = useCallback(() => {
         push("Auth", { onSuccess: openDialog });
     }, []);
-    const onPressCustomerSupport = useCallback(() => Linking.openURL(t("common:telegramUrl")), []);
-    const onPressResetAccount = useCallback(() => push("ResetAccount"), []);
-    const { Dialog, openDialog } = useBackupSeedPhraseDialog();
-    const versionString = useMemo(() => app.expo.version + "." + app.expo.extra.pubVersion, []);
     return (
-        <Container>
-            <View>
-                <TitleText>{t("myProfile")}</TitleText>
-                <Item
-                    title={t("customerSupport")}
-                    description={t("customerSupport.description")}
-                    iconType="AntDesign"
-                    iconName="customerservice"
-                    onPress={onPressCustomerSupport}
-                />
-                <Item
-                    title={t("myAddress")}
-                    description={ethereumChain ? ethereumChain!.getAddress().toLocalAddressString() : ""}
-                    iconName="key"
-                    onPress={onPressMyAddress}
-                />
-                <Item title={t("backupSeedPhrase")} iconName="note" onPress={onPressBackup} />
-                <Item
-                    title={t("resetAccount")}
-                    description={t("resetAccount.description")}
-                    iconType={"AntDesign"}
-                    iconName={"warning"}
-                    onPress={onPressResetAccount}
-                />
-                <Item title={t("appVersion")} description={versionString} numberOfLines={2} />
-            </View>
+        <>
+            <Item title={t("backupSeedPhrase")} iconName="note" onPress={onPressBackup} />
             <Dialog />
-        </Container>
+        </>
     );
+};
+
+const ResetAccountItem = () => {
+    const { t } = useTranslation(["profile", "common"]);
+    const { push } = useNavigation();
+    const onPressResetAccount = useCallback(() => push("ResetAccount"), []);
+    return (
+        <Item
+            title={t("resetAccount")}
+            description={t("resetAccount.description")}
+            iconType={"AntDesign"}
+            iconName={"warning"}
+            onPress={onPressResetAccount}
+        />
+    );
+};
+
+const AppVersionItem = () => {
+    const { t } = useTranslation(["profile", "common"]);
+    const versionString = useMemo(() => app.expo.version + "." + app.expo.extra.pubVersion, []);
+    return <Item title={t("appVersion")} description={versionString} numberOfLines={2} />;
 };
 
 interface ItemProps {

@@ -13,7 +13,7 @@ const CaptionText: React.FunctionComponent<CaptionTextProps> = props => {
             {...props}
             style={[
                 {
-                    color: "darkgrey",
+                    color: "grey",
                     fontSize: props.small ? 16 : 18,
                     marginHorizontal: Spacing.small + Spacing.normal
                 },

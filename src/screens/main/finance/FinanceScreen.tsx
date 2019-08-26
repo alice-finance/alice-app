@@ -9,6 +9,7 @@ import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils
 import { Linking } from "expo";
 import { Body, Button, Container, Content, Icon, ListItem, Text } from "native-base";
 import platform from "../../../../native-base-theme/variables/platform";
+import AliceIFOView from "../../../components/AliceIFOView";
 import CaptionText from "../../../components/CaptionText";
 import EmptyView from "../../../components/EmptyView";
 import MomentText from "../../../components/MomentText";
@@ -31,6 +32,8 @@ import AuthScreen from "../../AuthScreen";
 const FinanceScreen = () => {
     const { setParams } = useNavigation();
     const { t } = useTranslation("finance");
+    const { isReadOnly } = useContext(ChainContext);
+    const { myTotalBalance } = useContext(SavingsContext);
     const onPress = useCallback(() => Linking.openURL(t("common:blogUrl")), []);
     useScheduledUpdater();
     usePasscodeRegistration();
@@ -41,10 +44,11 @@ const FinanceScreen = () => {
         <Container>
             <Content>
                 <View>
+                    {(isReadOnly || (myTotalBalance && myTotalBalance.isZero())) && <AliceIFOView />}
                     <TitleText aboveText={true}>{t("savings")}</TitleText>
                     <CaptionText style={preset.marginBottomNormal}>{t("savings.description")}</CaptionText>
                     <SavingsCard />
-                    <MySavings />
+                    {!isReadOnly && <MySavings />}
                     <RecentSavings />
                 </View>
             </Content>
@@ -182,13 +186,16 @@ const useScheduledUpdater = () => {
 };
 
 const usePasscodeRegistration = () => {
+    const { isReadOnly } = useContext(ChainContext);
     const { push } = useNavigation();
     useEffect(() => {
-        AuthScreen.getSavedPasscode().then(passcode => {
-            if (!passcode || passcode === "") {
-                push("Auth", { needsRegistration: true, firstTime: true });
-            }
-        });
+        if (!isReadOnly) {
+            AuthScreen.getSavedPasscode().then(passcode => {
+                if (!passcode || passcode === "") {
+                    push("Auth", { needsRegistration: true, firstTime: true });
+                }
+            });
+        }
     }, []);
 };
 

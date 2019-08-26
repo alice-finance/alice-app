@@ -1,25 +1,26 @@
-import React, { useCallback, useContext, useEffect } from "react";
+import React, { useCallback, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
 import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
-import { Body, Button, Card, CardItem, Left, Right, Text } from "native-base";
+import { Body, Button, Card, CardItem, Left, Text } from "native-base";
 import TokenIcon from "../components/TokenIcon";
+import { ChainContext } from "../contexts/ChainContext";
 import { SavingsContext } from "../contexts/SavingsContext";
-import useTokenBalanceUpdater from "../hooks/useTokenBalanceUpdater";
+import useAssetBalancesUpdater from "../hooks/useAssetBalancesUpdater";
+import useAsyncEffect from "../hooks/useAsyncEffect";
 import preset from "../styles/preset";
 import { formatValue } from "../utils/big-number-utils";
 import BigNumberText from "./BigNumberText";
 
 const SavingsCard = () => {
     const { t } = useTranslation("finance");
+    const { isReadOnly } = useContext(ChainContext);
     const { asset, totalBalance, myTotalBalance, apr } = useContext(SavingsContext);
-    const { updating, update } = useTokenBalanceUpdater();
+    const { updating, update } = useAssetBalancesUpdater();
     const refreshing = !asset || !totalBalance || updating;
-    useEffect(() => {
-        update();
-    }, []);
+    useAsyncEffect(update, []);
     return (
         <View style={[preset.marginNormal]}>
             <Card>
@@ -34,8 +35,8 @@ const SavingsCard = () => {
                 </CardItem>
                 <CardItem style={preset.marginRightSmall}>
                     <Column label={t("totalBalance")} value={totalBalance} />
-                    <Column label={t("mySavings")} value={myTotalBalance} />
-                    <Column label={t("apr")} value={apr} small={true} />
+                    {!isReadOnly && <Column label={t("mySavings")} value={myTotalBalance} />}
+                    <Column label={t("apr")} value={apr} small={!isReadOnly} />
                 </CardItem>
                 <Footer refreshing={refreshing} />
             </Card>
@@ -55,12 +56,12 @@ const Column = ({ label, value, small = false }) => (
 const Footer = ({ refreshing }) => {
     const { t } = useTranslation("finance");
     const { push } = useNavigation();
+    const { isReadOnly } = useContext(ChainContext);
     const onShowLeaderboard = useCallback(() => push("SavingsLeaderboard"), []);
-    const onStart = useCallback(() => push("NewSavings"), []);
+    const onStart = useCallback(() => push(isReadOnly ? "Start" : "NewSavings"), []);
     return (
         <CardItem style={preset.marginBottomSmall}>
-            <Left />
-            <Right>
+            <Body style={preset.alignItemsFlexEnd}>
                 <View style={preset.flexDirectionRow}>
                     <Button primary={true} bordered={true} rounded={true} onPress={onShowLeaderboard}>
                         <Text style={preset.fontSize16}>{t("leaderboard")}</Text>
@@ -74,7 +75,7 @@ const Footer = ({ refreshing }) => {
                         <Text style={preset.fontSize16}>{t("startSaving")}</Text>
                     </Button>
                 </View>
-            </Right>
+            </Body>
         </CardItem>
     );
 };

@@ -7,7 +7,7 @@ import { bytesToHexAddr } from "loom-js/dist/crypto-utils";
 import { AssetContext } from "../contexts/AssetContext";
 import { ChainContext } from "../contexts/ChainContext";
 import { PendingTransactionsContext } from "../contexts/PendingTransactionsContext";
-import useTokenBalanceUpdater from "./useTokenBalanceUpdater";
+import useAssetBalancesUpdater from "./useAssetBalancesUpdater";
 
 const usePendingWithdrawalHandler = () => {
     const { assets } = useContext(AssetContext);
@@ -15,7 +15,7 @@ const usePendingWithdrawalHandler = () => {
     const { addPendingWithdrawalTransaction, clearPendingWithdrawalTransactions } = useContext(
         PendingTransactionsContext
     );
-    const { update } = useTokenBalanceUpdater();
+    const { update } = useAssetBalancesUpdater();
     const handlePendingWithdrawal = useCallback(async () => {
         if (loomChain && ethereumChain) {
             const ethereumNonce = await ethereumChain.getWithdrawalNonceAsync();

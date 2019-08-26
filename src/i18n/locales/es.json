@@ -10,7 +10,7 @@
         "goToLink": "Ir al enlace",
         "exchange": "Intercambios",
         "assets": "Bienes",
-        "home": "Casa",
+        "home": "Inicio",
         "finance": "Finanzas",
         "profile": "Perfil",
         "searchForTokens": "Búsqueda de fichas",
@@ -40,6 +40,8 @@
         "successful": "¡Autenticado con éxito!"
     },
     "start": {
+        "createYourWallet": "Crear Su Cartera",
+        "createYourWallet.description": "¡Crea su cartera ahora y participa!",
         "createNewWallet": "Crear Nueva Cartera",
         "importExistingWallet": "Importar Cartera Existente",
         "newSeedPhrase": "Nueva Frase de Semilla",
@@ -176,6 +178,8 @@
         "resetAccount.ok": "SI QUIERO REINICIAR",
         "modifyInfo": "Editar su información",
         "modifyInfoFailure": "Fallo al editar su información",
+        "createWallet": "Crear Nueva Cartera",
+        "createWallet.description": "¡Crea su cartera ahora y participa!",
         "customerSupport": "Servicio al cliente",
         "customerSupport.description": "Esto te redirigirá a nuestro canal de telegramas.",
         "appVersion": "Version de aplicacion",
@@ -183,6 +187,10 @@
         "email": "Correo Electrónico"
     },
     "finance": {
+        "aliceIFO": "Gana ALICE Gratis",
+        "aliceIFO.description": "¡Deposite monedas estables DAI y gane una cantidad equivalente de tokens ALICE cada 24 horas!",
+        "aliceIFO.blogUrl": "https://medium.com/alice-finance/alice-token-ifo-364ddc598c1d",
+        "aliceIFO.more": "Más Info",
         "start": "Comienzo",
         "start.depositAsset": "Por favor deposite los activos",
         "start.description": "Se requiere una pequeña cantidad de ETH (menos de 0.1) y DAI para usar los servicios de Alice.",

@@ -24,12 +24,12 @@ import Spinner from "../../../components/Spinner";
 import TitleText from "../../../components/TitleText";
 import TransactionLogListItem, { TypeBadge } from "../../../components/TransactionLogListItem";
 import { BalancesContext } from "../../../contexts/BalancesContext";
+import useAssetBalancesUpdater from "../../../hooks/useAssetBalancesUpdater";
 import useEthereumBlockNumberListener from "../../../hooks/useEthereumBlockNumberListener";
 import useKyberSwap, { TokenSwapped } from "../../../hooks/useKyberSwap";
 import useLogLoader from "../../../hooks/useLogLoader";
 import usePendingWithdrawalHandler from "../../../hooks/usePendingWithdrawalHandler";
 import usePendingWithdrawalListener from "../../../hooks/usePendingWithdrawalListener";
-import useTokenBalanceUpdater from "../../../hooks/useTokenBalanceUpdater";
 import preset from "../../../styles/preset";
 
 const ManageDepositsScreen = () => {
@@ -43,7 +43,7 @@ const ManageDepositsScreen = () => {
     const [withdrawn, setWithdrawn] = useState<ETHWithdrawn[] | ERC20Withdrawn[]>();
     const [isRefreshingLogs, setIsRefreshingLogs] = useState(false);
     const { getGatewayDepositLogs, getGatewayWithdrawLogs, getKyberSwapLogs } = useLogLoader(asset);
-    const { update } = useTokenBalanceUpdater();
+    const { update } = useAssetBalancesUpdater();
     const { blockNumber, activateListener, deactivateListener } = useEthereumBlockNumberListener();
     const renderItem = ({ item }) => <TransactionLogListItem asset={asset} item={item} blockNumber={blockNumber} />;
     const [items, setItems] = useState<Array<

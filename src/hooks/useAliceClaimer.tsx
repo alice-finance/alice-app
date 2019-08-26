@@ -6,8 +6,8 @@ import { SavingsRecord } from "@alice-finance/alice.js/dist/contracts/MoneyMarke
 import { ethers } from "ethers";
 import { BigNumber } from "ethers/utils";
 import { ChainContext } from "../contexts/ChainContext";
+import useAssetBalancesUpdater from "./useAssetBalancesUpdater";
 import useAsyncEffect from "./useAsyncEffect";
-import useTokenBalanceUpdater from "./useTokenBalanceUpdater";
 
 class AliceIFO extends ethers.Contract {
     constructor(loomChain: LoomChain, address: string) {
@@ -33,7 +33,7 @@ class AliceFund extends ethers.Contract {
 
 const useAliceClaimer = (record: SavingsRecord) => {
     const { loomChain } = useContext(ChainContext);
-    const { update } = useTokenBalanceUpdater();
+    const { update } = useAssetBalancesUpdater();
     const [claimableAt, setClaimableAt] = useState<Date | null>(null);
     const [claimableAmount, setClaimableAmount] = useState<BigNumber | null>(null);
     const [claiming, setClaiming] = useState(false);

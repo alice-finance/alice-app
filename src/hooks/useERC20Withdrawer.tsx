@@ -5,14 +5,14 @@ import { ethers } from "ethers";
 import { ChainContext } from "../contexts/ChainContext";
 import { PendingTransactionsContext } from "../contexts/PendingTransactionsContext";
 import Analytics from "../helpers/Analytics";
-import useTokenBalanceUpdater from "./useTokenBalanceUpdater";
+import useAssetBalancesUpdater from "./useAssetBalancesUpdater";
 
 const useERC20Withdrawer = (asset: ERC20Asset) => {
     const { loomChain, ethereumChain } = useContext(ChainContext);
     const { addPendingWithdrawalTransaction, clearPendingWithdrawalTransactions } = useContext(
         PendingTransactionsContext
     );
-    const { update } = useTokenBalanceUpdater();
+    const { update } = useAssetBalancesUpdater();
     const withdraw = useCallback(
         async (amount: ethers.utils.BigNumber) => {
             if (loomChain && ethereumChain) {

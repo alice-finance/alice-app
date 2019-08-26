@@ -14,24 +14,26 @@ import { Spacing } from "../../../constants/dimension";
 import { ERC20_MAX_PRECISION } from "../../../constants/token";
 import { AssetContext } from "../../../contexts/AssetContext";
 import { BalancesContext } from "../../../contexts/BalancesContext";
+import { ChainContext } from "../../../contexts/ChainContext";
 import { PendingTransactionsContext } from "../../../contexts/PendingTransactionsContext";
+import useAssetBalancesUpdater from "../../../hooks/useAssetBalancesUpdater";
 import useDepositionRecovery from "../../../hooks/useDepositionRecovery";
 import usePendingWithdrawalHandler from "../../../hooks/usePendingWithdrawalHandler";
-import useTokenBalanceUpdater from "../../../hooks/useTokenBalanceUpdater";
 import preset from "../../../styles/preset";
 import { pow10 } from "../../../utils/big-number-utils";
 
 const AssetsScreen = () => {
-    const { updating, update } = useTokenBalanceUpdater();
+    const { updating, update } = useAssetBalancesUpdater();
     const { sortedByName, setSortedByName, sortedTokens } = useTokenSorter();
     const { handlePendingWithdrawal } = usePendingWithdrawalHandler();
+    const { isReadOnly } = useContext(ChainContext);
     const { assets } = useContext(AssetContext);
     const { getPendingWithdrawalTransactions } = useContext(PendingTransactionsContext);
     const { push, setParams } = useNavigation();
     const { isFocused } = useFocusState();
     const { attemptToRecover } = useDepositionRecovery();
     const onSort = useCallback(() => setSortedByName(!sortedByName), [sortedByName]);
-    const onPress = useCallback((asset: ERC20Asset) => push("ManageAsset", { asset }), []);
+    const onPress = useCallback((asset: ERC20Asset) => push(isReadOnly ? "Start" : "ManageAsset", { asset }), []);
     const renderItem = useCallback(({ item }) => <TokenListItem token={item} onPress={onPress} />, []);
     const count = assets.reduce(
         (sum, asset) => sum + (getPendingWithdrawalTransactions(asset.ethereumAddress) || []).length,

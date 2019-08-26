@@ -3,11 +3,11 @@ import { useCallback, useContext } from "react";
 import { ChainContext } from "../contexts/ChainContext";
 import Analytics from "../helpers/Analytics";
 import SnackBar from "../utils/SnackBar";
-import useTokenBalanceUpdater from "./useTokenBalanceUpdater";
+import useAssetBalancesUpdater from "./useAssetBalancesUpdater";
 
 const useDepositionRecovery = () => {
     const { ethereumChain, loomChain } = useContext(ChainContext);
-    const { update } = useTokenBalanceUpdater();
+    const { update } = useAssetBalancesUpdater();
     const attemptToRecover = useCallback(async () => {
         if (loomChain && ethereumChain) {
             try {
