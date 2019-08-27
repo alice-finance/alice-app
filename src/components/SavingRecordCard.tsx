@@ -93,7 +93,7 @@ const ClaimButton = ({ claimable, claim, claiming }) => {
             SnackBar.danger(e.message);
             Sentry.error(e);
         }
-    }, []);
+    }, [claim]);
     return claiming ? (
         <NativeSpinner size={"small"} style={[preset.marginRightNormal, { marginBottom: -16 }]} />
     ) : (

@@ -53,19 +53,23 @@ const useAliceClaimer = (record: SavingsRecord) => {
         }
     };
     const claim = useCallback(async () => {
-        try {
-            if (ifo) {
+        if (ifo) {
+            try {
                 setClaiming(true);
                 await ifo.claim(record.id, { gasLimit: 0 });
                 setClaimableAt(null);
                 refresh().then(update);
                 Sentry.track(Sentry.trackingTopics.ALICE_CLAIMED, { recordId: record.id.toNumber() });
+            } catch (e) {
+                Sentry.error(e);
+                throw e;
+            } finally {
+                setClaiming(false);
             }
-        } catch (e) {
-            Sentry.error(e);
-            throw e;
-        } finally {
-            setClaiming(false);
+        } else {
+            const error = new Error("Cannot resolve IFO contract");
+            Sentry.error(error);
+            throw error;
         }
     }, [record, ifo]);
     useAsyncEffect(refresh, [record, ifo]);
