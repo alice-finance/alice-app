@@ -5,17 +5,17 @@ import "ethers/dist/shims.js";
 import React from "react";
 import { Root, StyleProvider } from "native-base";
 import { I18nextProvider } from "react-i18next";
+import firebase from "firebase";
 import getTheme from "./native-base-theme/components";
 import platform from "./native-base-theme/variables/platform";
 import AppContainer from "./src/AppContainer";
 import { ContextProvider } from "./src/contexts";
 import i18n from "./src/i18n";
-import * as Analytics from "./src/helpers/Analytics";
 import { Portal } from "react-native-paper";
 import { ethers } from "ethers";
 import { YellowBox, Platform, StatusBar } from "react-native";
 import { useScreens } from "react-native-screens";
-import Sentry from "./src/utils/sentry-utils";
+import Sentry from "./src/utils/Sentry";
 
 if (__DEV__) {
     YellowBox.ignoreWarnings(["Setting a timer"]);
@@ -23,10 +23,20 @@ if (__DEV__) {
 ethers.errors.setLogLevel("error");
 
 if (!__DEV__) {
-    Analytics.initialize();
     Sentry.initialize();
 }
 useScreens();
+
+const firebaseConfig = {
+    apiKey: "AIzaSyCoc1lH9HJK4mBqWXmkehQEn3nCz-A2f9Y",
+    authDomain: "alice-finance-indexer.firebaseapp.com",
+    databaseURL: "https://alice-finance-indexer.firebaseio.com",
+    projectId: "alice-finance-indexer",
+    storageBucket: "alice-finance-indexer.appspot.com",
+    messagingSenderId: "921241799721",
+    appId: "1:921241799721:web:b98e90b6e2cf28b7"
+};
+firebase.initializeApp(firebaseConfig);
 
 export default class App extends React.Component {
     public render() {

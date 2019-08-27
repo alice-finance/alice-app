@@ -18,6 +18,7 @@ import { ChainContext } from "../../../contexts/ChainContext";
 import preset from "../../../styles/preset";
 import { formatValue } from "../../../utils/big-number-utils";
 import { openTx } from "../../../utils/ether-scan-utils";
+import Sentry from "../../../utils/Sentry";
 import SnackBar from "../../../utils/SnackBar";
 
 const TransferAssetScreen = () => {
@@ -59,8 +60,13 @@ const TransferAssetScreen = () => {
                 setAddress("");
                 setAmount(null);
                 SnackBar.success(t("transferSuccess"));
+                Sentry.track(Sentry.trackingTopics.ASSET_TRANSFERRED, {
+                    asset: asset.ethereumAddress.toLocalAddressString(),
+                    to: address
+                });
             } catch (e) {
                 SnackBar.danger(e.message);
+                Sentry.error(e);
             } finally {
                 setTxHash(null);
                 setInProgress(false);

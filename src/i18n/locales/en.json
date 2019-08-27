@@ -6,6 +6,7 @@
         "warning": "Warning",
         "copy": "Copy",
         "reset": "Reset",
+        "refresh": "Refresh",
         "goToLink": "Go to link",
         "exchange": "Exchanges",
         "assets": "Assets",
@@ -39,6 +40,8 @@
         "successful": "Successfully authenticated!"
     },
     "start": {
+        "createYourWallet": "Create Your Wallet",
+        "createYourWallet.description": "Create your wallet now and get involved.",
         "createNewWallet": "Create New Wallet",
         "importExistingWallet": "Import Existing Wallet",
         "newSeedPhrase": "New Seed Phrase",
@@ -176,6 +179,8 @@
         "resetAccount.ok": "YES, I WANT TO RESET",
         "modifyInfo": "Edit My Info",
         "modifyInfoFailure": "Failure editing your info",
+        "createWallet": "Create New Wallet",
+        "createWallet.description": "Create your wallet now and get involved!",
         "customerSupport": "Customer Service",
         "customerSupport.description": "This will redirect you to our telegram channel.",
         "appVersion": "App Version",
@@ -183,16 +188,21 @@
         "email": "Email"
     },
     "finance": {
+        "aliceIFO": "Earn Free ALICE",
+        "aliceIFO.description": "Deposit DAI stable coins and earn equivalent amount of ALICE tokens every 24 hours!",
+        "aliceIFO.blogUrl": "https://medium.com/alice-finance/alice-token-ifo-364ddc598c1d",
+        "aliceIFO.more": "More Info",
         "start": "Start",
         "start.depositAsset": "Please deposit assets",
         "start.description": "A small amount of ETH (less than 0.1) and DAI is required to use Alice's services.",
         "savings": "Savings",
-        "savings.description": "Deposit your DAI stable coins and start savings with 8% of maximum annual interest rate. You can withdraw coins whenever you want.",
+        "savings.description": "Deposit DAI stable coins and start savings with 8% of maximum annual interest rate. You can withdraw coins whenever you want.",
         "startSavingsNow": "Start savings now!",
         "totalBalance": "Total Savings",
         "mySavings": "My Savings",
         "apr": "APR",
         "loading": "Loading",
+        "leaderboard": "Leaderboard",
         "startSaving": "Start Saving",
         "startSaving.description": "Savings on Alice, powered by smart contracts, guarantee you can withdraw your assets at any time.",
         "noSavingsHistory": "No savings history",
@@ -206,6 +216,7 @@
         "elapsed": "Elapsed",
         "days": "days",
         "profit": "Profit",
+        "interestEarned": "Interest Earned",
         "principal": "Principal",
         "withdrawSavings": "Withdraw",
         "withdrawSavings.description": "You can withdraw some or all amounts.",
@@ -220,7 +231,9 @@
         "youCanClaim": "{{amount}} ALICE ",
         "claimAlice": "Claim",
         "claimingAlice": "Claiming...",
-        "claimedAlice": "You've received {{amount}} ALICE"
+        "claimedAlice": "You've received {{amount}} ALICE",
+        "recentSavings": "Recent Savings",
+        "recentClaims": "Recent ALICE Claims"
     },
     "update": {
         "title": "There is an essential update",

@@ -7,7 +7,8 @@ import { getLogs } from "@alice-finance/alice.js/dist/utils/ethers-utils";
 import { ethers } from "ethers";
 import { ChainContext } from "../contexts/ChainContext";
 import { PendingTransactionsContext } from "../contexts/PendingTransactionsContext";
-import useTokenBalanceUpdater from "./useTokenBalanceUpdater";
+import Sentry from "../utils/Sentry";
+import useAssetBalancesUpdater from "./useAssetBalancesUpdater";
 
 const KYBER_NETWORK_PROXY_ADDRESS = {
     "1": "0x818e6fecd516ecc3849daf6845e3ec868087b755",
@@ -55,7 +56,7 @@ const useKyberSwap = () => {
     const { ethereumChain } = useContext(ChainContext);
     const [kyber, setKyber] = useState<ethers.Contract | null>(null);
     const [ready, setReady] = useState(false);
-    const { update } = useTokenBalanceUpdater();
+    const { update } = useAssetBalancesUpdater();
     const { addPendingDepositTransaction, clearPendingDepositTransactions } = useContext(PendingTransactionsContext);
 
     useEffect(() => {
@@ -168,6 +169,7 @@ const useKyberSwap = () => {
                     // Done!
                 } catch (e) {
                     clearPendingDepositTransactions(assetFrom.ethereumAddress);
+                    Sentry.error(e);
                     throw e;
                 }
             }

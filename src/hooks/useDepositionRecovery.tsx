@@ -1,13 +1,13 @@
 import { useCallback, useContext } from "react";
 
 import { ChainContext } from "../contexts/ChainContext";
-import Analytics from "../helpers/Analytics";
+import Sentry from "../utils/Sentry";
 import SnackBar from "../utils/SnackBar";
-import useTokenBalanceUpdater from "./useTokenBalanceUpdater";
+import useAssetBalancesUpdater from "./useAssetBalancesUpdater";
 
 const useDepositionRecovery = () => {
     const { ethereumChain, loomChain } = useContext(ChainContext);
-    const { update } = useTokenBalanceUpdater();
+    const { update } = useAssetBalancesUpdater();
     const attemptToRecover = useCallback(async () => {
         if (loomChain && ethereumChain) {
             try {
@@ -21,10 +21,7 @@ const useDepositionRecovery = () => {
                 }
             } catch (e) {
                 SnackBar.danger(e.message);
-                Analytics.track(Analytics.events.ERROR, {
-                    trace: e.stack,
-                    message: e.message
-                });
+                Sentry.error(e);
             }
         }
     }, [loomChain, ethereumChain]);

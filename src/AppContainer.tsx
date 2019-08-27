@@ -9,7 +9,6 @@ import {
 } from "react-navigation";
 import { useNavigation } from "react-navigation-hooks";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
-import { fromRight } from "react-navigation-transitions";
 
 import platform from "../native-base-theme/variables/platform";
 import TabBarIcon from "./components/TabBarIcon";
@@ -23,6 +22,7 @@ import TransferAssetScreen from "./screens/main/assets/TransferAssetScreen";
 import WithdrawalScreen from "./screens/main/assets/WithdrawalScreen";
 import FinanceScreen from "./screens/main/finance/FinanceScreen";
 import NewSavingsScreen from "./screens/main/finance/NewSavingsScreen";
+import SavingsLeaderboardScreen from "./screens/main/finance/SavingsLeaderboardScreen";
 import ProfileScreen from "./screens/main/profile/ProfileScreen";
 import ResetAccountScreen from "./screens/main/profile/ResetAccountScreen";
 import SplashScreen from "./screens/SplashScreen";
@@ -55,20 +55,6 @@ const tabBarNavigationOptions = (name, iconName) => ({ screenProps }) => ({
     tabBarLabel: screenProps.t(name),
     tabBarIcon: ({ focused, horizontal, tintColor }) => <TabBarIcon name={iconName} tintColor={tintColor} />
 });
-
-const StartNavigator = createDefaultStackNavigator(
-    {
-        Start: StartScreen,
-        NewMnemonic: NewMnemonicScreen,
-        ConfirmMnemonic: ConfirmMnemonicScreen,
-        Complete: CompleteScreen,
-        ImportMnemonic: ImportMnemonicScreen,
-        Auth: AuthScreen
-    },
-    {
-        transitionConfig: () => fromRight()
-    }
-);
 
 const tabs = {
     FinanceTab: {
@@ -114,6 +100,7 @@ const AndroidTabNavigator = createMaterialBottomTabNavigator(tabs, {
 const MainNavigator = createDefaultStackNavigator({
     Tab: Platform.OS === "ios" ? IOSTabNavigator : AndroidTabNavigator,
     NewSavings: NewSavingsScreen,
+    SavingsLeaderboard: SavingsLeaderboardScreen,
     ManageAsset: ManageAssetScreen,
     MyAddress: MyAddressScreen,
     TransferAsset: TransferAssetScreen,
@@ -121,12 +108,16 @@ const MainNavigator = createDefaultStackNavigator({
     Deposit: DepositScreen,
     Withdrawal: WithdrawalScreen,
     ResetAccount: ResetAccountScreen,
+    Start: StartScreen,
+    NewMnemonic: NewMnemonicScreen,
+    ConfirmMnemonic: ConfirmMnemonicScreen,
+    Complete: CompleteScreen,
+    ImportMnemonic: ImportMnemonicScreen,
     Auth: AuthScreen
 });
 
 const AppNavigator = createSwitchNavigator({
     Splash: SplashScreen,
-    Start: StartNavigator,
     Main: MainNavigator
 });
 

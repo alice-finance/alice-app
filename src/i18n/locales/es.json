@@ -6,10 +6,11 @@
         "warning": "Advertencia",
         "copy": "Copiar",
         "reset": "Reiniciar",
+        "refresh": "Refrescar",
         "goToLink": "Ir al enlace",
         "exchange": "Intercambios",
         "assets": "Bienes",
-        "home": "Casa",
+        "home": "Inicio",
         "finance": "Finanzas",
         "profile": "Perfil",
         "searchForTokens": "Búsqueda de fichas",
@@ -39,6 +40,8 @@
         "successful": "¡Autenticado con éxito!"
     },
     "start": {
+        "createYourWallet": "Crear Su Cartera",
+        "createYourWallet.description": "¡Crea su cartera ahora y participa!",
         "createNewWallet": "Crear Nueva Cartera",
         "importExistingWallet": "Importar Cartera Existente",
         "newSeedPhrase": "Nueva Frase de Semilla",
@@ -175,6 +178,8 @@
         "resetAccount.ok": "SI QUIERO REINICIAR",
         "modifyInfo": "Editar su información",
         "modifyInfoFailure": "Fallo al editar su información",
+        "createWallet": "Crear Nueva Cartera",
+        "createWallet.description": "¡Crea su cartera ahora y participa!",
         "customerSupport": "Servicio al cliente",
         "customerSupport.description": "Esto te redirigirá a nuestro canal de telegramas.",
         "appVersion": "Version de aplicacion",
@@ -182,6 +187,10 @@
         "email": "Correo Electrónico"
     },
     "finance": {
+        "aliceIFO": "Gana ALICE Gratis",
+        "aliceIFO.description": "¡Deposite monedas estables DAI y gane una cantidad equivalente de tokens ALICE cada 24 horas!",
+        "aliceIFO.blogUrl": "https://medium.com/alice-finance/alice-token-ifo-364ddc598c1d",
+        "aliceIFO.more": "Más Info",
         "start": "Comienzo",
         "start.depositAsset": "Por favor deposite los activos",
         "start.description": "Se requiere una pequeña cantidad de ETH (menos de 0.1) y DAI para usar los servicios de Alice.",
@@ -192,6 +201,7 @@
         "mySavings": "Sus Ahorros",
         "apr": "APR",
         "loading": "Cargando",
+        "leaderboard": "Clasificación",
         "startSaving": "Ahorrar",
         "startSaving.description": "Los ahorros en Alice, respaldados por contratos inteligentes, garantizan que puede retirar sus activos en cualquier momento.",
         "noSavingsHistory": "Sin historial de ahorro",
@@ -205,6 +215,7 @@
         "elapsed": "Transcurrido",
         "days": "Dias",
         "profit": "El Lucro",
+        "interestEarned": "Interés obtenido",
         "principal": "El capital",
         "withdrawSavings": "Retirar",
         "withdrawSavings.description": "Puede retirar algunas o todas las cantidades.",
@@ -219,7 +230,9 @@
         "youCanClaim": "{{amount}} ALICE ",
         "claimAlice": "Reclamar",
         "claimingAlice": "Reclamando...",
-        "claimedAlice": "Has recibido {{amount}} ALICE"
+        "claimedAlice": "Has recibido {{amount}} ALICE",
+        "recentSavings": "Ahorros recientes",
+        "recentClaims": "Reclamaciones recientes de ALICE"
     },
     "update": {
         "title": "Hay una actualización esencial",

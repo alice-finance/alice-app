@@ -1,78 +1,66 @@
-import React, { useCallback, useContext, useEffect } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FlatList, View } from "react-native";
+import { Dimensions, FlatList, View } from "react-native";
+import Carousel, { Pagination } from "react-native-snap-carousel";
 import { useNavigation } from "react-navigation-hooks";
+import { defaultKeyExtractor } from "../../../utils/react-native-utils";
 
-import { SavingsRecord } from "@alice-finance/alice.js/dist/contracts/MoneyMarket";
 import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { Linking } from "expo";
-import { Button, Container, Content, Icon } from "native-base";
+import { Body, Button, Container, Content, Icon, ListItem, Text } from "native-base";
 import platform from "../../../../native-base-theme/variables/platform";
+import AliceIFOView from "../../../components/AliceIFOView";
 import CaptionText from "../../../components/CaptionText";
 import EmptyView from "../../../components/EmptyView";
+import MomentText from "../../../components/MomentText";
 import SavingRecordCard from "../../../components/SavingRecordCard";
 import SavingsCard from "../../../components/SavingsCard";
 import Spinner from "../../../components/Spinner";
 import SubtitleText from "../../../components/SubtitleText";
 import TitleText from "../../../components/TitleText";
+import TokenIcon from "../../../components/TokenIcon";
+import { AssetContext } from "../../../contexts/AssetContext";
 import { ChainContext } from "../../../contexts/ChainContext";
 import { SavingsContext } from "../../../contexts/SavingsContext";
-import useMySavingsUpdater from "../../../hooks/useMySavingsUpdater";
+import useAsyncEffect from "../../../hooks/useAsyncEffect";
+import useMySavingsLoader from "../../../hooks/useMySavingsLoader";
+import useRecentClaimsLoader from "../../../hooks/useRecentClaimsLoader";
+import useRecentSavingsLoader from "../../../hooks/useRecentSavingsLoader";
 import preset from "../../../styles/preset";
+import { formatValue } from "../../../utils/big-number-utils";
+import { compoundToAPR } from "../../../utils/interest-rate-utils";
+import { openTx } from "../../../utils/loom-utils";
 import AuthScreen from "../../AuthScreen";
 
 const FinanceScreen = () => {
-    const { setParams, push } = useNavigation();
-    const { t } = useTranslation(["finance", "common"]);
-    const { totalBalance, myRecords } = useContext(SavingsContext);
-    const sortedMyRecords = myRecords
-        ? myRecords.sort((a, b) => b.initialTimestamp.getTime() - a.initialTimestamp.getTime())
-        : null;
+    const { setParams } = useNavigation();
+    const { t } = useTranslation("finance");
+    const { isReadOnly } = useContext(ChainContext);
+    const { myTotalBalance } = useContext(SavingsContext);
+    const { assets } = useContext(AssetContext);
+    const alice = assets.find(a => a.symbol === "ALICE");
     const onPress = useCallback(() => Linking.openURL(t("common:blogUrl")), []);
-    const renderItem = useCallback(({ item }) => <SavingRecordCard record={item} />, []);
-    const { update } = useMySavingsUpdater();
     useScheduledUpdater();
+    usePasscodeRegistration();
     useEffect(() => {
         setParams({ onPress });
-        if (totalBalance) {
-            update();
-        }
-    }, [totalBalance]);
-    useEffect(() => {
-        AuthScreen.getSavedPasscode().then(passcode => {
-            if (!passcode || passcode === "") {
-                push("Auth", { needsRegistration: true, firstTime: true });
-            }
-        });
     }, []);
-
     return (
         <Container>
             <Content>
                 <View>
+                    {(isReadOnly || (myTotalBalance && myTotalBalance.isZero())) && <AliceIFOView />}
                     <TitleText aboveText={true}>{t("savings")}</TitleText>
                     <CaptionText style={preset.marginBottomNormal}>{t("savings.description")}</CaptionText>
                     <SavingsCard />
-                    <SubtitleText aboveText={true} style={[preset.flex1, preset.marginTopNormal]}>
-                        {t("mySavings")}
-                    </SubtitleText>
-                    {myRecords ? (
-                        <FlatList
-                            data={sortedMyRecords}
-                            keyExtractor={savingRecordKeyExtractor}
-                            renderItem={renderItem}
-                            ListEmptyComponent={<EmptyView text={t("noSavingsHistory")} />}
-                        />
-                    ) : (
-                        <Spinner compact={true} />
-                    )}
+                    {!isReadOnly && <MySavings />}
+                    <RecentSavings />
+                    <RecentClaims asset={alice} />
                 </View>
             </Content>
         </Container>
     );
 };
-
-const savingRecordKeyExtractor = (item: SavingsRecord) => item.id.toString();
 
 FinanceScreen.navigationOptions = ({ navigation }) => ({
     headerRight: (
@@ -81,6 +69,164 @@ FinanceScreen.navigationOptions = ({ navigation }) => ({
         </Button>
     )
 });
+
+const MySavings = () => {
+    const { t } = useTranslation("finance");
+    const { totalBalance, myRecords } = useContext(SavingsContext);
+    const { load } = useMySavingsLoader();
+    useEffect(() => {
+        if (totalBalance) {
+            load();
+        }
+    }, [totalBalance]);
+    const sortedMyRecords = myRecords
+        ? myRecords
+              .filter(r => !r.balance.isZero())
+              .sort((a, b) => b.initialTimestamp.getTime() - a.initialTimestamp.getTime())
+        : null;
+    return (
+        <View>
+            <SubtitleText aboveText={true} style={[preset.flex1, preset.marginTopNormal]}>
+                {t("mySavings")}
+            </SubtitleText>
+            <MySavingsCarousel myRecords={sortedMyRecords} />
+        </View>
+    );
+};
+
+const MySavingsCarousel = ({ myRecords }) => {
+    const { t } = useTranslation("finance");
+    const renderItem = useCallback(({ item }) => <SavingRecordCard record={item} />, []);
+    const [sliderWidth] = useState(Dimensions.get("window").width);
+    const [selection, setSelection] = useState(0);
+    return myRecords ? (
+        myRecords.length > 0 ? (
+            <View>
+                <Carousel
+                    data={myRecords}
+                    renderItem={renderItem}
+                    sliderWidth={sliderWidth}
+                    itemWidth={sliderWidth}
+                    activeSlideAlignment={"start"}
+                    inactiveSlideScale={1.0}
+                    onSnapToItem={setSelection}
+                />
+                <Pagination dotsLength={myRecords.length} activeDotIndex={selection} dotColor={platform.colorPrimary} />
+            </View>
+        ) : (
+            <EmptyView text={t("noSavingsHistory")} />
+        )
+    ) : (
+        <Spinner compact={true} />
+    );
+};
+
+const RecentSavings = () => {
+    const { t } = useTranslation(["finance", "common"]);
+    const renderItem = useCallback(({ item }) => <SavingsItem savings={item} />, []);
+    const { loadRecentSavings, recentSavings } = useRecentSavingsLoader();
+    const onPress = loadRecentSavings;
+    useAsyncEffect(loadRecentSavings, []);
+    return (
+        <View>
+            <View style={[preset.flexDirectionRow]}>
+                <SubtitleText aboveText={true} style={[preset.flex1]}>
+                    {t("recentSavings")}
+                </SubtitleText>
+                <Button transparent={true} rounded={true} small={true} onPress={onPress} style={preset.marginNormal}>
+                    <Text>{t("common:refresh")}</Text>
+                </Button>
+            </View>
+            {recentSavings ? (
+                <FlatList
+                    data={recentSavings}
+                    keyExtractor={defaultKeyExtractor}
+                    renderItem={renderItem}
+                    ListEmptyComponent={<EmptyView text={t("noSavingsHistory")} />}
+                />
+            ) : (
+                <Spinner compact={true} />
+            )}
+        </View>
+    );
+};
+
+const SavingsItem = ({ savings }) => {
+    const { asset, decimals } = useContext(SavingsContext);
+    const onPress = useCallback(() => openTx(savings.transactionHash), []);
+    const [apr] = useState(() => compoundToAPR(savings.rate, decimals));
+    return (
+        <ListItem button={true} noBorder={true} iconRight={true} onPress={onPress}>
+            <Body style={[preset.flex0, preset.marginLeftSmall, preset.marginRightSmall]}>
+                <TokenIcon address={asset!.ethereumAddress.toLocalAddressString()} width={32} height={32} />
+                <Text style={[preset.fontSize16, preset.textAlignCenter, { marginLeft: 0 }]}>
+                    {formatValue(toBigNumber(apr), decimals, 2)}%
+                </Text>
+            </Body>
+            <Body>
+                <View style={[preset.flex1, preset.flexDirectionRow, preset.alignItemsCenter]}>
+                    <Text style={[preset.flex1, preset.fontSize20]}>
+                        {formatValue(savings.balance, asset!.decimals)} {asset!.symbol}
+                    </Text>
+                    <MomentText date={new Date(savings.timestamp * 1000)} note={true} />
+                </View>
+                <Text ellipsizeMode="middle" numberOfLines={1} style={[preset.fontSize16, preset.colorGrey]}>
+                    {savings.owner}
+                </Text>
+            </Body>
+        </ListItem>
+    );
+};
+
+const RecentClaims = ({ asset }) => {
+    const { t } = useTranslation(["finance", "common"]);
+    const renderItem = useCallback(({ item }) => <ClaimItem claim={item} asset={asset} />, []);
+    const { loadRecentClaims, recentClaims } = useRecentClaimsLoader();
+    const onPress = loadRecentClaims;
+    useAsyncEffect(loadRecentClaims, []);
+    return (
+        <View>
+            <View style={[preset.flexDirectionRow, preset.marginTopLarge]}>
+                <SubtitleText aboveText={true} style={[preset.flex1]}>
+                    {t("recentClaims")}
+                </SubtitleText>
+                <Button transparent={true} rounded={true} small={true} onPress={onPress} style={preset.marginNormal}>
+                    <Text>{t("common:refresh")}</Text>
+                </Button>
+            </View>
+            {recentClaims ? (
+                <FlatList
+                    data={recentClaims}
+                    keyExtractor={defaultKeyExtractor}
+                    renderItem={renderItem}
+                    ListEmptyComponent={<EmptyView text={t("noSavingsHistory")} />}
+                />
+            ) : (
+                <Spinner compact={true} />
+            )}
+        </View>
+    );
+};
+
+const ClaimItem = ({ claim, asset }) => {
+    const onPress = useCallback(() => openTx(claim.transactionHash), []);
+    return (
+        <ListItem button={true} onPress={onPress}>
+            <Body style={[preset.flex0, preset.marginLeftSmall, preset.marginRightSmall]}>
+                <TokenIcon address={asset!.ethereumAddress.toLocalAddressString()} width={32} height={32} />
+            </Body>
+            <Body>
+                <View style={[preset.flex1, preset.flexDirectionRow, preset.alignItemsCenter]}>
+                    <Text style={[preset.flex1, preset.fontSize20]}>{formatValue(claim.amount, 18)} ALICE</Text>
+                    <MomentText date={new Date(claim.timestamp * 1000)} note={true} />
+                </View>
+                <Text ellipsizeMode="middle" numberOfLines={1} style={[preset.fontSize16, preset.colorGrey]}>
+                    {claim.user}
+                </Text>
+            </Body>
+        </ListItem>
+    );
+};
 
 const useScheduledUpdater = () => {
     const { loomChain } = useContext(ChainContext);
@@ -96,6 +242,20 @@ const useScheduledUpdater = () => {
         return () => clearInterval(handle);
     }, []);
     return { apr, totalSavings: totalBalance };
+};
+
+const usePasscodeRegistration = () => {
+    const { isReadOnly } = useContext(ChainContext);
+    const { push } = useNavigation();
+    useEffect(() => {
+        if (!isReadOnly) {
+            AuthScreen.getSavedPasscode().then(passcode => {
+                if (!passcode || passcode === "") {
+                    push("Auth", { needsRegistration: true, firstTime: true });
+                }
+            });
+        }
+    }, []);
 };
 
 export default FinanceScreen;

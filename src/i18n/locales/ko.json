@@ -6,6 +6,7 @@
         "warning": "경고",
         "copy": "복사하기",
         "reset": "초기화",
+        "refresh": "새로고침",
         "goToLink": "링크로 이동",
         "exchange": "거래",
         "assets": "자산",
@@ -39,6 +40,8 @@
         "successful": "인증 성공!"
     },
     "start": {
+        "createYourWallet": "여러분의 지갑을 만드세요",
+        "createYourWallet.description": "지갑을 만들면 Alice의 다양한 서비스를 활용할 수 있습니다.",
         "createNewWallet": "새로운 지갑 생성하기",
         "importExistingWallet": "지갑 불러오기",
         "newSeedPhrase": "새로운 시드 단어",
@@ -175,6 +178,8 @@
         "resetAccount.ok": "네, 초기화하고 싶습니다.",
         "modifyInfo": "내 정보 수정",
         "modifyInfoFailure": "내 정보 수정 실패",
+        "createWallet": "지갑 생성하기",
+        "createWallet.description": "지금 지갑을 생성하고 Alice를 100% 이용해보세요!",
         "customerSupport": "고객 지원",
         "customerSupport.description": "텔레그램 채널로 연결됩니다.",
         "appVersion": "앱 버전",
@@ -182,6 +187,10 @@
         "email": "이메일"
     },
     "finance": {
+        "aliceIFO": "무료 ALICE를 받으세요",
+        "aliceIFO.description": "DAI 스테이블 코인을 예치하시면 동일한 수량의 ALICE 토큰을 24시간마다 무료로 받을 수 있습니다!",
+        "aliceIFO.blogUrl": "https://medium.com/alice-finance-korean/alice-token-ifo-605788cc98f8",
+        "aliceIFO.more": "더 알아보기",
         "start": "시작하기",
         "start.depositAsset": "자산을 입금해주세요",
         "start.description": "Alice의 서비스를 사용하기 위해서는 소량의 ETH(0.1 이하)와 DAI가 필요합니다.",
@@ -192,6 +201,7 @@
         "mySavings": "나의 저축",
         "apr": "APR(연이율)",
         "loading": "로딩 중",
+        "leaderboard": "순위표",
         "startSaving": "저축 시작하기",
         "startSaving.description": "Alice의 저축은 원하는 시점에 언제든 출금할 수 있는 것이 보장된 스마트 계약 시스템입니다.",
         "noSavingsHistory": "저축 내역이 없습니다.",
@@ -205,7 +215,8 @@
         "savingsFailure": "저축 시작에 실패했습니다. 다시 시도해 주세요.",
         "elapsed": "경과 시간",
         "days": "일",
-        "profit": "수익금",
+        "profit": "수익",
+        "interestEarned": "누적 이자",
         "principal": "원금",
         "withdrawSavings": "출금하기",
         "withdrawSavings.description": "일부 혹은 전체 금액을 출금할 수 있습니다.",
@@ -216,11 +227,13 @@
         "withdrawalHistory": "출금 내역",
         "aliceClaimHistory": "ALICE 보상 내역",
         "calculatingClaim": "ALICE 보상 계산 중...",
-        "youCanClaimNow": "지금 {{amount}} ALICE 보상을 받으세요!",
+        "youCanClaimNow": "{{amount}} ALICE를 받으세요!",
         "youCanClaim": "{{amount}} ALICE 보상 ",
         "claimAlice": "보상받기",
         "claimingAlice": "ALICE 받는중...",
-        "claimedAlice": "{{amount}} ALICE 보상을 받았습니다."
+        "claimedAlice": "{{amount}} ALICE 보상을 받았습니다.",
+        "recentSavings": "최근 저축",
+        "recentClaims": "최근 ALICE 보상 지급"
     },
     "update": {
         "title": "필수 업데이트가 있습니다",

@@ -1,37 +1,28 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Image, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
-import { Button, Text } from "native-base";
+import { Button, Container, Text } from "native-base";
+import CaptionText from "../../components/CaptionText";
+import SubtitleText from "../../components/SubtitleText";
 import { Spacing } from "../../constants/dimension";
+import preset from "../../styles/preset";
 
 const StartScreen = () => {
+    const { t } = useTranslation("start");
     const { push } = useNavigation();
     const onCreateWallet = useCallback(() => push("NewMnemonic"), []);
     const onImportWallet = useCallback(() => push("ImportMnemonic"), []);
     return (
-        <View style={{ flex: 1 }}>
-            <View style={styles.background}>
-                <Image style={styles.backgroundImage} source={require("../../assets/main-bg.png")} fadeDuration={0} />
-            </View>
-            <View style={styles.content}>
-                <Image
-                    style={styles.icon}
-                    resizeMode="contain"
-                    source={require("../../assets/icon-light.png")}
-                    fadeDuration={0}
-                />
-                <Image
-                    style={styles.logo}
-                    resizeMode="contain"
-                    source={require("../../assets/logo-light.png")}
-                    fadeDuration={0}
-                />
+        <Container>
+            <SubtitleText aboveText={true}>{t("createYourWallet")}</SubtitleText>
+            <CaptionText style={preset.marginBottomLarge}>{t("createYourWallet.description")}</CaptionText>
+            <View style={preset.marginNormal}>
                 <CreateWalletButton onPress={onCreateWallet} />
                 <ImportWalletButton onPress={onImportWallet} />
             </View>
-        </View>
+        </Container>
     );
 };
 
@@ -52,7 +43,7 @@ const ImportWalletButton = ({ onPress }) => {
         <Button
             block={true}
             large={true}
-            light={true}
+            primary={true}
             rounded={true}
             bordered={true}
             style={styles.button}
@@ -63,12 +54,6 @@ const ImportWalletButton = ({ onPress }) => {
 };
 
 const styles = StyleSheet.create({
-    content: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        padding: Spacing.normal
-    },
     icon: {
         width: 84,
         height: 84,
@@ -92,10 +77,6 @@ const styles = StyleSheet.create({
         resizeMode: "contain"
     },
     button: { margin: Spacing.small }
-});
-
-StartScreen.navigationOptions = () => ({
-    header: null
 });
 
 export default StartScreen;

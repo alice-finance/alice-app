@@ -6,8 +6,9 @@ import { SavingsRecord } from "@alice-finance/alice.js/dist/contracts/MoneyMarke
 import { ethers } from "ethers";
 import { BigNumber } from "ethers/utils";
 import { ChainContext } from "../contexts/ChainContext";
+import Sentry from "../utils/Sentry";
+import useAssetBalancesUpdater from "./useAssetBalancesUpdater";
 import useAsyncEffect from "./useAsyncEffect";
-import useTokenBalanceUpdater from "./useTokenBalanceUpdater";
 
 class AliceIFO extends ethers.Contract {
     constructor(loomChain: LoomChain, address: string) {
@@ -33,7 +34,7 @@ class AliceFund extends ethers.Contract {
 
 const useAliceClaimer = (record: SavingsRecord) => {
     const { loomChain } = useContext(ChainContext);
-    const { update } = useTokenBalanceUpdater();
+    const { update } = useAssetBalancesUpdater();
     const [claimableAt, setClaimableAt] = useState<Date | null>(null);
     const [claimableAmount, setClaimableAmount] = useState<BigNumber | null>(null);
     const [claiming, setClaiming] = useState(false);
@@ -52,17 +53,23 @@ const useAliceClaimer = (record: SavingsRecord) => {
         }
     };
     const claim = useCallback(async () => {
-        try {
-            if (ifo) {
+        if (ifo) {
+            try {
                 setClaiming(true);
                 await ifo.claim(record.id, { gasLimit: 0 });
                 setClaimableAt(null);
                 refresh().then(update);
+                Sentry.track(Sentry.trackingTopics.ALICE_CLAIMED, { recordId: record.id.toNumber() });
+            } catch (e) {
+                Sentry.error(e);
+                throw e;
+            } finally {
+                setClaiming(false);
             }
-        } catch (e) {
-            throw e;
-        } finally {
-            setClaiming(false);
+        } else {
+            const error = new Error("Cannot resolve IFO contract");
+            Sentry.error(error);
+            throw error;
         }
     }, [record, ifo]);
     useAsyncEffect(refresh, [record, ifo]);

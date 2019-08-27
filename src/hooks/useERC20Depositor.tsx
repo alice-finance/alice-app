@@ -4,13 +4,13 @@ import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
 import { ethers } from "ethers";
 import { ChainContext } from "../contexts/ChainContext";
 import { PendingTransactionsContext } from "../contexts/PendingTransactionsContext";
-import Analytics from "../helpers/Analytics";
-import useTokenBalanceUpdater from "./useTokenBalanceUpdater";
+import Sentry from "../utils/Sentry";
+import useAssetBalancesUpdater from "./useAssetBalancesUpdater";
 
 const useERC20Depositor = () => {
     const { ethereumChain } = useContext(ChainContext);
     const { addPendingDepositTransaction, clearPendingDepositTransactions } = useContext(PendingTransactionsContext);
-    const { update } = useTokenBalanceUpdater();
+    const { update } = useAssetBalancesUpdater();
     const deposit = useCallback(
         async (asset: ERC20Asset, amount: ethers.utils.BigNumber) => {
             if (ethereumChain) {
@@ -27,11 +27,12 @@ const useERC20Depositor = () => {
                     addPendingDepositTransaction(assetAddress, depositTx);
                     await depositTx.wait();
                     // Done
-                    Analytics.track(Analytics.events.ASSET_DEPOSITED);
+                    Sentry.track(Sentry.trackingTopics.ASSET_DEPOSITED);
                     await update();
                     clearPendingDepositTransactions(assetAddress);
                 } catch (e) {
                     clearPendingDepositTransactions(assetAddress);
+                    Sentry.error(e);
                     throw e;
                 }
             }
