@@ -25,6 +25,7 @@ import NewSavingsScreen from "./screens/main/finance/NewSavingsScreen";
 import SavingsLeaderboardScreen from "./screens/main/finance/SavingsLeaderboardScreen";
 import ProfileScreen from "./screens/main/profile/ProfileScreen";
 import ResetAccountScreen from "./screens/main/profile/ResetAccountScreen";
+import NotConnectedScreen from "./screens/NotConnectedScreen";
 import SplashScreen from "./screens/SplashScreen";
 import CompleteScreen from "./screens/start/CompleteScreen";
 import ConfirmMnemonicScreen from "./screens/start/ConfirmMnemonicScreen";
@@ -118,6 +119,7 @@ const MainNavigator = createDefaultStackNavigator({
 
 const AppNavigator = createSwitchNavigator({
     Splash: SplashScreen,
+    NotConnected: NotConnectedScreen,
     Main: MainNavigator
 });
 

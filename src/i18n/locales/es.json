@@ -241,5 +241,10 @@
         "error": "Error",
         "fetchInfoError": "No se pudo obtener información de actualización.",
         "latestVersion": "Alice está al día"
+    },
+    "not-connected": {
+        "title": "No conectado :(",
+        "description": "Verifique su conectividad WIFI o móvil y reinicie la aplicación",
+        "restart": "Reiniciar"
     }
 }
