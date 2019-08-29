@@ -42,6 +42,7 @@ const preset = StyleSheet.create({
     marginLeftNormal: { marginLeft: Spacing.normal },
     marginLeftLarge: { marginLeft: Spacing.large },
     marginLeftHuge: { marginLeft: Spacing.huge },
+    marginRight0: { marginRight: 0 },
     marginRightTiny: { marginRight: Spacing.tiny },
     marginRightSmall: { marginRight: Spacing.small },
     marginRightNormal: { marginRight: Spacing.normal },

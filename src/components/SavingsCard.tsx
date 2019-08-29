@@ -36,7 +36,7 @@ const SavingsCard = () => {
                 <CardItem style={preset.marginRightSmall}>
                     <Column label={t("totalBalance")} value={totalBalance} />
                     {!isReadOnly && <Column label={t("mySavings")} value={myTotalBalance} />}
-                    <Column label={t("apr")} value={apr} small={!isReadOnly} />
+                    <Column label={t("apr")} value={apr} suffix={"%"} small={!isReadOnly} />
                 </CardItem>
                 <Footer refreshing={refreshing} />
             </Card>
@@ -44,12 +44,12 @@ const SavingsCard = () => {
     );
 };
 
-const Column = ({ label, value, small = false }) => (
-    <View style={[preset.marginLeftSmall, small ? preset.flex0 : preset.flex1]}>
+const Column = ({ label, value, suffix = "", small = false }) => (
+    <View style={[preset.marginLeftSmall, small ? preset.flex1 : preset.flex2]}>
         <Text note={true} style={preset.marginLeft0}>
             {label}
         </Text>
-        <BigNumberText value={value} decimalPlaces={small ? 2 : 4} />
+        <BigNumberText value={value} suffix={suffix} decimalPlaces={small ? 2 : 4} />
     </View>
 );
 
