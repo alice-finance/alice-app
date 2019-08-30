@@ -14,7 +14,6 @@ import SubtitleText from "../../components/SubtitleText";
 import preset from "../../styles/preset";
 import { ethereumPrivateKeyFromMnemonic, loomPrivateKeyFromMnemonic } from "../../utils/crypto-utils";
 import { mapAccounts } from "../../utils/loom-utils";
-import Sentry from "../../utils/Sentry";
 
 const ConfirmMnemonicScreen = () => {
     const { t } = useTranslation(["common", "start"]);
@@ -42,7 +41,6 @@ const ConfirmMnemonicScreen = () => {
                         const ethereumChain = new EthereumChain(ethereumPrivateKey, __DEV__);
                         const loomChain = new LoomChain(loomPrivateKey, __DEV__);
                         await mapAccounts(ethereumChain, loomChain);
-                        Sentry.track(Sentry.trackingTopics.KEY_CREATED);
                         push("Complete");
                     } finally {
                         setEncrypting(false);

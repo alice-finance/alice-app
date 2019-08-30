@@ -12,6 +12,7 @@ import Spinner from "../../components/Spinner";
 import SubtitleText from "../../components/SubtitleText";
 import { Spacing } from "../../constants/dimension";
 import preset from "../../styles/preset";
+import Sentry from "../../utils/Sentry";
 import SnackBar from "../../utils/SnackBar";
 
 const NewMnemonicScreen = () => {
@@ -19,8 +20,12 @@ const NewMnemonicScreen = () => {
     const { push } = useNavigation();
     const [refreshing, setRefreshing] = useState(true);
     const [mnemonic, setMnemonic] = useState<string>("");
-    const onPressConfirm = useCallback(() => push("ConfirmMnemonic", { mnemonic }), [mnemonic]);
+    const onPressConfirm = useCallback(() => {
+        Sentry.track(Sentry.trackingTopics.WALLET_CREATED);
+        push("ConfirmMnemonic", { mnemonic });
+    }, [mnemonic]);
     const onCopy = useCallback(() => {
+        Sentry.track(Sentry.trackingTopics.COPY_MNEMONIC);
         Clipboard.setString(mnemonic);
         SnackBar.success(t("profile:seedPhraseCopiedToTheClipboard"));
     }, [mnemonic]);

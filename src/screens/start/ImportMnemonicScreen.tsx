@@ -46,7 +46,7 @@ const ImportMnemonicScreen = () => {
                         const ethereumChain = new EthereumChain(ethereumPrivateKey, __DEV__);
                         const loomChain = new LoomChain(loomPrivateKey, __DEV__);
                         await mapAccounts(ethereumChain, loomChain);
-                        Sentry.track(Sentry.trackingTopics.KEY_IMPORTED);
+                        Sentry.track(Sentry.trackingTopics.WALLET_IMPORTED);
                         push("Complete");
                     } finally {
                         setEncrypting(false);

@@ -5,12 +5,16 @@ import { Image, View } from "react-native";
 import { Linking } from "expo";
 import { Button, Text } from "native-base";
 import preset from "../styles/preset";
+import Sentry from "../utils/Sentry";
 import CaptionText from "./CaptionText";
 import TitleText from "./TitleText";
 
 const AliceIFOView = () => {
     const { t } = useTranslation("finance");
-    const onPress = useCallback(() => Linking.openURL(t("aliceIFO.blogUrl")), []);
+    const onPress = useCallback(() => {
+        Sentry.track(Sentry.trackingTopics.IFO_MORE_INFO);
+        Linking.openURL(t("aliceIFO.blogUrl"));
+    }, []);
     return (
         <View style={preset.marginBottomSmall}>
             <TitleText aboveText={true}>{t("aliceIFO")}</TitleText>
@@ -19,7 +23,6 @@ const AliceIFOView = () => {
                     fadeDuration={0}
                     source={require("../assets/icon.png")}
                     style={[{ width: 96, height: 96 }, preset.marginLeftSmall]}
-                    resizeMode="contain"
                 />
                 <View style={preset.flex1}>
                     <CaptionText>{t("aliceIFO.description")}</CaptionText>
