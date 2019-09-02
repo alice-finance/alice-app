@@ -238,7 +238,9 @@ const useWithdraw = () => {
                 });
                 setTotalBalance(toBigNumber(await market.totalFunds()));
                 await load();
+                return true;
             }
+            return false;
         },
         [loomChain]
     );
@@ -249,12 +251,6 @@ const useWithdraw = () => {
 const WithdrawButton = ({ record, onOk, amount, inProgress, setInProgress }) => {
     const { t } = useTranslation(["finance", "common"]);
     const { withdraw } = useWithdraw();
-    const onPress = useCallback(() => {
-        Alert.alert(t("withdrawSavings.confirm"), undefined, [
-            { text: t("common:cancel"), style: "cancel" },
-            { text: t("common:ok"), onPress: onWithdraw }
-        ]);
-    }, []);
     const onWithdraw = useCallback(async () => {
         if (amount) {
             setInProgress(true);
@@ -269,7 +265,13 @@ const WithdrawButton = ({ record, onOk, amount, inProgress, setInProgress }) => 
                 setInProgress(false);
             }
         }
-    }, [amount]);
+    }, [withdraw, amount]);
+    const onPress = useCallback(() => {
+        Alert.alert(t("withdrawSavings.confirm"), undefined, [
+            { text: t("common:cancel"), style: "cancel" },
+            { text: t("common:ok"), onPress: onWithdraw }
+        ]);
+    }, [onWithdraw]);
     return (
         <Button rounded={true} transparent={true} onPress={onPress} disabled={!amount || inProgress}>
             <Text>{t("withdrawSavings")}</Text>
