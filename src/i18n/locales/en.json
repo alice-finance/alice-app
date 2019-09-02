@@ -220,6 +220,7 @@
         "principal": "Principal",
         "withdrawSavings": "Withdraw",
         "withdrawSavings.description": "You can withdraw some or all amounts.",
+        "withdrawSavings.confirm": "Your interest will start to accrue after 24 hours if you withdraw now. Would you withdraw?",
         "noWithdrawalHistory": "No withdrawal history",
         "withdrawalComplete": "Your withdrawal has completed.",
         "loan": "Mortgage Loan",

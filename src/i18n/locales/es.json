@@ -219,6 +219,7 @@
         "principal": "El capital",
         "withdrawSavings": "Retirar",
         "withdrawSavings.description": "Puede retirar algunas o todas las cantidades.",
+        "withdrawSavings.confirm": "Su retiro comenzará a acumularse después de 24 horas. ¿Te retirarías?",
         "noWithdrawalHistory": "Sin historial de retiro",
         "withdrawalComplete": "Su retiro se ha completado.",
         "loan": "Préstamo hipotecario",

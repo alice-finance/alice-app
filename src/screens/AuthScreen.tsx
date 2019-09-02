@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { AsyncStorage, InteractionManager, StyleSheet } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
-import { Button, Icon, Text, View } from "native-base";
+import { Button, Container, Content, Icon, Text, View } from "native-base";
 import platform from "../../native-base-theme/variables/platform";
 import CaptionText from "../components/CaptionText";
 import TitleText from "../components/TitleText";
@@ -29,20 +29,24 @@ const AuthScreen = () => {
     };
     usePasscodeChecker(needsRegistration, passcode, confirm, onMatch, onError);
     return (
-        <View style={preset.flex1}>
-            <TitleText aboveText={true}>{t(needsRegistration ? "registration" : "authentication")}</TitleText>
-            <CaptionText>
-                {t(
-                    confirming
-                        ? "pleaseEnterYourPasswordAgain"
-                        : needsRegistration
-                        ? "pleaseEnterYourNewPassword"
-                        : "pleaseEnterYourPassword"
-                )}
-            </CaptionText>
-            <Circles passcode={confirming ? confirm : passcode} />
-            <KeyPad appendPasscode={confirming ? appendConfirm : appendPasscode} />
-        </View>
+        <Container>
+            <Content>
+                <View style={preset.flex1}>
+                    <TitleText aboveText={true}>{t(needsRegistration ? "registration" : "authentication")}</TitleText>
+                    <CaptionText>
+                        {t(
+                            confirming
+                                ? "pleaseEnterYourPasswordAgain"
+                                : needsRegistration
+                                ? "pleaseEnterYourNewPassword"
+                                : "pleaseEnterYourPassword"
+                        )}
+                    </CaptionText>
+                    <Circles passcode={confirming ? confirm : passcode} />
+                    <KeyPad appendPasscode={confirming ? appendConfirm : appendPasscode} />
+                </View>
+            </Content>
+        </Container>
     );
 };
 
