@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Keyboard, View } from "react-native";
 
-import { Button, Container, Text } from "native-base";
+import { Button, Container, Content, Text } from "native-base";
 import CaptionText from "../../../components/CaptionText";
 import MnemonicInput from "../../../components/MnemonicInput";
 import SubtitleText from "../../../components/SubtitleText";
@@ -29,21 +29,23 @@ const ResetAccountScreen = () => {
     }, [confirmed, mnemonic]);
     return (
         <Container>
-            <SubtitleText aboveText={true}>{t("resetAccount")}</SubtitleText>
-            <CaptionText>{t("resetAccount.requirement")}</CaptionText>
-            <View style={preset.marginNormal}>
-                <MnemonicInput onChangeMnemonic={onChangeMnemonic} style={preset.marginTopNormal} />
-                {confirmed && (
-                    <Button
-                        block={true}
-                        rounded={true}
-                        disabled={!confirmed}
-                        style={preset.marginTopNormal}
-                        onPress={onComplete}>
-                        <Text>{t("common:ok")}</Text>
-                    </Button>
-                )}
-            </View>
+            <Content keyboardShouldPersistTaps="handled">
+                <SubtitleText aboveText={true}>{t("resetAccount")}</SubtitleText>
+                <CaptionText>{t("resetAccount.requirement")}</CaptionText>
+                <View style={preset.marginNormal}>
+                    <MnemonicInput onChangeMnemonic={onChangeMnemonic} style={preset.marginTopNormal} />
+                    {confirmed && (
+                        <Button
+                            block={true}
+                            rounded={true}
+                            disabled={!confirmed}
+                            style={preset.marginTopNormal}
+                            onPress={onComplete}>
+                            <Text>{t("common:ok")}</Text>
+                        </Button>
+                    )}
+                </View>
+            </Content>
             <Dialog />
         </Container>
     );

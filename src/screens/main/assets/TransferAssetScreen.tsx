@@ -7,7 +7,7 @@ import { useNavigation } from "react-navigation-hooks";
 import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
 import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { BigNumber } from "ethers/utils";
-import { Button, Container, Text } from "native-base";
+import { Button, Container, Content, Text } from "native-base";
 import platform from "../../../../native-base-theme/variables/platform";
 import AmountInput from "../../../components/AmountInput";
 import Spinner from "../../../components/Spinner";
@@ -80,51 +80,56 @@ const TransferAssetScreen = () => {
     }, [txHash]);
     return (
         <Container>
-            <SubtitleText aboveText={true}>
-                {asset.symbol} {t("transfer")}
-            </SubtitleText>
-            {inProgress ? (
-                <>
-                    <Spinner label={t("processing")} />
-                    {txHash && (
-                        <Button bordered={true} onPress={onPress} style={[preset.marginTopLarge, preset.alignCenter]}>
-                            <Text numberOfLines={1} ellipsizeMode="middle">
-                                {t("viewTransaction")}
-                            </Text>
+            <Content keyboardShouldPersistTaps="handled">
+                <SubtitleText aboveText={true}>
+                    {asset.symbol} {t("transfer")}
+                </SubtitleText>
+                {inProgress ? (
+                    <>
+                        <Spinner label={t("processing")} />
+                        {txHash && (
+                            <Button
+                                bordered={true}
+                                onPress={onPress}
+                                style={[preset.marginTopLarge, preset.alignCenter]}>
+                                <Text numberOfLines={1} ellipsizeMode="middle">
+                                    {t("viewTransaction")}
+                                </Text>
+                            </Button>
+                        )}
+                    </>
+                ) : (
+                    <View style={{ margin: Spacing.large }}>
+                        <AmountInput
+                            asset={asset}
+                            max={getBalance(asset.ethereumAddress)}
+                            disabled={inProgress}
+                            onChangeAmount={setAmount}
+                            style={preset.marginBottomLarge}
+                        />
+                        <TextInput
+                            keyboardType={"ascii-capable"}
+                            placeholder={t("receiver")}
+                            value={address}
+                            editable={!inProgress}
+                            onChangeText={onChangeAddress}
+                            style={[{ borderBottomColor: platform.brandLight, borderBottomWidth: 2, fontSize: 36 }]}
+                        />
+                        {error.length > 0 && (
+                            <Text style={[preset.marginNormal, preset.colorDanger, preset.fontSize14]}>{error}</Text>
+                        )}
+                        <Button
+                            primary={true}
+                            rounded={true}
+                            block={true}
+                            style={preset.marginTopLarge}
+                            onPress={onTransfer}
+                            disabled={!!error || inProgress}>
+                            <Text>{t("transfer")}</Text>
                         </Button>
-                    )}
-                </>
-            ) : (
-                <View style={{ margin: Spacing.large }}>
-                    <AmountInput
-                        asset={asset}
-                        max={getBalance(asset.ethereumAddress)}
-                        disabled={inProgress}
-                        onChangeAmount={setAmount}
-                        style={preset.marginBottomLarge}
-                    />
-                    <TextInput
-                        keyboardType={"ascii-capable"}
-                        placeholder={t("receiver")}
-                        value={address}
-                        editable={!inProgress}
-                        onChangeText={onChangeAddress}
-                        style={[{ borderBottomColor: platform.brandLight, borderBottomWidth: 2, fontSize: 36 }]}
-                    />
-                    {error.length > 0 && (
-                        <Text style={[preset.marginNormal, preset.colorDanger, preset.fontSize14]}>{error}</Text>
-                    )}
-                    <Button
-                        primary={true}
-                        rounded={true}
-                        block={true}
-                        style={preset.marginTopLarge}
-                        onPress={onTransfer}
-                        disabled={!!error || inProgress}>
-                        <Text>{t("transfer")}</Text>
-                    </Button>
-                </View>
-            )}
+                    </View>
+                )}
+            </Content>
         </Container>
     );
 };
