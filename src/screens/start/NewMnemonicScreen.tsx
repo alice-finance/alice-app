@@ -5,7 +5,7 @@ import { useNavigation } from "react-navigation-hooks";
 
 import { entropyToMnemonic } from "bip39";
 import * as Random from "expo-random";
-import { Button, Container, Text } from "native-base";
+import { Button, Container, Content, Text } from "native-base";
 import CaptionText from "../../components/CaptionText";
 import MnemonicChip from "../../components/MnemonicChip";
 import Spinner from "../../components/Spinner";
@@ -34,38 +34,40 @@ const NewMnemonicScreen = () => {
     }, []);
     return (
         <Container style={styles.container}>
-            <SubtitleText aboveText={true}>{t("start:newSeedPhrase")}</SubtitleText>
-            <CaptionText>{t("start:newSeedPhrase.description")}</CaptionText>
-            <View style={styles.content}>
-                {refreshing ? (
-                    <Spinner compact={true} label={t("common:generatingSeedPhrase")} />
-                ) : (
-                    <View style={preset.marginNormal}>
-                        <View style={styles.mnemonic}>
-                            {mnemonic.split(" ").map((word, index) => (
-                                <MnemonicChip key={index} word={word} />
-                            ))}
+            <Content>
+                <SubtitleText aboveText={true}>{t("start:newSeedPhrase")}</SubtitleText>
+                <CaptionText>{t("start:newSeedPhrase.description")}</CaptionText>
+                <View style={styles.content}>
+                    {refreshing ? (
+                        <Spinner compact={true} label={t("common:generatingSeedPhrase")} />
+                    ) : (
+                        <View style={preset.marginNormal}>
+                            <View style={styles.mnemonic}>
+                                {mnemonic.split(" ").map((word, index) => (
+                                    <MnemonicChip key={index} word={word} />
+                                ))}
+                            </View>
+                            <Button
+                                block={true}
+                                rounded={true}
+                                transparent={true}
+                                onPress={onCopy}
+                                style={preset.marginTopNormal}>
+                                <Text>{t("common:copy")}</Text>
+                            </Button>
+                            <Button
+                                primary={true}
+                                block={true}
+                                rounded={true}
+                                disabled={refreshing}
+                                style={preset.marginTopSmall}
+                                onPress={onPressConfirm}>
+                                <Text>{t("next")}</Text>
+                            </Button>
                         </View>
-                        <Button
-                            block={true}
-                            rounded={true}
-                            transparent={true}
-                            onPress={onCopy}
-                            style={preset.marginTopNormal}>
-                            <Text>{t("common:copy")}</Text>
-                        </Button>
-                        <Button
-                            primary={true}
-                            block={true}
-                            rounded={true}
-                            disabled={refreshing}
-                            style={preset.marginTopSmall}
-                            onPress={onPressConfirm}>
-                            <Text>{t("next")}</Text>
-                        </Button>
-                    </View>
-                )}
-            </View>
+                    )}
+                </View>
+            </Content>
         </Container>
     );
 };

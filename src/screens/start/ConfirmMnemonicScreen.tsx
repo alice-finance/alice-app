@@ -6,7 +6,7 @@ import { useNavigation, useNavigationParam } from "react-navigation-hooks";
 import EthereumChain from "@alice-finance/alice.js/dist/chains/EthereumChain";
 import LoomChain from "@alice-finance/alice.js/dist/chains/LoomChain";
 import * as SecureStore from "expo-secure-store";
-import { Button, Container, Text } from "native-base";
+import { Button, Container, Content, Text } from "native-base";
 import CaptionText from "../../components/CaptionText";
 import MnemonicInput from "../../components/MnemonicInput";
 import Spinner from "../../components/Spinner";
@@ -54,27 +54,29 @@ const ConfirmMnemonicScreen = () => {
     }, [confirmed, mnemonic]);
     return (
         <Container>
-            <SubtitleText aboveText={true}>{t("start:confirmSeedPhrase")}</SubtitleText>
-            <CaptionText>{t("start:confirmSeedPhrase.description")}</CaptionText>
-            <View style={preset.marginNormal}>
-                {encrypting ? (
-                    <Spinner compact={true} label={t("common:encrypting")} />
-                ) : (
-                    <View style={preset.marginSmall}>
-                        <MnemonicInput onChangeMnemonic={onChangeMnemonic} style={preset.marginTopNormal} />
-                        {confirmed && (
-                            <Button
-                                block={true}
-                                rounded={true}
-                                disabled={!confirmed}
-                                style={preset.marginTopNormal}
-                                onPress={onComplete}>
-                                <Text>{t("next")}</Text>
-                            </Button>
-                        )}
-                    </View>
-                )}
-            </View>
+            <Content>
+                <SubtitleText aboveText={true}>{t("start:confirmSeedPhrase")}</SubtitleText>
+                <CaptionText>{t("start:confirmSeedPhrase.description")}</CaptionText>
+                <View style={preset.marginNormal}>
+                    {encrypting ? (
+                        <Spinner compact={true} label={t("common:encrypting")} />
+                    ) : (
+                        <View style={preset.marginSmall}>
+                            <MnemonicInput onChangeMnemonic={onChangeMnemonic} style={preset.marginTopNormal} />
+                            {confirmed && (
+                                <Button
+                                    block={true}
+                                    rounded={true}
+                                    disabled={!confirmed}
+                                    style={preset.marginTopNormal}
+                                    onPress={onComplete}>
+                                    <Text>{t("next")}</Text>
+                                </Button>
+                            )}
+                        </View>
+                    )}
+                </View>
+            </Content>
         </Container>
     );
 };
