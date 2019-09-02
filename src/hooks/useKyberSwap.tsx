@@ -1,13 +1,13 @@
 import { useCallback, useContext, useEffect, useState } from "react";
+import { KYBER_FEE_SHARING_ADDRESS } from "react-native-dotenv";
 
-import { Address, ERC20Asset } from "@alice-finance/alice.js";
+import { Address, ERC20Asset, EthereumChain } from "@alice-finance/alice.js";
 import { ZERO_ADDRESS } from "@alice-finance/alice.js/dist/constants";
 import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { getLogs } from "@alice-finance/alice.js/dist/utils/ethers-utils";
 import { ethers } from "ethers";
 import { ChainContext } from "../contexts/ChainContext";
 import { PendingTransactionsContext } from "../contexts/PendingTransactionsContext";
-import Sentry from "../utils/Sentry";
 import useAssetBalancesUpdater from "./useAssetBalancesUpdater";
 
 const KYBER_NETWORK_PROXY_ADDRESS = {
@@ -50,6 +50,40 @@ const convertAddressToKyber = (address: Address): Address => {
     }
 
     return address;
+};
+
+const getKyberSwapLogsAsync = async (
+    kyber: ethers.Contract,
+    ethereumChain: EthereumChain,
+    sourceAsset: ERC20Asset,
+    fromBlock: number,
+    toBlock: number
+) => {
+    const provider = ethereumChain.getProvider();
+    if (fromBlock === 0) {
+        const transaction = await provider.getTransaction(ethereumChain.config.gateway.transactionHash);
+        fromBlock = Number(transaction.blockNumber || 0);
+    }
+    if (toBlock === 0) {
+        const blockNumber = await provider.getBlockNumber();
+        toBlock = Number(blockNumber);
+    }
+    const event = kyber.interface.events.ExecuteTrade;
+    const address = convertAddressToKyber(sourceAsset.ethereumAddress);
+    const logs = await getLogs(provider, {
+        address: kyber.address,
+        topics: [event.topic, ethers.utils.hexZeroPad(ethereumChain.getAddress().toLocalAddressString(), 32)],
+        fromBlock,
+        toBlock
+    });
+    // noinspection TypeScriptValidateJSTypes
+    return logs
+        .sort((l1, l2) => (l2.blockNumber || 0) - (l1.blockNumber || 0))
+        .map(log => ({
+            log,
+            ...event.decode(log.data)
+        }))
+        .filter(data => Address.createEthereumAddress(data.src || ZERO_ADDRESS).equals(address));
 };
 
 const useKyberSwap = () => {
@@ -105,73 +139,66 @@ const useKyberSwap = () => {
             };
 
             if (kyber !== null && ethereumChain !== null) {
-                try {
-                    let value = toBigNumber(0);
-                    const fromAddress = getAddressForKyber(assetFrom);
-                    const toAddress = getAddressForKyber(assetTo);
-                    clearPendingDepositTransactions(assetFrom.ethereumAddress);
+                let value = toBigNumber(0);
+                const fromAddress = getAddressForKyber(assetFrom);
+                const toAddress = getAddressForKyber(assetTo);
+                clearPendingDepositTransactions(assetFrom.ethereumAddress);
 
-                    // Try to swap token
-                    if (assetFrom.symbol !== "ETH") {
-                        const fromERC20 = await ethereumChain.createERC20(assetFrom);
-                        const approvedAmount: ethers.utils.BigNumber = await fromERC20.allowance(
-                            ethereumChain.getAddress().toLocalAddressString(),
-                            kyber.address
-                        );
-
-                        if (approvedAmount.lt(amount)) {
-                            // Try to approve...
-                            const approveTx = await fromERC20.approve(kyber.address, KYBER_MAX_ALLOWANCE);
-                            addPendingDepositTransaction(assetFrom.ethereumAddress, approveTx);
-                            await approveTx.wait();
-                            // approved!
-                        }
-                    } else {
-                        value = amount;
-                    }
-
-                    // Checking rate
-                    const rate = await checkRate(assetFrom, assetTo, amount);
-
-                    if (rate.expectedRate.isZero() || rate.slippageRate.isZero()) {
-                        throw Error("CANNOT EXCHANGE: RATE IS ZERO");
-                    }
-
-                    // Trade
-                    const tradeTx = await kyber.trade(
-                        fromAddress,
-                        value,
-                        toAddress,
+                // Try to swap token
+                if (assetFrom.symbol !== "ETH") {
+                    const fromERC20 = await ethereumChain.createERC20(assetFrom);
+                    const approvedAmount: ethers.utils.BigNumber = await fromERC20.allowance(
                         ethereumChain.getAddress().toLocalAddressString(),
-                        KYBER_MAX_ALLOWANCE,
-                        rate.slippageRate,
-                        "0x0000000000000000000000000000000000000000",
-                        { value, gasLimit: 500000 }
+                        kyber.address
                     );
-                    addPendingDepositTransaction(assetFrom.ethereumAddress, tradeTx);
-                    const receipt = await tradeTx.wait();
-                    // Traded!
 
-                    if (receipt.events && receipt.events.length > 0) {
-                        // Checking events
-                        receipt.events.forEach(event => {
-                            if (event.event === "ExecuteTrade") {
-                                result.fromAmount = event.args[3];
-                                result.convertedAmount = event.args[4];
-                            }
-                        });
-                    } else {
-                        throw Error("EVENTS NOT FIRED!");
+                    if (approvedAmount.lt(amount)) {
+                        // Try to approve...
+                        const approveTx = await fromERC20.approve(kyber.address, KYBER_MAX_ALLOWANCE);
+                        addPendingDepositTransaction(assetFrom.ethereumAddress, approveTx);
+                        await approveTx.wait();
+                        // approved!
                     }
-
-                    await update();
-                    clearPendingDepositTransactions(assetFrom.ethereumAddress);
-                    // Done!
-                } catch (e) {
-                    clearPendingDepositTransactions(assetFrom.ethereumAddress);
-                    Sentry.error(e);
-                    throw e;
+                } else {
+                    value = amount;
                 }
+
+                // Checking rate
+                const rate = await checkRate(assetFrom, assetTo, amount);
+
+                if (rate.expectedRate.isZero() || rate.slippageRate.isZero()) {
+                    throw Error("Got ZERO exchange rate.");
+                }
+
+                // Trade
+                const tradeTx = await kyber.trade(
+                    fromAddress,
+                    value,
+                    toAddress,
+                    ethereumChain.getAddress().toLocalAddressString(),
+                    KYBER_MAX_ALLOWANCE,
+                    rate.slippageRate,
+                    KYBER_FEE_SHARING_ADDRESS || "0x0000000000000000000000000000000000000000",
+                    { value, gasLimit: 500000 }
+                );
+                addPendingDepositTransaction(assetFrom.ethereumAddress, tradeTx);
+                const receipt = await tradeTx.wait();
+                // Traded!
+
+                if (receipt.events && receipt.events.length > 0) {
+                    // Checking events
+                    receipt.events.forEach(event => {
+                        if (event.event === "ExecuteTrade") {
+                            result.fromAmount = event.args[3];
+                            result.convertedAmount = event.args[4];
+                        }
+                    });
+                } else {
+                    throw Error("Cannot get ExecuteTrade event");
+                }
+
+                await update();
+                clearPendingDepositTransactions(assetFrom.ethereumAddress);
             }
 
             return result;
@@ -181,39 +208,10 @@ const useKyberSwap = () => {
 
     const getSwapLogsAsync = useCallback(
         async (sourceAsset: ERC20Asset, fromBlock: number = 0, toBlock: number = 0) => {
-            if (kyber !== null && ethereumChain !== null) {
-                const provider = ethereumChain.getProvider();
-                if (fromBlock === 0) {
-                    const transaction = await provider.getTransaction(ethereumChain.config.gateway.transactionHash);
-                    fromBlock = Number(transaction.blockNumber || 0);
-                }
-                if (toBlock === 0) {
-                    const blockNumber = await provider.getBlockNumber();
-                    toBlock = Number(blockNumber);
-                }
-                const event = kyber.interface.events.ExecuteTrade;
-
-                const logs = await getLogs(provider, {
-                    address: kyber.address,
-                    topics: [
-                        event.topic,
-                        ethers.utils.hexZeroPad(ethereumChain.getAddress().toLocalAddressString(), 32)
-                    ],
-                    fromBlock,
-                    toBlock
-                });
-
-                return logs
-                    .sort((l1, l2) => (l2.blockNumber || 0) - (l1.blockNumber || 0))
-                    .map(log => ({
-                        log,
-                        ...event.decode(log.data)
-                    }))
-                    .filter(data =>
-                        Address.createEthereumAddress(data.src || ZERO_ADDRESS).equals(
-                            convertAddressToKyber(sourceAsset.ethereumAddress)
-                        )
-                    );
+            if (kyber != null && ethereumChain != null) {
+                return getKyberSwapLogsAsync(kyber, ethereumChain, sourceAsset, fromBlock, toBlock);
+            } else {
+                return [];
             }
         },
         [ethereumChain, kyber]
