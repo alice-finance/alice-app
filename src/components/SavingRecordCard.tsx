@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { View } from "react-native";
+import { Alert, View } from "react-native";
 import { Portal } from "react-native-paper";
 import Dialog from "../react-native-paper/Dialog/Dialog";
 
@@ -220,26 +220,47 @@ const DialogContent = ({ record, apr, onChangeAmount, inProgress }) => {
     );
 };
 
-const WithdrawButton = ({ record, onOk, amount, inProgress, setInProgress }) => {
-    const { t } = useTranslation(["finance", "common"]);
+const useWithdraw = () => {
     const { loomChain } = useContext(ChainContext);
-    const { load } = useMySavingsLoader();
     const { setTotalBalance } = useContext(SavingsContext);
-    const onWithdraw = useCallback(async () => {
-        if (loomChain && amount) {
-            setInProgress(true);
-            try {
+    const { load } = useMySavingsLoader();
+
+    const withdraw = useCallback(
+        async (record, amount) => {
+            if (loomChain) {
                 const market = loomChain.getMoneyMarket();
                 const tx = await market.withdraw(record.id, amount);
                 await tx.wait();
-                setTotalBalance(toBigNumber(await market.totalFunds()));
-                await load();
-                SnackBar.success(t("withdrawalComplete"));
                 Sentry.track(Sentry.trackingTopics.SAVINGS_WITHDRAWN, {
                     recordId: record.id.toNumber(),
                     tx: tx.hash,
                     amount: amount.toString()
                 });
+                setTotalBalance(toBigNumber(await market.totalFunds()));
+                await load();
+            }
+        },
+        [loomChain]
+    );
+
+    return { withdraw };
+};
+
+const WithdrawButton = ({ record, onOk, amount, inProgress, setInProgress }) => {
+    const { t } = useTranslation(["finance", "common"]);
+    const { withdraw } = useWithdraw();
+    const onPress = useCallback(() => {
+        Alert.alert(t("withdrawSavings.confirm"), undefined, [
+            { text: t("common:cancel"), style: "cancel" },
+            { text: t("common:ok"), onPress: onWithdraw }
+        ]);
+    }, []);
+    const onWithdraw = useCallback(async () => {
+        if (amount) {
+            setInProgress(true);
+            try {
+                await withdraw(record, amount);
+                SnackBar.success(t("withdrawalComplete"));
                 onOk();
             } catch (e) {
                 SnackBar.danger(e.message);
@@ -248,9 +269,9 @@ const WithdrawButton = ({ record, onOk, amount, inProgress, setInProgress }) => 
                 setInProgress(false);
             }
         }
-    }, [loomChain, amount]);
+    }, [amount]);
     return (
-        <Button rounded={true} transparent={true} onPress={onWithdraw} disabled={!amount || inProgress}>
+        <Button rounded={true} transparent={true} onPress={onPress} disabled={!amount || inProgress}>
             <Text>{t("withdrawSavings")}</Text>
         </Button>
     );
