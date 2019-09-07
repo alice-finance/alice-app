@@ -121,9 +121,9 @@ const sortAssetsByBalance = (assets, getBalance, alice) => {
         assets = assets.filter(asset => asset.symbol !== alice.symbol);
     }
     return assets.sort((t1, t2) =>
-        getBalance(t1.ethereumAddress)
-            .add(getBalance(t1.loomAddress))
-            .sub(getBalance(t2.ethereumAddress).add(getBalance(t2.loomAddress)))
+        getBalance(t2.ethereumAddress)
+            .add(getBalance(t2.loomAddress))
+            .sub(getBalance(t1.ethereumAddress).add(getBalance(t1.loomAddress)))
             .div(pow10(18 - ERC20_MAX_PRECISION))
             .toNumber()
     );
