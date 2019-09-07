@@ -41,7 +41,7 @@ const RankItem = ({ rank }) => {
                 <View style={[preset.flex1, preset.flexDirectionRow, preset.alignItemsCenter]}>
                     <Badge rank={rank.rank} />
                     <View style={[preset.flex1, preset.marginLeftSmall]}>
-                        <Text style={[preset.fontSize20, preset.fontWeightBold, preset.textAlignRight]}>
+                        <Text style={[preset.fontSize20, preset.fontWeightBold]}>
                             {formatValue(toBigNumber(rank.amount), decimals, 4)} {asset!.symbol}
                         </Text>
                         <Text ellipsizeMode="middle" numberOfLines={1} style={preset.fontSize16}>
@@ -66,13 +66,13 @@ const Badge = ({ rank }) => {
     return (
         <View
             style={{
+                justifyContent: "center",
                 backgroundColor: color,
                 borderColor: light ? color : "grey",
                 borderWidth: platform.borderWidth * 2,
                 width: 48,
                 height: 48,
-                borderRadius: 24,
-                paddingTop: 4
+                borderRadius: 24
             }}>
             <Text style={[preset.fontSize24, preset.alignCenter, light ? preset.colorLight : preset.colorGrey]}>
                 {rank}
