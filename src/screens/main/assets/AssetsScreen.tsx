@@ -1,13 +1,14 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { useFocusState, useNavigation } from "react-navigation-hooks";
 import { defaultKeyExtractor } from "../../../utils/react-native-utils";
 
 import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
-import { Body, Button, Container, Icon, ListItem } from "native-base";
+import { Body, Container, Icon, ListItem } from "native-base";
 import BalanceView from "../../../components/BalanceView";
 import CaptionText from "../../../components/CaptionText";
+import SubtitleText from "../../../components/SubtitleText";
 import TitleText from "../../../components/TitleText";
 import TokenIcon from "../../../components/TokenIcon";
 import { Spacing } from "../../../constants/dimension";
@@ -24,74 +25,50 @@ import { pow10 } from "../../../utils/big-number-utils";
 
 const AssetsScreen = () => {
     const { updating, update } = useAssetBalancesUpdater();
-    const { sortedByName, setSortedByName, sortedTokens } = useTokenSorter();
-    const { handlePendingWithdrawal } = usePendingWithdrawalHandler();
     const { isReadOnly } = useContext(ChainContext);
     const { assets } = useContext(AssetContext);
-    const { getPendingWithdrawalTransactions } = useContext(PendingTransactionsContext);
-    const { push, setParams } = useNavigation();
-    const { isFocused } = useFocusState();
-    const { attemptToRecover } = useDepositionRecovery();
-    const onSort = useCallback(() => setSortedByName(!sortedByName), [sortedByName]);
+    const { getBalance } = useContext(BalancesContext);
+    const { push } = useNavigation();
     const onPress = useCallback((asset: ERC20Asset) => push(isReadOnly ? "Start" : "ManageAsset", { asset }), []);
     const renderItem = useCallback(({ item }) => <TokenListItem token={item} onPress={onPress} />, []);
-    const count = assets.reduce(
-        (sum, asset) => sum + (getPendingWithdrawalTransactions(asset.ethereumAddress) || []).length,
-        0
-    );
-    useEffect(() => {
-        setParams({ onSort });
-        update();
-        attemptToRecover();
-    }, []);
-
-    useEffect(() => {
-        if (isFocused && count && Number(count) > 0) {
-            handlePendingWithdrawal();
-        }
-    }, [count, isFocused]);
+    const alice = assets.find(asset => asset.symbol === "ALICE");
+    useAssetsScreenEffects();
     return (
         <Container>
             <FlatList
-                data={sortedTokens()}
+                data={sortAssetsByBalance(assets, getBalance, alice)}
                 keyExtractor={defaultKeyExtractor}
                 renderItem={renderItem}
                 refreshing={updating}
                 onRefresh={update}
-                ListHeaderComponent={<ListHeader />}
+                ListHeaderComponent={<ListHeader alice={alice} onPress={onPress} />}
             />
         </Container>
     );
 };
 
-AssetsScreen.navigationOptions = ({ navigation }) => ({
-    headerRight: (
-        <Button rounded={true} transparent={true} onPress={navigation.getParam("onSort")}>
-            <Icon type="MaterialIcons" name="sort" style={preset.colorPrimary} />
-        </Button>
-    )
-});
-
 AssetsScreen.pendingWithdrawalCount = null;
 
-const useTokenSorter = () => {
-    const [sortedByName, setSortedByName] = useState(false);
+const useAssetsScreenEffects = () => {
+    const { update } = useAssetBalancesUpdater();
     const { assets } = useContext(AssetContext);
-    const { getBalance } = useContext(BalancesContext);
-    const sortedTokens = useCallback(() => {
-        if (sortedByName) {
-            return assets.sort((t1, t2) => t1.symbol.localeCompare(t2.symbol));
-        } else {
-            return assets.sort((t1, t2) =>
-                getBalance(t1.ethereumAddress)
-                    .add(getBalance(t1.loomAddress))
-                    .sub(getBalance(t2.ethereumAddress).add(getBalance(t2.loomAddress)))
-                    .div(pow10(18 - ERC20_MAX_PRECISION))
-                    .toNumber()
-            );
+    const { getPendingWithdrawalTransactions } = useContext(PendingTransactionsContext);
+    const { handlePendingWithdrawal } = usePendingWithdrawalHandler();
+    const { isFocused } = useFocusState();
+    const { attemptToRecover } = useDepositionRecovery();
+    const count = assets.reduce(
+        (sum, asset) => sum + (getPendingWithdrawalTransactions(asset.ethereumAddress) || []).length,
+        0
+    );
+    useEffect(() => {
+        update();
+        attemptToRecover();
+    }, []);
+    useEffect(() => {
+        if (isFocused && count && Number(count) > 0) {
+            handlePendingWithdrawal();
         }
-    }, [assets]);
-    return { sortedByName, setSortedByName, sortedTokens };
+    }, [count, isFocused]);
 };
 
 const TokenListItem = ({ token, onPress }: { token: ERC20Asset; onPress: (ERC20Asset) => void }) => {
@@ -118,12 +95,19 @@ const TokenListItem = ({ token, onPress }: { token: ERC20Asset; onPress: (ERC20A
     );
 };
 
-const ListHeader = () => {
+const ListHeader = ({ alice, onPress }) => {
     const { t } = useTranslation("asset");
     return (
         <View>
             <TitleText aboveText={true}>{t("myAssets")}</TitleText>
             <CaptionText style={preset.marginBottomLarge}>{t("myAssets.description")}</CaptionText>
+            {alice && (
+                <>
+                    <SubtitleText aboveText={true}>{t("alice")}</SubtitleText>
+                    <TokenListItem token={alice} onPress={onPress} />
+                    <SubtitleText aboveText={true}>{t("erc20Assets")}</SubtitleText>
+                </>
+            )}
         </View>
     );
 };
@@ -131,5 +115,18 @@ const ListHeader = () => {
 const styles = StyleSheet.create({
     tokenIcon: { flex: 0, marginLeft: Spacing.small, paddingRight: Spacing.normal }
 });
+
+const sortAssetsByBalance = (assets, getBalance, alice) => {
+    if (alice) {
+        assets = assets.filter(asset => asset.symbol !== alice.symbol);
+    }
+    return assets.sort((t1, t2) =>
+        getBalance(t1.ethereumAddress)
+            .add(getBalance(t1.loomAddress))
+            .sub(getBalance(t2.ethereumAddress).add(getBalance(t2.loomAddress)))
+            .div(pow10(18 - ERC20_MAX_PRECISION))
+            .toNumber()
+    );
+};
 
 export default AssetsScreen;
