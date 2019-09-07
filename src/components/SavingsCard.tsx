@@ -12,6 +12,7 @@ import useAssetBalancesUpdater from "../hooks/useAssetBalancesUpdater";
 import useAsyncEffect from "../hooks/useAsyncEffect";
 import preset from "../styles/preset";
 import { formatValue } from "../utils/big-number-utils";
+import Sentry from "../utils/Sentry";
 import BigNumberText from "./BigNumberText";
 
 const SavingsCard = () => {
@@ -54,29 +55,44 @@ const Column = ({ label, value, suffix = "", small = false }) => (
 );
 
 const Footer = ({ refreshing }) => {
-    const { t } = useTranslation("finance");
-    const { push } = useNavigation();
-    const { isReadOnly } = useContext(ChainContext);
-    const onShowLeaderboard = useCallback(() => push("SavingsLeaderboard"), []);
-    const onStart = useCallback(() => push(isReadOnly ? "Start" : "NewSavings"), []);
     return (
         <CardItem style={preset.marginBottomSmall}>
             <Body style={preset.alignItemsFlexEnd}>
                 <View style={preset.flexDirectionRow}>
-                    <Button primary={true} bordered={true} rounded={true} onPress={onShowLeaderboard}>
-                        <Text style={preset.fontSize16}>{t("leaderboard")}</Text>
-                    </Button>
-                    <Button
-                        primary={true}
-                        rounded={true}
-                        disabled={refreshing}
-                        onPress={onStart}
-                        style={preset.marginLeftSmall}>
-                        <Text style={preset.fontSize16}>{t("startSaving")}</Text>
-                    </Button>
+                    <LeaderboardButton />
+                    <StartSavingButton refreshing={refreshing} />
                 </View>
             </Body>
         </CardItem>
+    );
+};
+
+const LeaderboardButton = () => {
+    const { t } = useTranslation("finance");
+    const { push } = useNavigation();
+    const onShowLeaderboard = useCallback(() => {
+        Sentry.track(Sentry.trackingTopics.LEADERBOARD);
+        push("SavingsLeaderboard");
+    }, []);
+    return (
+        <Button primary={true} bordered={true} rounded={true} onPress={onShowLeaderboard}>
+            <Text style={preset.fontSize16}>{t("leaderboard")}</Text>
+        </Button>
+    );
+};
+
+const StartSavingButton = ({ refreshing }) => {
+    const { t } = useTranslation("finance");
+    const { push } = useNavigation();
+    const { isReadOnly } = useContext(ChainContext);
+    const onStart = useCallback(() => {
+        Sentry.track(Sentry.trackingTopics.START_SAVING);
+        push(isReadOnly ? "Start" : "NewSavings");
+    }, []);
+    return (
+        <Button primary={true} rounded={true} disabled={refreshing} onPress={onStart} style={preset.marginLeftSmall}>
+            <Text style={preset.fontSize16}>{t("startSaving")}</Text>
+        </Button>
     );
 };
 
