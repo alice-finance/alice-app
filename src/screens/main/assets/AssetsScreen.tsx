@@ -24,7 +24,6 @@ import preset from "../../../styles/preset";
 import { pow10 } from "../../../utils/big-number-utils";
 
 const AssetsScreen = () => {
-    const { updating, update } = useAssetBalancesUpdater();
     const { isReadOnly } = useContext(ChainContext);
     const { assets } = useContext(AssetContext);
     const { getBalance } = useContext(BalancesContext);
@@ -32,7 +31,7 @@ const AssetsScreen = () => {
     const onPress = useCallback((asset: ERC20Asset) => push(isReadOnly ? "Start" : "ManageAsset", { asset }), []);
     const renderItem = useCallback(({ item }) => <TokenListItem token={item} onPress={onPress} />, []);
     const alice = assets.find(asset => asset.symbol === "ALICE");
-    useAssetsScreenEffects();
+    const { updating, update } = useAssetsScreenEffects();
     return (
         <Container>
             <FlatList
@@ -50,7 +49,7 @@ const AssetsScreen = () => {
 AssetsScreen.pendingWithdrawalCount = null;
 
 const useAssetsScreenEffects = () => {
-    const { update } = useAssetBalancesUpdater();
+    const { updating, update } = useAssetBalancesUpdater();
     const { assets } = useContext(AssetContext);
     const { getPendingWithdrawalTransactions } = useContext(PendingTransactionsContext);
     const { handlePendingWithdrawal } = usePendingWithdrawalHandler();
@@ -69,6 +68,7 @@ const useAssetsScreenEffects = () => {
             handlePendingWithdrawal();
         }
     }, [count, isFocused]);
+    return { updating, update };
 };
 
 const TokenListItem = ({ token, onPress }: { token: ERC20Asset; onPress: (ERC20Asset) => void }) => {
