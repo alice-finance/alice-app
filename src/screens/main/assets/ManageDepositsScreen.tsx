@@ -147,7 +147,7 @@ const ManageDepositsScreen = () => {
     return (
         <Container>
             <Content>
-                <TitleText aboveText={true}>{t("manageDepositedAmount")}</TitleText>
+                <TitleText aboveText={true}>{t("transferAssets")}</TitleText>
                 <BalanceCard
                     title={t("ethereumNetwork")}
                     description={t("ethereumNetwork.description")}
