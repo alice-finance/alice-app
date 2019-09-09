@@ -267,7 +267,7 @@ const WithdrawButton = ({ record, onOk, amount, inProgress, setInProgress }) => 
         }
     }, [withdraw, amount]);
     const onPress = useCallback(() => {
-        Alert.alert(t("withdrawSavings.confirm"), undefined, [
+        Alert.alert(t("common:warning"), t("withdrawSavings.confirm"), [
             { text: t("common:cancel"), style: "cancel" },
             { text: t("common:ok"), onPress: onWithdraw }
         ]);
