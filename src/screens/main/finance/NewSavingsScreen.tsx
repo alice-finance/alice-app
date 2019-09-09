@@ -17,6 +17,7 @@ import { SavingsContext } from "../../../contexts/SavingsContext";
 import useSavingsStarter from "../../../hooks/useSavingsStarter";
 import preset from "../../../styles/preset";
 import { formatValue } from "../../../utils/big-number-utils";
+import Sentry from "../../../utils/Sentry";
 
 const NewSavingsScreen = () => {
     const { push } = useNavigation();
@@ -30,7 +31,10 @@ const NewSavingsScreen = () => {
     const myBalance = getBalance(asset!.loomAddress);
     const myBalanceText = formatValue(myBalance, asset!.decimals) + " " + asset!.symbol;
     const { starting, start } = useSavingsStarter(asset, amount);
-    const onPressManageAsset = useCallback(() => push("ManageAsset", { asset }), []);
+    const onPressManageAsset = useCallback(() => {
+        Sentry.track(Sentry.trackingTopics.MANAGE_ASSETS);
+        push("AssetsTab");
+    }, []);
     useEffect(() => {
         const refresh = async () => {
             const balance = await loomChain!.balanceOfERC20Async(asset!);

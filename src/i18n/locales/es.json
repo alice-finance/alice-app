@@ -25,7 +25,7 @@
         "generatingSeedPhrase": "Generando frase de semilla...",
         "encrypting": "Encriptando su clave privada...",
         "blogUrl": "https://medium.com/alice-finance",
-        "telegramUrl": "https://t.me/alicefinance"
+        "telegramUrl": "https://t.me/alicefinanceespanol"
     },
     "auth": {
         "authentication": "Autenticación",
@@ -189,7 +189,7 @@
     "finance": {
         "aliceIFO": "Gana ALICE Gratis",
         "aliceIFO.description": "¡Deposite monedas estables DAI y gane una cantidad equivalente de tokens ALICE cada 24 horas!",
-        "aliceIFO.blogUrl": "https://medium.com/alice-finance/alice-token-ifo-364ddc598c1d",
+        "aliceIFO.blogUrl": "https://medium.com/alice-finance-español/alice-ifo-f1d19358fa4",
         "aliceIFO.more": "Más Info",
         "start": "Comienzo",
         "start.depositAsset": "Por favor deposite los activos",
@@ -219,6 +219,7 @@
         "principal": "El capital",
         "withdrawSavings": "Retirar",
         "withdrawSavings.description": "Puede retirar algunas o todas las cantidades.",
+        "withdrawSavings.confirm": "Su retiro comenzará a acumularse después de 24 horas. ¿Te retirarías?",
         "noWithdrawalHistory": "Sin historial de retiro",
         "withdrawalComplete": "Su retiro se ha completado.",
         "loan": "Préstamo hipotecario",

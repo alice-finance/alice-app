@@ -7,7 +7,7 @@ import EthereumChain from "@alice-finance/alice.js/dist/chains/EthereumChain";
 import LoomChain from "@alice-finance/alice.js/dist/chains/LoomChain";
 import { wordlists } from "bip39";
 import * as SecureStore from "expo-secure-store";
-import { Button, Container, Text } from "native-base";
+import { Button, Container, Content, Text } from "native-base";
 import CaptionText from "../../components/CaptionText";
 import MnemonicInput from "../../components/MnemonicInput";
 import Spinner from "../../components/Spinner";
@@ -46,7 +46,7 @@ const ImportMnemonicScreen = () => {
                         const ethereumChain = new EthereumChain(ethereumPrivateKey, __DEV__);
                         const loomChain = new LoomChain(loomPrivateKey, __DEV__);
                         await mapAccounts(ethereumChain, loomChain);
-                        Sentry.track(Sentry.trackingTopics.KEY_IMPORTED);
+                        Sentry.track(Sentry.trackingTopics.WALLET_IMPORTED);
                         push("Complete");
                     } finally {
                         setEncrypting(false);
@@ -58,27 +58,29 @@ const ImportMnemonicScreen = () => {
     }, [confirmed, mnemonic]);
     return (
         <Container>
-            <SubtitleText aboveText={true}>{t("importSeedPhrase")}</SubtitleText>
-            <CaptionText>{t("importSeedPhrase.description")}</CaptionText>
-            <View style={preset.marginNormal}>
-                {encrypting ? (
-                    <Spinner compact={true} label={t("common:encrypting")} />
-                ) : (
-                    <View style={preset.marginSmall}>
-                        <MnemonicInput onChangeMnemonic={onChangeMnemonic} style={preset.marginTopNormal} />
-                        {confirmed && (
-                            <Button
-                                block={true}
-                                rounded={true}
-                                disabled={!confirmed}
-                                style={preset.marginTopNormal}
-                                onPress={onComplete}>
-                                <Text>{t("common:next")}</Text>
-                            </Button>
-                        )}
-                    </View>
-                )}
-            </View>
+            <Content>
+                <SubtitleText aboveText={true}>{t("importSeedPhrase")}</SubtitleText>
+                <CaptionText>{t("importSeedPhrase.description")}</CaptionText>
+                <View style={preset.marginNormal}>
+                    {encrypting ? (
+                        <Spinner compact={true} label={t("common:encrypting")} />
+                    ) : (
+                        <View style={preset.marginSmall}>
+                            <MnemonicInput onChangeMnemonic={onChangeMnemonic} style={preset.marginTopNormal} />
+                            {confirmed && (
+                                <Button
+                                    block={true}
+                                    rounded={true}
+                                    disabled={!confirmed}
+                                    style={preset.marginTopNormal}
+                                    onPress={onComplete}>
+                                    <Text>{t("common:next")}</Text>
+                                </Button>
+                            )}
+                        </View>
+                    )}
+                </View>
+            </Content>
         </Container>
     );
 };

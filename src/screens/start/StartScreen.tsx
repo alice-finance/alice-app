@@ -8,12 +8,19 @@ import CaptionText from "../../components/CaptionText";
 import SubtitleText from "../../components/SubtitleText";
 import { Spacing } from "../../constants/dimension";
 import preset from "../../styles/preset";
+import Sentry from "../../utils/Sentry";
 
 const StartScreen = () => {
     const { t } = useTranslation("start");
     const { push } = useNavigation();
-    const onCreateWallet = useCallback(() => push("NewMnemonic"), []);
-    const onImportWallet = useCallback(() => push("ImportMnemonic"), []);
+    const onCreateWallet = useCallback(() => {
+        Sentry.track(Sentry.trackingTopics.CREATE_WALLET);
+        push("NewMnemonic");
+    }, []);
+    const onImportWallet = useCallback(() => {
+        Sentry.track(Sentry.trackingTopics.IMPORT_WALLET);
+        push("ImportMnemonic");
+    }, []);
     return (
         <Container>
             <SubtitleText aboveText={true}>{t("createYourWallet")}</SubtitleText>
