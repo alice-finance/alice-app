@@ -7,46 +7,109 @@ import Dialog from "../react-native-paper/Dialog/Dialog";
 import { SavingsRecord } from "@alice-finance/alice.js/dist/contracts/MoneyMarket";
 import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { BigNumber } from "ethers/utils";
-import { Button, Card, CardItem, Icon, Left, Spinner as NativeSpinner, Text } from "native-base";
+import { Body, Button, Card, CardItem, Icon, Left, Spinner as NativeSpinner, Text } from "native-base";
 import { ChainContext } from "../contexts/ChainContext";
 import { SavingsContext } from "../contexts/SavingsContext";
 import useAliceClaimer from "../hooks/useAliceClaimer";
+import useAsyncEffect from "../hooks/useAsyncEffect";
 import useMySavingsLoader from "../hooks/useMySavingsLoader";
 import preset from "../styles/preset";
 import { formatValue } from "../utils/big-number-utils";
+import { fetchCollection } from "../utils/firebase-utils";
 import { compoundToAPR } from "../utils/interest-rate-utils";
 import Sentry from "../utils/Sentry";
 import SnackBar from "../utils/SnackBar";
 import AmountInput from "./AmountInput";
 import BigNumberText from "./BigNumberText";
 import MomentText from "./MomentText";
+import NoteText from "./NoteText";
 import Row from "./Row";
 import Spinner from "./Spinner";
+import TokenIcon from "./TokenIcon";
 
 const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
-    const { decimals } = useContext(SavingsContext);
-    const { claimableAt, claimableAmount, claim, claiming } = useAliceClaimer(record);
+    const { asset, decimals } = useContext(SavingsContext);
     const [apr] = useState(() => compoundToAPR(record.interestRate, decimals));
     return (
         <View style={[preset.marginNormal]} key={record.id.toString()}>
             <Card>
-                <Header
-                    record={record}
-                    claimableAt={claimableAt}
-                    claimableAmount={claimableAmount}
-                    claim={claim}
-                    claiming={claiming}
-                />
-                <Body record={record} apr={apr} />
-                <Actions record={record} apr={apr} />
+                <Header asset={asset} apr={apr} record={record} />
+                <Main asset={asset} record={record} />
+                <Notes record={record} apr={apr} />
+                <Footer record={record} decimals={decimals} />
             </Card>
         </View>
     );
 };
 
-const Header = ({ record, claimableAt, claimableAmount, claim, claiming }) => {
-    const { asset } = useContext(SavingsContext);
+const Header = ({ asset, apr, record }) => {
+    const { t } = useTranslation("finance");
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const openDialog = () => setDialogOpen(true);
+    const closeDialog = () => setDialogOpen(false);
+    return (
+        <>
+            <CardItem>
+                <Left>
+                    <TokenIcon address={asset!.ethereumAddress.toLocalAddressString()} width={32} height={32} />
+                    <Body style={preset.marginLeftNormal}>
+                        <Text style={[preset.fontSize20, preset.colorGrey]}>{asset!.name}</Text>
+                    </Body>
+                </Left>
+                <Button primary={true} rounded={true} transparent={true} small={true} onPress={openDialog}>
+                    <Text style={{ paddingRight: 12 }}>{t("withdrawSavings")}</Text>
+                </Button>
+            </CardItem>
+            <WithdrawDialog visible={dialogOpen} apr={apr} onCancel={closeDialog} onOk={closeDialog} record={record} />
+        </>
+    );
+};
+
+const Main = ({ asset, record }) => {
+    const { t } = useTranslation("finance");
+    const [profit] = useState(
+        record.balance
+            .add(record.withdrawals.reduce((previous, current) => previous.add(current.amount), toBigNumber(0)))
+            .sub(record.principal)
+    );
+    const { claimedAmount } = useClaimedAmountUpdater(record);
+    const assetSuffix = " " + asset!.symbol;
+    return (
+        <>
+            <CardItem>
+                <View style={preset.flexDirectionRow}>
+                    <View style={[preset.flex1, preset.alignItemsFlexEnd]}>
+                        <Text style={preset.fontSize20}>{t("myBalance")}</Text>
+                        <Text style={preset.fontSize20}>{t("interestEarned")}</Text>
+                        <Text style={preset.fontSize20}>{t("claimedRewards")}</Text>
+                    </View>
+                    <View style={[preset.flex2, preset.alignItemsCenter]}>
+                        <BigNumberText value={record.balance} suffix={assetSuffix} style={preset.fontWeightBold} />
+                        <BigNumberText value={profit} suffix={assetSuffix} style={preset.fontWeightBold} />
+                        <BigNumberText value={claimedAmount} suffix={" ALICE"} style={preset.fontWeightBold} />
+                    </View>
+                </View>
+            </CardItem>
+        </>
+    );
+};
+
+const Notes = ({ apr, record }) => {
+    const { t } = useTranslation("finance");
+    return (
+        <View style={[preset.alignFlexEnd, preset.flexDirectionRow, preset.marginLeftNormal, preset.marginRightNormal]}>
+            <MomentText date={record.initialTimestamp} note={true} />
+            <NoteText> / {t("apr")} </NoteText>
+            <BigNumberText value={apr} suffix={"%"} decimalPlaces={2} style={[preset.fontSize14, preset.colorGrey]} />
+        </View>
+    );
+};
+
+const Footer = ({ record, decimals }) => {
+    const { claim, claiming } = useAliceClaimer(record);
+    const { claimableAt, claimableAmount } = useAliceClaimer(record);
     const [claimable, setClaimable] = useState(claimableAt && claimableAt.getTime() <= Date.now());
+    const amount = claimableAmount ? formatValue(claimableAmount, decimals) : "";
     useEffect(() => {
         setClaimable(claimableAt && claimableAt.getTime() <= Date.now());
         let handle = 0;
@@ -55,35 +118,20 @@ const Header = ({ record, claimableAt, claimableAmount, claim, claiming }) => {
         }
         return () => clearTimeout(handle);
     }, [claimableAt]);
-    return (
-        <CardItem>
-            <View style={preset.flexDirectionRow}>
-                <View style={[preset.flex1, preset.marginSmall]}>
-                    <Text style={[preset.fontSize24, preset.fontWeightBold]}>
-                        {formatValue(record.balance, asset!.decimals)} {asset!.symbol}
-                    </Text>
-                    <ClaimText claimableAt={claimableAt} claimableAmount={claimableAmount} claimable={claimable} />
-                </View>
-                <ClaimButton claimable={claimable} claim={claim} claiming={claiming} />
-            </View>
-        </CardItem>
-    );
-};
-
-const ClaimText = ({ claimableAt, claimableAmount, claimable }) => {
-    const { t } = useTranslation("finance");
-    const { decimals } = useContext(SavingsContext);
-    const text = claimableAt ? (claimable ? "youCanClaimNow" : "youCanClaim") : "calculatingClaim";
-    const amount = claimableAmount ? formatValue(claimableAmount, decimals) : "";
-    return (
-        <View style={preset.flexDirectionRow}>
-            <Text note={true}>{t(text, { amount })}</Text>
-            {claimableAt && !claimable && <MomentText date={claimableAt} note={true} />}
+    return claiming ? (
+        <NativeSpinner size={"small"} style={[preset.marginRightNormal]} />
+    ) : claimable ? (
+        <View style={preset.marginNormal}>
+            <ClaimButton claim={claim} amount={amount} />
+        </View>
+    ) : (
+        <View style={preset.marginNormal}>
+            <DisabledClaimButton claimableAt={claimableAt} />
         </View>
     );
 };
 
-const ClaimButton = ({ claimable, claim, claiming }) => {
+const ClaimButton = ({ claim, amount }) => {
     const { t } = useTranslation("finance");
     const onClaim = useCallback(async () => {
         try {
@@ -94,72 +142,28 @@ const ClaimButton = ({ claimable, claim, claiming }) => {
             Sentry.error(e);
         }
     }, [claim]);
-    return claiming ? (
-        <NativeSpinner size={"small"} style={[preset.marginRightNormal, { marginBottom: -16 }]} />
-    ) : (
-        <Button
-            info={true}
-            rounded={true}
-            transparent={true}
-            disabled={!claimable}
-            onPress={onClaim}
-            style={preset.marginTopNormal}>
-            <View style={[preset.flexDirectionColumn, preset.alignItemsCenter]}>
-                <Icon type={"AntDesign"} name={"gift"} />
-                <Text style={preset.fontSize12}>{t("claimAlice")}</Text>
-            </View>
+    return (
+        <Button primary={true} rounded={true} bordered={true} block={true} onPress={onClaim} iconLeft={true}>
+            <Icon type={"AntDesign"} name={"gift"} />
+            <Text>{t("claimAlice", { amount })}</Text>
         </Button>
     );
 };
 
-const Body = ({ record, apr }: { record: SavingsRecord; apr: BigNumber }) => {
+const DisabledClaimButton = ({ claimableAt }) => {
     const { t } = useTranslation("finance");
-    const [profit] = useState(
-        record.balance
-            .add(record.withdrawals.reduce((previous, current) => previous.add(current.amount), toBigNumber(0)))
-            .sub(record.principal)
-        // .mul(toBigNumber("100").mul(toBigNumber(10).pow(toBigNumber(decimals))))
-        // .div(record.principal)
-    );
     return (
-        <CardItem>
-            <View style={[preset.marginLeftSmall, preset.flex2]}>
-                <Text note={true} style={preset.marginLeft0}>
-                    {t("elapsed")}
-                </Text>
-                <MomentText date={record.initialTimestamp} ago={true} />
+        <Button primary={true} rounded={true} bordered={true} block={true} disabled={true} iconLeft={true}>
+            <Icon type={"MaterialCommunityIcons"} name={"clock-outline"} style={{ color: "grey" }} />
+            <View style={preset.flexDirectionRow}>
+                <NoteText style={{ paddingRight: 0 }}>{t("youCanClaim")}</NoteText>
+                {claimableAt ? (
+                    <MomentText date={claimableAt} ago={true} note={true} />
+                ) : (
+                    <NoteText>{t("loading")}</NoteText>
+                )}
             </View>
-            <View style={[preset.marginLeftSmall, preset.flex3]}>
-                <Text note={true} style={preset.marginLeft0}>
-                    {t("interestEarned")}
-                </Text>
-                <BigNumberText value={profit} suffix={""} prefix={"$"} />
-            </View>
-            <View style={[preset.marginLeftSmall, preset.marginRightSmall, preset.flex2]}>
-                <Text note={true} style={preset.marginLeft0}>
-                    {t("apr")}
-                </Text>
-                <BigNumberText value={apr} suffix={"%"} decimalPlaces={2} />
-            </View>
-        </CardItem>
-    );
-};
-
-const Actions = ({ record, apr }) => {
-    const { t } = useTranslation("finance");
-    const [dialogOpen, setDialogOpen] = useState(false);
-    const openDialog = () => setDialogOpen(true);
-    const closeDialog = () => setDialogOpen(false);
-    return (
-        <View style={preset.marginBottomTiny}>
-            <CardItem>
-                <Left />
-                <Button primary={true} rounded={true} transparent={true} small={true} onPress={openDialog}>
-                    <Text style={{ paddingRight: 12 }}>{t("withdrawSavings")}</Text>
-                </Button>
-            </CardItem>
-            <WithdrawDialog visible={dialogOpen} apr={apr} onCancel={closeDialog} onOk={closeDialog} record={record} />
-        </View>
+        </Button>
     );
 };
 
@@ -222,7 +226,6 @@ const DialogContent = ({ record, apr, onChangeAmount, inProgress }) => {
 
 const useWithdraw = () => {
     const { loomChain } = useContext(ChainContext);
-    const { setTotalBalance } = useContext(SavingsContext);
     const { load } = useMySavingsLoader();
 
     const withdraw = useCallback(
@@ -236,7 +239,6 @@ const useWithdraw = () => {
                     tx: tx.hash,
                     amount: amount.toString()
                 });
-                setTotalBalance(toBigNumber(await market.totalFunds()));
                 await load();
                 return true;
             }
@@ -277,6 +279,22 @@ const WithdrawButton = ({ record, onOk, amount, inProgress, setInProgress }) => 
             <Text>{t("withdrawSavings")}</Text>
         </Button>
     );
+};
+
+const useClaimedAmountUpdater = (record: SavingsRecord) => {
+    const [claimedAmount, setClaimedAmount] = useState(toBigNumber(0));
+    useAsyncEffect(async () => {
+        const claims = await fetchCollection(ref =>
+            ref
+                .doc("events")
+                .collection("Claimed")
+                .where("recordId", "==", record.id.toNumber())
+        );
+        setClaimedAmount(
+            claims.reduce<BigNumber>((previous, current) => previous.add(toBigNumber(current.amount)), toBigNumber(0))
+        );
+    }, [record.balance]);
+    return { claimedAmount };
 };
 
 export default SavingRecordCard;

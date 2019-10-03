@@ -8,7 +8,7 @@ import { Spacing } from "../constants/dimension";
 const Spinner = ({ compact = false, label = "" }) => (
     <View>
         <NativeSpinner color={platform.brandPrimary} style={{ marginTop: compact ? 0 : Spacing.huge * 2 }} />
-        <Text style={{ alignSelf: "center", color: "grey" }}>{label}</Text>
+        {label.length > 0 && <Text style={{ alignSelf: "center", color: "grey" }}>{label}</Text>}
     </View>
 );
 

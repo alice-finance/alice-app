@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
-import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { Body, Button, Card, CardItem, Left, Text } from "native-base";
 import TokenIcon from "../components/TokenIcon";
 import { ChainContext } from "../contexts/ChainContext";
@@ -11,33 +10,34 @@ import { SavingsContext } from "../contexts/SavingsContext";
 import useAssetBalancesUpdater from "../hooks/useAssetBalancesUpdater";
 import useAsyncEffect from "../hooks/useAsyncEffect";
 import preset from "../styles/preset";
-import { formatValue } from "../utils/big-number-utils";
 import Sentry from "../utils/Sentry";
 import BigNumberText from "./BigNumberText";
+import Spinner from "./Spinner";
 
 const SavingsCard = () => {
     const { t } = useTranslation("finance");
-    const { isReadOnly } = useContext(ChainContext);
-    const { asset, totalBalance, myTotalBalance, apr } = useContext(SavingsContext);
+    const { asset, apr } = useContext(SavingsContext);
     const { updating, update } = useAssetBalancesUpdater();
-    const refreshing = !asset || !totalBalance || updating;
+    const refreshing = !asset || updating;
     useAsyncEffect(update, []);
     return (
         <View style={[preset.marginNormal]}>
             <Card>
+                <Header asset={asset} />
                 <CardItem>
-                    <Left>
-                        <TokenIcon address={asset!.ethereumAddress.toLocalAddressString()} width={56} height={56} />
-                        <Body style={preset.marginLeftNormal}>
-                            <Text style={[preset.fontSize24, preset.fontWeightBold]}>{asset!.name}</Text>
-                            <MySavingsSummaryText />
-                        </Body>
-                    </Left>
-                </CardItem>
-                <CardItem style={preset.marginRightSmall}>
-                    <Column label={t("totalBalance")} value={totalBalance} />
-                    {!isReadOnly && <Column label={t("mySavings")} value={myTotalBalance} />}
-                    <Column label={t("apr")} value={apr} suffix={"%"} small={!isReadOnly} />
+                    <View style={[preset.flex1, preset.flexDirectionColumn, preset.alignItemsCenter]}>
+                        <Text style={[preset.fontSize16]}>{t("currentApr")}</Text>
+                        {apr ? (
+                            <BigNumberText
+                                value={apr}
+                                suffix={"%"}
+                                decimalPlaces={2}
+                                style={[preset.fontSize48, preset.fontWeightBold]}
+                            />
+                        ) : (
+                            <Spinner compact={true} />
+                        )}
+                    </View>
                 </CardItem>
                 <Footer refreshing={refreshing} />
             </Card>
@@ -45,38 +45,39 @@ const SavingsCard = () => {
     );
 };
 
-const Column = ({ label, value, suffix = "", small = false }) => (
-    <View style={[preset.marginLeftSmall, small ? preset.flex1 : preset.flex2]}>
-        <Text note={true} style={preset.marginLeft0}>
-            {label}
-        </Text>
-        <BigNumberText value={value} suffix={suffix} decimalPlaces={small ? 2 : 4} />
-    </View>
+const Header = ({ asset }) => (
+    <CardItem>
+        <Left>
+            <TokenIcon address={asset!.ethereumAddress.toLocalAddressString()} width={32} height={32} />
+            <Body style={preset.marginLeftNormal}>
+                <Text style={[preset.fontSize20, preset.colorGrey]}>{asset!.name}</Text>
+            </Body>
+        </Left>
+    </CardItem>
 );
 
 const Footer = ({ refreshing }) => {
     return (
-        <CardItem style={preset.marginBottomSmall}>
-            <Body style={preset.alignItemsFlexEnd}>
-                <View style={preset.flexDirectionRow}>
-                    <LeaderboardButton />
-                    <StartSavingButton refreshing={refreshing} />
-                </View>
-            </Body>
+        <CardItem>
+            <View style={[preset.flex1, preset.flexDirectionRow]}>
+                <SavingsSimulationButton />
+                <View style={preset.marginTiny} />
+                <StartSavingButton refreshing={refreshing} />
+            </View>
         </CardItem>
     );
 };
 
-const LeaderboardButton = () => {
+const SavingsSimulationButton = () => {
     const { t } = useTranslation("finance");
     const { push } = useNavigation();
     const onShowLeaderboard = useCallback(() => {
-        Sentry.track(Sentry.trackingTopics.LEADERBOARD);
-        push("SavingsLeaderboard");
+        Sentry.track(Sentry.trackingTopics.SIMULATION);
+        push("SavingsSimulation");
     }, []);
     return (
-        <Button primary={true} bordered={true} rounded={true} onPress={onShowLeaderboard}>
-            <Text style={preset.fontSize16}>{t("leaderboard")}</Text>
+        <Button primary={true} bordered={true} rounded={true} onPress={onShowLeaderboard} style={preset.flex1}>
+            <Text style={preset.fontSize16}>{t("simulation")}</Text>
         </Button>
     );
 };
@@ -90,21 +91,10 @@ const StartSavingButton = ({ refreshing }) => {
         push(isReadOnly ? "Start" : "NewSavings");
     }, []);
     return (
-        <Button primary={true} rounded={true} disabled={refreshing} onPress={onStart} style={preset.marginLeftSmall}>
+        <Button primary={true} rounded={true} disabled={refreshing} onPress={onStart} style={preset.flex1}>
             <Text style={preset.fontSize16}>{t("startSaving")}</Text>
         </Button>
     );
-};
-
-const MySavingsSummaryText = () => {
-    const { t } = useTranslation("finance");
-    const { myTotalPrincipal, myTotalBalance, myTotalWithdrawal } = useContext(SavingsContext);
-    let profit = toBigNumber(0);
-    if (myTotalPrincipal && myTotalBalance && myTotalWithdrawal && !myTotalPrincipal.isZero()) {
-        profit = myTotalBalance.add(myTotalWithdrawal).sub(myTotalPrincipal);
-    }
-    const text = myTotalPrincipal && !myTotalPrincipal.isZero() ? "$" + formatValue(profit, 18) : t("startSavingsNow");
-    return <Text style={profit.isZero() ? preset.colorGrey : preset.colorInfo}>{text}</Text>;
 };
 
 export default SavingsCard;

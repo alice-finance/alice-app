@@ -9,10 +9,10 @@ import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils
 import { Linking } from "expo";
 import { Body, Button, Container, Content, Icon, ListItem, Text } from "native-base";
 import platform from "../../../../native-base-theme/variables/platform";
-import AliceIFOView from "../../../components/AliceIFOView";
 import CaptionText from "../../../components/CaptionText";
 import EmptyView from "../../../components/EmptyView";
 import MomentText from "../../../components/MomentText";
+import NoteText from "../../../components/NoteText";
 import SavingRecordCard from "../../../components/SavingRecordCard";
 import SavingsCard from "../../../components/SavingsCard";
 import Spinner from "../../../components/Spinner";
@@ -36,24 +36,24 @@ const FinanceScreen = () => {
     const { setParams } = useNavigation();
     const { t } = useTranslation("finance");
     const { isReadOnly } = useContext(ChainContext);
-    const { myTotalBalance } = useContext(SavingsContext);
     const { assets } = useContext(AssetContext);
+    const { updateAPR } = useAPRUpdater();
     const alice = assets.find(a => a.symbol === "ALICE");
     const onPress = useCallback(() => Linking.openURL(t("common:blogUrl")), []);
-    useScheduledUpdater();
     usePasscodeRegistration();
     useEffect(() => {
         setParams({ onPress });
+        updateAPR();
     }, []);
     return (
         <Container>
             <Content>
                 <View>
-                    {(isReadOnly || (myTotalBalance && myTotalBalance.isZero())) && <AliceIFOView />}
                     <TitleText aboveText={true}>{t("savings")}</TitleText>
                     <CaptionText style={preset.marginBottomNormal}>{t("savings.description")}</CaptionText>
-                    <SavingsCard />
                     {!isReadOnly && <MySavings />}
+                    <SubtitleText aboveText={true}>{t("newSavings")}</SubtitleText>
+                    <NewSavings />
                     <RecentSavings />
                     <RecentClaims asset={alice} />
                 </View>
@@ -72,13 +72,11 @@ FinanceScreen.navigationOptions = ({ navigation }) => ({
 
 const MySavings = () => {
     const { t } = useTranslation("finance");
-    const { totalBalance, myRecords } = useContext(SavingsContext);
+    const { myRecords } = useContext(SavingsContext);
     const { load } = useMySavingsLoader();
     useEffect(() => {
-        if (totalBalance) {
-            load();
-        }
-    }, [totalBalance]);
+        load();
+    }, []);
     const sortedMyRecords = myRecords
         ? myRecords
               .filter(r => !r.balance.isZero())
@@ -87,7 +85,7 @@ const MySavings = () => {
     return (
         <View>
             <SubtitleText aboveText={true} style={[preset.flex1, preset.marginTopNormal]}>
-                {t("mySavings")}
+                {t("myProfits")}
             </SubtitleText>
             <MySavingsCarousel myRecords={sortedMyRecords} />
         </View>
@@ -110,6 +108,8 @@ const MySavingsCarousel = ({ myRecords }) => {
                     activeSlideAlignment={"start"}
                     inactiveSlideScale={1.0}
                     onSnapToItem={setSelection}
+                    contentContainerCustomStyle={{ flexGrow: 0 }}
+                    containerCustomStyle={{ flexGrow: 0 }}
                 />
                 <Pagination dotsLength={myRecords.length} activeDotIndex={selection} dotColor={platform.colorPrimary} />
             </View>
@@ -118,6 +118,16 @@ const MySavingsCarousel = ({ myRecords }) => {
         )
     ) : (
         <Spinner compact={true} />
+    );
+};
+
+const NewSavings = () => {
+    const { t } = useTranslation("finance");
+    return (
+        <View style={preset.marginBottomLarge}>
+            <SavingsCard />
+            <NoteText style={[preset.alignFlexEnd, preset.marginRightNormal]}>{t("newSavings.note")}</NoteText>
+        </View>
     );
 };
 
@@ -133,9 +143,7 @@ const RecentSavings = () => {
                 <SubtitleText aboveText={true} style={[preset.flex1]}>
                     {t("recentSavings")}
                 </SubtitleText>
-                <Button transparent={true} rounded={true} small={true} onPress={onPress} style={preset.marginNormal}>
-                    <Text>{t("common:refresh")}</Text>
-                </Button>
+                <RefreshButton onPress={onPress} />
             </View>
             {recentSavings ? (
                 <FlatList
@@ -190,9 +198,7 @@ const RecentClaims = ({ asset }) => {
                 <SubtitleText aboveText={true} style={[preset.flex1]}>
                     {t("recentClaims")}
                 </SubtitleText>
-                <Button transparent={true} rounded={true} small={true} onPress={onPress} style={preset.marginNormal}>
-                    <Text>{t("common:refresh")}</Text>
-                </Button>
+                <RefreshButton onPress={onPress} />
             </View>
             {recentClaims ? (
                 <FlatList
@@ -228,20 +234,20 @@ const ClaimItem = ({ claim, asset }) => {
     );
 };
 
-const useScheduledUpdater = () => {
+const RefreshButton = ({ onPress }) => (
+    <Button transparent={true} rounded={true} onPress={onPress} style={[preset.alignFlexEnd, preset.marginRightNormal]}>
+        <Icon type={"MaterialIcons"} name={"refresh"} style={preset.fontSize24} />
+    </Button>
+);
+
+const useAPRUpdater = () => {
     const { loomChain } = useContext(ChainContext);
-    const { totalBalance, setTotalBalance, apr, setAPR } = useContext(SavingsContext);
-    useEffect(() => {
-        const refresh = async () => {
-            const market = loomChain!.getMoneyMarket();
-            setTotalBalance(toBigNumber(await market.totalFunds()));
-            setAPR(toBigNumber(await market.getCurrentSavingsAPR()).mul(toBigNumber(100)));
-        };
-        refresh();
-        const handle = setInterval(() => refresh(), 60 * 1000);
-        return () => clearInterval(handle);
+    const { setAPR } = useContext(SavingsContext);
+    const updateAPR = useCallback(async () => {
+        const market = loomChain!.getMoneyMarket();
+        setAPR(toBigNumber(await market.getCurrentSavingsAPR()).mul(toBigNumber(100)));
     }, []);
-    return { apr, totalSavings: totalBalance };
+    return { updateAPR };
 };
 
 const usePasscodeRegistration = () => {
