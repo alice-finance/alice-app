@@ -60,8 +60,8 @@ const Footer = ({ refreshing }) => {
     return (
         <CardItem>
             <View style={[preset.flex1, preset.flexDirectionRow]}>
-                <SavingsSimulationButton />
-                <View style={preset.marginTiny} />
+                {/*<SavingsSimulationButton />*/}
+                {/*<View style={preset.marginTiny} />*/}
                 <StartSavingButton refreshing={refreshing} />
             </View>
         </CardItem>
