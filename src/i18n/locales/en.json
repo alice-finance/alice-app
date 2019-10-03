@@ -241,7 +241,9 @@
         "claimingAlice": "Claiming...",
         "claimedAlice": "You've received {{amount}} ALICE",
         "recentSavings": "Recent Savings",
-        "recentClaims": "Recent ALICE Claims"
+        "recentSavings.description": "Other users are saving too.",
+        "recentClaims": "Recent Claims",
+        "recentClaims.description": "Other users are claiming rewards too."
     },
     "update": {
         "title": "There is an essential update",

@@ -145,6 +145,7 @@ const RecentSavings = () => {
                 </SubtitleText>
                 <RefreshButton onPress={onPress} />
             </View>
+            <CaptionText>{t("recentSavings.description")}</CaptionText>
             {recentSavings ? (
                 <FlatList
                     data={recentSavings}
@@ -164,7 +165,7 @@ const SavingsItem = ({ savings }) => {
     const onPress = useCallback(() => openTx(savings.transactionHash), []);
     const [apr] = useState(() => compoundToAPR(savings.rate, decimals));
     return (
-        <ListItem button={true} noBorder={true} iconRight={true} onPress={onPress}>
+        <ListItem button={true} iconRight={true} onPress={onPress}>
             <Body style={[preset.flex0, preset.marginLeftSmall, preset.marginRightSmall]}>
                 <TokenIcon address={asset!.ethereumAddress.toLocalAddressString()} width={32} height={32} />
                 <Text style={[preset.fontSize16, preset.textAlignCenter, { marginLeft: 0 }]}>
@@ -200,6 +201,7 @@ const RecentClaims = ({ asset }) => {
                 </SubtitleText>
                 <RefreshButton onPress={onPress} />
             </View>
+            <CaptionText>{t("recentClaims.description")}</CaptionText>
             {recentClaims ? (
                 <FlatList
                     data={recentClaims}

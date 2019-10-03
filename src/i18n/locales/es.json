@@ -240,7 +240,9 @@
         "claimingAlice": "Reclamando...",
         "claimedAlice": "Has recibido {{amount}} ALICE",
         "recentSavings": "Ahorros recientes",
-        "recentClaims": "Reclamaciones recientes de ALICE"
+        "recentSavings.description": "Otros usuarios también están ahorrando.",
+        "recentClaims": "Reclamaciones recientes de ALICE",
+        "recentClaims.description": "Otros usuarios también reclaman recompensas."
     },
     "update": {
         "title": "Hay una actualización esencial",
