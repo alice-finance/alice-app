@@ -13,75 +13,85 @@ import { formatValue, parseValue } from "../utils/big-number-utils";
 
 interface AmountInputProps {
     asset: ERC20Asset;
-    max: BigNumber;
+    max?: BigNumber;
     disabled?: boolean;
+    placeholderHidden?: boolean;
+    initialValue?: string;
     onChangeAmount: (amount: BigNumber | null) => void;
     style?: StyleProp<ViewStyle>;
     inputStyle?: StyleProp<TextStyle>;
 }
 
-const AmountInput: FunctionComponent<AmountInputProps> = ({
-    asset,
-    max,
-    onChangeAmount,
-    disabled = false,
-    style = {},
-    inputStyle = {}
-}) => {
+const AmountInput: FunctionComponent<AmountInputProps> = props => {
     const { t } = useTranslation("finance");
-    const [value, setValue] = useState("");
+    const [value, setValue] = useState(props.initialValue || "");
     const [error, setError] = useState("");
-    const onChangeValue = (newValue: string) => {
-        setValue(newValue);
-        const parsedValue = parseValue(newValue, asset!.decimals);
-        const isError = parsedValue.gt(max);
-        setError(isError ? t("amountGreaterThanBalance") : "");
-        onChangeAmount(isError ? null : parsedValue);
-    };
-    const onChange = useCallback(
-        event => {
-            const newValue = event.nativeEvent.text;
-            onChangeValue(newValue);
+    const onChangeValue = useCallback(
+        (newValue: string) => {
+            setValue(newValue);
+            const parsedValue = parseValue(newValue, props.asset.decimals);
+            const isError = props.max && parsedValue.gt(props.max);
+            setError(isError ? t("amountGreaterThanBalance") : "");
+            props.onChangeAmount(isError ? null : parsedValue);
         },
-        [asset, max]
+        [props.max]
     );
-    const onPressMax = useCallback(() => {
-        const newValue = formatValue(max, asset!.decimals);
-        setValue(newValue);
-        onChangeAmount(max);
-    }, [asset, max]);
     return (
-        <View style={[preset.flexDirectionColumn, style]}>
+        <View style={[preset.flexDirectionColumn, props.style]}>
             <View>
-                <TextInput
-                    autoFocus={true}
-                    keyboardType="numeric"
-                    placeholder={asset!.symbol}
-                    value={value}
-                    editable={!disabled}
-                    onChange={onChange}
-                    style={[{ borderBottomColor: platform.brandLight, borderBottomWidth: 2, fontSize: 48 }, inputStyle]}
-                />
-                <Button
-                    rounded={true}
-                    transparent={true}
-                    full={true}
-                    style={{
-                        padding: Spacing.small,
-                        position: "absolute",
-                        right: 0,
-                        height: "100%",
-                        zIndex: 100
-                    }}
-                    disabled={disabled}
-                    onPress={onPressMax}>
-                    <Text style={[disabled ? preset.colorGrey : preset.colorInfo, preset.fontSize20]}>MAX</Text>
-                </Button>
+                <Input props={props} value={value} onChangeValue={onChangeValue} />
+                {props.max && <MaxButton props={props} onChangeValue={onChangeValue} />}
             </View>
             {error.length > 0 && (
                 <Text style={[preset.marginNormal, preset.colorDanger, preset.fontSize14]}>{error}</Text>
             )}
         </View>
+    );
+};
+
+const Input = ({ props, value, onChangeValue }) => {
+    const onChange = useCallback(event => {
+        const newValue = event.nativeEvent.text;
+        onChangeValue(newValue);
+    }, []);
+    return (
+        <TextInput
+            autoFocus={true}
+            keyboardType="numeric"
+            placeholder={props.placeholderHidden ? null : props.asset.symbol}
+            value={value}
+            editable={!props.disabled}
+            onChange={onChange}
+            style={[
+                preset.fontSize36,
+                preset.textAlignRight,
+                { borderBottomColor: platform.brandLight, borderBottomWidth: 2 },
+                props.inputStyle
+            ]}
+        />
+    );
+};
+
+const MaxButton = ({ props, onChangeValue }) => {
+    const onPress = useCallback(() => {
+        onChangeValue(formatValue(props.max, props.asset.decimals));
+    }, [props.max, props.asset]);
+    return (
+        <Button
+            rounded={true}
+            transparent={true}
+            full={true}
+            style={{
+                padding: Spacing.small,
+                position: "absolute",
+                right: 0,
+                height: "100%",
+                zIndex: 100
+            }}
+            disabled={props.disabled}
+            onPress={onPress}>
+            <Text style={[props.disabled ? preset.colorGrey : preset.colorInfo, preset.fontSize20]}>MAX</Text>
+        </Button>
     );
 };
 

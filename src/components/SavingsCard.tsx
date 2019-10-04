@@ -5,7 +5,6 @@ import { useNavigation } from "react-navigation-hooks";
 
 import { Body, Button, Card, CardItem, Left, Text } from "native-base";
 import TokenIcon from "../components/TokenIcon";
-import { ChainContext } from "../contexts/ChainContext";
 import { SavingsContext } from "../contexts/SavingsContext";
 import useAssetBalancesUpdater from "../hooks/useAssetBalancesUpdater";
 import useAsyncEffect from "../hooks/useAsyncEffect";
@@ -13,6 +12,7 @@ import preset from "../styles/preset";
 import Sentry from "../utils/Sentry";
 import BigNumberText from "./BigNumberText";
 import Spinner from "./Spinner";
+import StartSavingButton from "./StartSavingsButton";
 
 const SavingsCard = () => {
     const { t } = useTranslation("finance");
@@ -59,10 +59,10 @@ const Header = ({ asset }) => (
 const Footer = ({ refreshing }) => {
     return (
         <CardItem>
-            <View style={[preset.flex1, preset.flexDirectionRow]}>
-                {/*<SavingsSimulationButton />*/}
-                {/*<View style={preset.marginTiny} />*/}
-                <StartSavingButton refreshing={refreshing} />
+            <View style={[preset.flex1, preset.flexDirectionRow, preset.marginBottomSmall]}>
+                <SavingsSimulationButton />
+                <View style={preset.marginTiny} />
+                <StartSavingButton disabled={refreshing} />
             </View>
         </CardItem>
     );
@@ -78,21 +78,6 @@ const SavingsSimulationButton = () => {
     return (
         <Button primary={true} bordered={true} rounded={true} onPress={onShowLeaderboard} style={preset.flex1}>
             <Text style={preset.fontSize16}>{t("simulation")}</Text>
-        </Button>
-    );
-};
-
-const StartSavingButton = ({ refreshing }) => {
-    const { t } = useTranslation("finance");
-    const { push } = useNavigation();
-    const { isReadOnly } = useContext(ChainContext);
-    const onStart = useCallback(() => {
-        Sentry.track(Sentry.trackingTopics.START_SAVING);
-        push(isReadOnly ? "Start" : "NewSavings");
-    }, []);
-    return (
-        <Button primary={true} rounded={true} disabled={refreshing} onPress={onStart} style={preset.flex1}>
-            <Text style={preset.fontSize16}>{t("startSaving")}</Text>
         </Button>
     );
 };
