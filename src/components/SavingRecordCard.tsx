@@ -106,8 +106,7 @@ const Notes = ({ apr, record }) => {
 };
 
 const Footer = ({ record, decimals }) => {
-    const { claim, claiming } = useAliceClaimer(record);
-    const { claimableAt, claimableAmount } = useAliceClaimer(record);
+    const { claim, claiming, claimableAt, claimableAmount } = useAliceClaimer(record);
     const [claimable, setClaimable] = useState(claimableAt && claimableAt.getTime() <= Date.now());
     const amount = claimableAmount ? formatValue(claimableAmount, decimals) : "";
     useEffect(() => {

@@ -4,7 +4,7 @@ import { View } from "react-native";
 
 import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { BigNumber } from "ethers/utils";
-import { Body, Card, CardItem, Container, Left, Right, Text } from "native-base";
+import { Body, Card, CardItem, Container, Content, Left, Right, Text } from "native-base";
 import AmountInput from "../../../components/AmountInput";
 import BigNumberText from "../../../components/BigNumberText";
 import CaptionText from "../../../components/CaptionText";
@@ -37,10 +37,12 @@ const SavingsSimulationScreen = () => {
     }, [amount]);
     return (
         <Container>
-            <TitleText aboveText={true}>{t("simulation")}</TitleText>
-            <CaptionText style={preset.marginBottomNormal}>{t("simulation.description")}</CaptionText>
-            <Controls asset={asset} setAmount={setAmount} aprText={aprText} />
-            <Result apr={apr} amount={amount} loading={loading} />
+            <Content>
+                <TitleText aboveText={true}>{t("simulation")}</TitleText>
+                <CaptionText style={preset.marginBottomNormal}>{t("simulation.description")}</CaptionText>
+                <Controls asset={asset} setAmount={setAmount} aprText={aprText} />
+                <Result apr={apr} amount={amount} loading={loading} />
+            </Content>
         </Container>
     );
 };

@@ -52,7 +52,6 @@ const FinanceScreen = () => {
                     <TitleText aboveText={true}>{t("savings")}</TitleText>
                     <CaptionText style={preset.marginBottomNormal}>{t("savings.description")}</CaptionText>
                     {!isReadOnly && <MySavings />}
-                    <SubtitleText aboveText={true}>{t("newSavings")}</SubtitleText>
                     <NewSavings />
                     <RecentSavings />
                     <RecentClaims asset={alice} />
@@ -83,10 +82,8 @@ const MySavings = () => {
               .sort((a, b) => b.initialTimestamp.getTime() - a.initialTimestamp.getTime())
         : null;
     return (
-        <View>
-            <SubtitleText aboveText={true} style={[preset.flex1, preset.marginTopNormal]}>
-                {t("myProfits")}
-            </SubtitleText>
+        <View style={preset.marginBottomNormal}>
+            <SubtitleText aboveText={true}>{t("myProfits")}</SubtitleText>
             <MySavingsCarousel myRecords={sortedMyRecords} />
         </View>
     );
@@ -125,6 +122,7 @@ const NewSavings = () => {
     const { t } = useTranslation("finance");
     return (
         <View style={preset.marginBottomLarge}>
+            <SubtitleText aboveText={true}>{t("newSavings")}</SubtitleText>
             <SavingsCard />
             <NoteText style={[preset.alignFlexEnd, preset.marginRightNormal]}>{t("newSavings.note")}</NoteText>
         </View>
@@ -138,7 +136,7 @@ const RecentSavings = () => {
     const onPress = loadRecentSavings;
     useAsyncEffect(loadRecentSavings, []);
     return (
-        <View>
+        <View style={preset.marginBottomNormal}>
             <View style={[preset.flexDirectionRow]}>
                 <SubtitleText aboveText={true} style={[preset.flex1]}>
                     {t("recentSavings")}
@@ -194,7 +192,7 @@ const RecentClaims = ({ asset }) => {
     const onPress = loadRecentClaims;
     useAsyncEffect(loadRecentClaims, []);
     return (
-        <View>
+        <View style={preset.marginBottomNormal}>
             <View style={[preset.flexDirectionRow, preset.marginTopLarge]}>
                 <SubtitleText aboveText={true} style={[preset.flex1]}>
                     {t("recentClaims")}
