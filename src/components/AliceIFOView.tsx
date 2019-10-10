@@ -10,14 +10,14 @@ import CaptionText from "./texts/CaptionText";
 import TitleText from "./texts/TitleText";
 
 const AliceIFOView = () => {
-    const { t } = useTranslation("finance");
+    const { t } = useTranslation("ifo");
     const onPress = useCallback(() => {
         Sentry.track(Sentry.trackingTopics.IFO_MORE_INFO);
-        Linking.openURL(t("aliceIFO.blogUrl"));
+        Linking.openURL(t("blogUrl"));
     }, []);
     return (
         <View style={preset.marginBottomSmall}>
-            <TitleText aboveText={true}>{t("aliceIFO")}</TitleText>
+            <TitleText aboveText={true}>{t("title")}</TitleText>
             <View style={[preset.flexDirectionRow, preset.flex1, preset.marginNormal]}>
                 <Image
                     fadeDuration={0}
@@ -25,14 +25,14 @@ const AliceIFOView = () => {
                     style={[{ width: 96, height: 96 }, preset.marginLeftSmall]}
                 />
                 <View style={preset.flex1}>
-                    <CaptionText>{t("aliceIFO.description")}</CaptionText>
+                    <CaptionText>{t("description")}</CaptionText>
                     <Button
                         primary={true}
                         rounded={true}
                         transparent={true}
                         onPress={onPress}
                         style={preset.alignFlexEnd}>
-                        <Text style={preset.marginRightSmall}>{t("aliceIFO.more")}</Text>
+                        <Text style={preset.marginRightSmall}>{t("more")}</Text>
                     </Button>
                 </View>
             </View>

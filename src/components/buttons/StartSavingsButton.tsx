@@ -8,7 +8,7 @@ import preset from "../../styles/preset";
 import Sentry from "../../utils/Sentry";
 
 const StartSavingsButton = ({ disabled = false }) => {
-    const { t } = useTranslation("finance");
+    const { t } = useTranslation("savings");
     const { push } = useNavigation();
     const { isReadOnly } = useContext(ChainContext);
     const onStart = useCallback(() => {

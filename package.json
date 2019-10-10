@@ -27,6 +27,7 @@
     "firebase": "^6.4.0",
     "hdkey": "^1.1.1",
     "i18next": "^15.1.2",
+    "identicon.js": "^2.3.3",
     "lodash": "^4.17.11",
     "loom-js": "1.54.2",
     "moment": "^2.24.0",

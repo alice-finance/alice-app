@@ -15,7 +15,7 @@ import BigNumberText from "../texts/BigNumberText";
 import TokenIcon from "../TokenIcon";
 
 const NewSavingsCard = () => {
-    const { t } = useTranslation("finance");
+    const { t } = useTranslation("savings");
     const { asset, apr } = useContext(SavingsContext);
     const { updating, update } = useAssetBalancesUpdater();
     const refreshing = !asset || updating;
@@ -69,7 +69,7 @@ const Footer = ({ refreshing }) => {
 };
 
 const SavingsSimulationButton = () => {
-    const { t } = useTranslation("finance");
+    const { t } = useTranslation("savings");
     const { push } = useNavigation();
     const onShowLeaderboard = useCallback(() => {
         Sentry.track(Sentry.trackingTopics.SIMULATION);

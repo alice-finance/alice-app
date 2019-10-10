@@ -17,7 +17,7 @@ import { SavingsContext } from "../../../contexts/SavingsContext";
 import preset from "../../../styles/preset";
 
 const SavingsSimulationScreen = () => {
-    const { t } = useTranslation("finance");
+    const { t } = useTranslation("savings");
     const [amount, setAmount] = useState<BigNumber | null>(null);
     const [apr, setAPR] = useState<BigNumber | null>(toBigNumber(0));
     const [loading, setLoading] = useState(false);
@@ -43,7 +43,7 @@ const SavingsSimulationScreen = () => {
 };
 
 const Header = ({ asset }) => {
-    const { t } = useTranslation("finance");
+    const { t } = useTranslation("savings");
     return (
         <CardItem>
             <Left>
@@ -60,7 +60,7 @@ const Header = ({ asset }) => {
 };
 
 const Main = ({ asset, decimals, apr, amount }) => {
-    const { t } = useTranslation("finance");
+    const { t } = useTranslation("savings");
     const assetSuffix = " " + asset!.symbol;
     const profit = amount.mul(apr).div(toBigNumber(10).pow(decimals));
     const amountToClaim = amount.mul(365);
@@ -83,7 +83,7 @@ const Main = ({ asset, decimals, apr, amount }) => {
 };
 
 const Result = ({ apr, amount, loading }) => {
-    const { t } = useTranslation("finance");
+    const { t } = useTranslation("savings");
     const { asset, decimals } = useContext(SavingsContext);
     return (
         amount &&

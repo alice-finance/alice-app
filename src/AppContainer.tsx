@@ -13,7 +13,6 @@ import { createMaterialBottomTabNavigator } from "react-navigation-material-bott
 import platform from "../native-base-theme/variables/platform";
 import TabBarIcon from "./components/TabBarIcon";
 import AuthScreen from "./screens/AuthScreen";
-import AssetsScreen from "./screens/main/assets/AssetsScreen";
 import DepositScreen from "./screens/main/assets/DepositScreen";
 import ManageAssetScreen from "./screens/main/assets/ManageAssetScreen";
 import ManageDepositsScreen from "./screens/main/assets/ManageDepositsScreen";
@@ -21,6 +20,7 @@ import MyAddressScreen from "./screens/main/assets/MyAddressScreen";
 import TransferAssetScreen from "./screens/main/assets/TransferAssetScreen";
 import WithdrawalScreen from "./screens/main/assets/WithdrawalScreen";
 import NewSavingsScreen from "./screens/main/finance/NewSavingsScreen";
+import SavingsScreen from "./screens/main/finance/SavingsScreen";
 import SavingsSimulationScreen from "./screens/main/finance/SavingsSimulationScreen";
 import HomeScreen from "./screens/main/home/HomeScreen";
 import ProfileScreen from "./screens/main/profile/ProfileScreen";
@@ -62,9 +62,9 @@ const tabs = {
         screen: HomeScreen,
         navigationOptions: tabBarNavigationOptions("home", "home")
     },
-    AssetsTab: {
-        screen: AssetsScreen,
-        navigationOptions: tabBarNavigationOptions("assets", "pie-chart")
+    SavingsTab: {
+        screen: SavingsScreen,
+        navigationOptions: tabBarNavigationOptions("savings", "present")
     },
     ProfileTab: {
         screen: ProfileScreen,
