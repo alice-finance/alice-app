@@ -24,6 +24,8 @@
         "invalidSeedWords": "Invalid seed words",
         "generatingSeedPhrase": "Generating Seed Phrase...",
         "encrypting": "Encrypting Your Private Key...",
+        "loading": "Loading",
+        "amountGreaterThanBalance": "The amount must be less than or equal to your balance.",
         "blogUrl": "https://medium.com/alice-finance",
         "telegramUrl": "https://t.me/alicefinance"
     },
@@ -53,6 +55,13 @@
         "importSeedPhrase": "Import Seed Phrase",
         "importSeedPhrase.description": "Input existing seed phrase. It consists of 12 words.",
         "inputSeedPhraseNotice": "All words are in lower case.\nEach word is separated by a space."
+    },
+    "home": {
+        "title": "Home",
+        "description": "Bring your crypto to your Alice Wallet and start savings!",
+        "wallet": "Alice Wallet",
+        "bring": "Bring",
+        "send": "Send"
     },
     "exchange": {
         "title": "Exchanges",
@@ -117,7 +126,7 @@
         "myAssets": "My Assets",
         "myAssets.description": "You can deposit assets from Ethereum network.",
         "alice": "ALICE",
-        "erc20Assets": "ERC-20 Assets",
+        "erc20Assets": "Ethereum Assets",
         "ethereumNetwork": "Ethereum Network",
         "ethereumNetwork.description": "You can transfer assets in Ethereum Network to any other accounts.",
         "aliceNetwork": "Alice Network",
@@ -189,11 +198,13 @@
         "name": "Name",
         "email": "Email"
     },
-    "finance": {
-        "aliceIFO": "Earn Free ALICE",
-        "aliceIFO.description": "Deposit DAI stable coins and earn equivalent amount of ALICE tokens every 24 hours!",
-        "aliceIFO.blogUrl": "https://medium.com/alice-finance/alice-token-ifo-364ddc598c1d",
-        "aliceIFO.more": "More Info",
+    "ifo": {
+        "title": "Earn Free ALICE",
+        "description": "Deposit DAI stable coins and earn equivalent amount of ALICE tokens every 24 hours!",
+        "blogUrl": "https://medium.com/alice-finance/why-we-offer-17-5m-alice-tokens-for-free-ifo-d17e93577566",
+        "more": "More Info"
+    },
+    "savings": {
         "start": "Start",
         "start.depositAsset": "Please deposit assets",
         "start.description": "A small amount of ETH (less than 0.1) and DAI is required to use Alice's services.",
@@ -212,7 +223,6 @@
         "expectedInterest": "Expected Interest",
         "expectedRewards": "Expected Rewards",
         "apr": "APR",
-        "loading": "Loading",
         "leaderboard": "Leaderboard",
         "startSaving": "Start Saving",
         "startSaving.description": "Savings on Alice, powered by smart contracts, guarantee you can withdraw your assets at any time.",
@@ -221,7 +231,6 @@
         "amount": "Amount",
         "myBalance": "My Balance",
         "manageAsset": "Manage Asset",
-        "amountGreaterThanBalance": "The amount must be less than or equal to your balance.",
         "aNewSavingsStartToday": "A new savings start today",
         "savingsFailure": "Failure starting savings. Please try again.",
         "elapsed": "Elapsed",

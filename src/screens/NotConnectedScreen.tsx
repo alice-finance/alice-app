@@ -4,8 +4,8 @@ import { Image, View } from "react-native";
 
 import { Updates } from "expo";
 import { Button, Header, Text } from "native-base";
-import CaptionText from "../components/CaptionText";
-import SubtitleText from "../components/SubtitleText";
+import CaptionText from "../components/texts/CaptionText";
+import SubtitleText from "../components/texts/SubtitleText";
 import { Spacing } from "../constants/dimension";
 import preset from "../styles/preset";
 

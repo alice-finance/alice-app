@@ -4,8 +4,8 @@ import { StyleSheet, View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
 import { Button, Container, Text } from "native-base";
-import CaptionText from "../../components/CaptionText";
-import SubtitleText from "../../components/SubtitleText";
+import CaptionText from "../../components/texts/CaptionText";
+import SubtitleText from "../../components/texts/SubtitleText";
 import { Spacing } from "../../constants/dimension";
 import preset from "../../styles/preset";
 import Sentry from "../../utils/Sentry";

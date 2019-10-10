@@ -1,7 +1,7 @@
 import React from "react";
 
 import { NativeBase, Text } from "native-base";
-import { Spacing } from "../constants/dimension";
+import { Spacing } from "../../constants/dimension";
 
 interface SubtitleTextProps extends NativeBase.Text {
     aboveText?: boolean;

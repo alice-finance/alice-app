@@ -5,69 +5,40 @@ import { View } from "react-native";
 import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { BigNumber } from "ethers/utils";
 import { Body, Card, CardItem, Container, Content, Left, Right, Text } from "native-base";
-import AmountInput from "../../../components/AmountInput";
-import BigNumberText from "../../../components/BigNumberText";
-import CaptionText from "../../../components/CaptionText";
-import NoteText from "../../../components/NoteText";
+import StartSavingButton from "../../../components/buttons/StartSavingsButton";
+import SavingsAmountInput from "../../../components/inputs/SavingsAmountInput";
 import Spinner from "../../../components/Spinner";
-import StartSavingButton from "../../../components/StartSavingsButton";
-import TitleText from "../../../components/TitleText";
+import BigNumberText from "../../../components/texts/BigNumberText";
+import CaptionText from "../../../components/texts/CaptionText";
+import NoteText from "../../../components/texts/NoteText";
+import TitleText from "../../../components/texts/TitleText";
 import TokenIcon from "../../../components/TokenIcon";
-import { ChainContext } from "../../../contexts/ChainContext";
 import { SavingsContext } from "../../../contexts/SavingsContext";
-import useAsyncEffect from "../../../hooks/useAsyncEffect";
 import preset from "../../../styles/preset";
-import { formatValue } from "../../../utils/big-number-utils";
 
 const SavingsSimulationScreen = () => {
     const { t } = useTranslation("finance");
-    const { asset } = useContext(SavingsContext);
-    const { loomChain } = useContext(ChainContext);
     const [amount, setAmount] = useState<BigNumber | null>(null);
     const [apr, setAPR] = useState<BigNumber | null>(toBigNumber(0));
     const [loading, setLoading] = useState(false);
-    const aprText = formatValue(toBigNumber(apr).mul(100), asset!.decimals, 2) + " %";
-    useAsyncEffect(async () => {
-        if (amount) {
-            setLoading(true);
-            const market = loomChain!.getMoneyMarket();
-            setAPR(await market.getExpectedSavingsAPR(amount));
-            setLoading(false);
-        }
-    }, [amount]);
+    const onLoadingStarted = () => setLoading(true);
+    const onLoadingFinished = () => setLoading(false);
     return (
         <Container>
             <Content>
                 <TitleText aboveText={true}>{t("simulation")}</TitleText>
                 <CaptionText style={preset.marginBottomNormal}>{t("simulation.description")}</CaptionText>
-                <Controls asset={asset} setAmount={setAmount} aprText={aprText} />
+                <View style={[preset.marginLeftLarge, preset.marginRightLarge, preset.marginTopLarge]}>
+                    <SavingsAmountInput
+                        onAmountChanged={setAmount}
+                        onAPRChanged={setAPR}
+                        onLoadingStarted={onLoadingStarted}
+                        onLoadingFinished={onLoadingFinished}
+                    />
+                </View>
                 <Result apr={apr} amount={amount} loading={loading} />
             </Content>
         </Container>
-    );
-};
-
-const Controls = ({ asset, setAmount, aprText }) => {
-    const { t } = useTranslation("finance");
-    return (
-        <View style={[preset.marginLeftLarge, preset.marginRightLarge, preset.marginTopLarge]}>
-            <View style={[preset.flexDirectionRow, preset.alignItemsCenter]}>
-                <Text style={preset.fontSize24}>{t("amount")}</Text>
-                <AmountInput
-                    asset={asset!}
-                    placeholderHidden={true}
-                    onChangeAmount={setAmount}
-                    style={[preset.flex1, preset.marginLeftNormal, preset.marginRightSmall]}
-                />
-                <Text style={[preset.fontSize24, preset.colorDarkGrey]}>{asset!.symbol}</Text>
-            </View>
-            <View style={[preset.flexDirectionRow, preset.alignItemsCenter, preset.marginTopSmall]}>
-                <Text style={preset.fontSize24}>{t("apr")}</Text>
-                <Text style={[preset.flex1, preset.marginRightSmall, preset.fontSize32, preset.textAlignRight]}>
-                    {aprText}
-                </Text>
-            </View>
-        </View>
     );
 };
 

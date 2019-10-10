@@ -6,7 +6,7 @@ import { defaultKeyExtractor } from "../../../utils/react-native-utils";
 import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { Body, Button, Container, ListItem, Text } from "native-base";
 import platform from "../../../../native-base-theme/variables/platform";
-import SubtitleText from "../../../components/SubtitleText";
+import SubtitleText from "../../../components/texts/SubtitleText";
 import { SavingsContext } from "../../../contexts/SavingsContext";
 import useAsyncEffect from "../../../hooks/useAsyncEffect";
 import useSavingsLeaderboardLoader from "../../../hooks/useSavingsLeaderboardLoader";

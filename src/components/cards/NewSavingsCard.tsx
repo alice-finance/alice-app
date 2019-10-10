@@ -4,17 +4,17 @@ import { View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
 import { Body, Button, Card, CardItem, Left, Text } from "native-base";
-import TokenIcon from "../components/TokenIcon";
-import { SavingsContext } from "../contexts/SavingsContext";
-import useAssetBalancesUpdater from "../hooks/useAssetBalancesUpdater";
-import useAsyncEffect from "../hooks/useAsyncEffect";
-import preset from "../styles/preset";
-import Sentry from "../utils/Sentry";
-import BigNumberText from "./BigNumberText";
-import Spinner from "./Spinner";
-import StartSavingButton from "./StartSavingsButton";
+import { SavingsContext } from "../../contexts/SavingsContext";
+import useAssetBalancesUpdater from "../../hooks/useAssetBalancesUpdater";
+import useAsyncEffect from "../../hooks/useAsyncEffect";
+import preset from "../../styles/preset";
+import Sentry from "../../utils/Sentry";
+import StartSavingButton from "../buttons/StartSavingsButton";
+import Spinner from "../Spinner";
+import BigNumberText from "../texts/BigNumberText";
+import TokenIcon from "../TokenIcon";
 
-const SavingsCard = () => {
+const NewSavingsCard = () => {
     const { t } = useTranslation("finance");
     const { asset, apr } = useContext(SavingsContext);
     const { updating, update } = useAssetBalancesUpdater();
@@ -50,7 +50,7 @@ const Header = ({ asset }) => (
         <Left>
             <TokenIcon address={asset!.ethereumAddress.toLocalAddressString()} width={32} height={32} />
             <Body style={preset.marginLeftNormal}>
-                <Text style={[preset.fontSize20, preset.colorGrey]}>{asset!.name}</Text>
+                <Text style={[preset.fontSize24, preset.colorGrey]}>{asset!.symbol}</Text>
             </Body>
         </Left>
     </CardItem>
@@ -59,7 +59,7 @@ const Header = ({ asset }) => (
 const Footer = ({ refreshing }) => {
     return (
         <CardItem>
-            <View style={[preset.flex1, preset.flexDirectionRow, preset.marginBottomSmall]}>
+            <View style={[preset.flexDirectionRow, preset.marginBottomSmall]}>
                 <SavingsSimulationButton />
                 <View style={preset.marginTiny} />
                 <StartSavingButton disabled={refreshing} />
@@ -76,10 +76,16 @@ const SavingsSimulationButton = () => {
         push("SavingsSimulation");
     }, []);
     return (
-        <Button primary={true} bordered={true} rounded={true} onPress={onShowLeaderboard} style={preset.flex1}>
+        <Button
+            primary={true}
+            bordered={true}
+            rounded={true}
+            block={true}
+            onPress={onShowLeaderboard}
+            style={preset.flex1}>
             <Text style={preset.fontSize16}>{t("simulation")}</Text>
         </Button>
     );
 };
 
-export default SavingsCard;
+export default NewSavingsCard;

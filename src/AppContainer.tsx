@@ -20,9 +20,9 @@ import ManageDepositsScreen from "./screens/main/assets/ManageDepositsScreen";
 import MyAddressScreen from "./screens/main/assets/MyAddressScreen";
 import TransferAssetScreen from "./screens/main/assets/TransferAssetScreen";
 import WithdrawalScreen from "./screens/main/assets/WithdrawalScreen";
-import FinanceScreen from "./screens/main/finance/FinanceScreen";
 import NewSavingsScreen from "./screens/main/finance/NewSavingsScreen";
 import SavingsSimulationScreen from "./screens/main/finance/SavingsSimulationScreen";
+import HomeScreen from "./screens/main/home/HomeScreen";
 import ProfileScreen from "./screens/main/profile/ProfileScreen";
 import ResetAccountScreen from "./screens/main/profile/ResetAccountScreen";
 import NotConnectedScreen from "./screens/NotConnectedScreen";
@@ -58,8 +58,8 @@ const tabBarNavigationOptions = (name, iconName) => ({ screenProps }) => ({
 });
 
 const tabs = {
-    FinanceTab: {
-        screen: FinanceScreen,
+    HomeTab: {
+        screen: HomeScreen,
         navigationOptions: tabBarNavigationOptions("home", "home")
     },
     AssetsTab: {

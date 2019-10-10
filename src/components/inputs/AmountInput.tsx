@@ -5,11 +5,9 @@ import { StyleProp, Text, TextInput, TextStyle, View, ViewStyle } from "react-na
 
 import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
 import { BigNumber } from "ethers/utils";
-import { Button } from "native-base";
-import platform from "../../native-base-theme/variables/platform";
-import { Spacing } from "../constants/dimension";
-import preset from "../styles/preset";
-import { formatValue, parseValue } from "../utils/big-number-utils";
+import platform from "../../../native-base-theme/variables/platform";
+import preset from "../../styles/preset";
+import { parseValue } from "../../utils/big-number-utils";
 
 interface AmountInputProps {
     asset: ERC20Asset;
@@ -23,7 +21,7 @@ interface AmountInputProps {
 }
 
 const AmountInput: FunctionComponent<AmountInputProps> = props => {
-    const { t } = useTranslation("finance");
+    const { t } = useTranslation("common");
     const [value, setValue] = useState(props.initialValue || "");
     const [error, setError] = useState("");
     const onChangeValue = useCallback(
@@ -38,9 +36,8 @@ const AmountInput: FunctionComponent<AmountInputProps> = props => {
     );
     return (
         <View style={[preset.flexDirectionColumn, props.style]}>
-            <View>
+            <View style={preset.flexDirectionRow}>
                 <Input props={props} value={value} onChangeValue={onChangeValue} />
-                {props.max && <MaxButton props={props} onChangeValue={onChangeValue} />}
             </View>
             {error.length > 0 && (
                 <Text style={[preset.marginNormal, preset.colorDanger, preset.fontSize14]}>{error}</Text>
@@ -63,35 +60,13 @@ const Input = ({ props, value, onChangeValue }) => {
             editable={!props.disabled}
             onChange={onChange}
             style={[
-                preset.fontSize36,
+                preset.flex1,
                 preset.textAlignRight,
+                props.large ? preset.fontSize48 : preset.fontSize36,
                 { borderBottomColor: platform.brandLight, borderBottomWidth: 2 },
                 props.inputStyle
             ]}
         />
-    );
-};
-
-const MaxButton = ({ props, onChangeValue }) => {
-    const onPress = useCallback(() => {
-        onChangeValue(formatValue(props.max, props.asset.decimals));
-    }, [props.max, props.asset]);
-    return (
-        <Button
-            rounded={true}
-            transparent={true}
-            full={true}
-            style={{
-                padding: Spacing.small,
-                position: "absolute",
-                right: 0,
-                height: "100%",
-                zIndex: 100
-            }}
-            disabled={props.disabled}
-            onPress={onPress}>
-            <Text style={[props.disabled ? preset.colorGrey : preset.colorInfo, preset.fontSize20]}>MAX</Text>
-        </Button>
     );
 };
 

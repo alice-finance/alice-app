@@ -5,8 +5,8 @@ import { useNavigation } from "react-navigation-hooks";
 
 import { Button, Container, Content, Icon, Text, View } from "native-base";
 import platform from "../../native-base-theme/variables/platform";
-import CaptionText from "../components/CaptionText";
-import TitleText from "../components/TitleText";
+import CaptionText from "../components/texts/CaptionText";
+import TitleText from "../components/texts/TitleText";
 import useAsyncEffect from "../hooks/useAsyncEffect";
 import preset from "../styles/preset";
 import SnackBar from "../utils/SnackBar";
@@ -24,24 +24,18 @@ const AuthScreen = () => {
         pop();
         getParam("onSuccess")();
     };
-    const onError = () => {
-        needsRegistration ? clearConfirm() : clearPasscode();
-    };
-    usePasscodeChecker(needsRegistration, passcode, confirm, onMatch, onError);
+    const caption = confirming
+        ? "pleaseEnterYourPasswordAgain"
+        : needsRegistration
+        ? "pleaseEnterYourNewPassword"
+        : "pleaseEnterYourPassword";
+    usePasscodeChecker(needsRegistration, passcode, confirm, onMatch, needsRegistration ? clearConfirm : clearPasscode);
     return (
         <Container>
             <Content>
                 <View style={preset.flex1}>
                     <TitleText aboveText={true}>{t(needsRegistration ? "registration" : "authentication")}</TitleText>
-                    <CaptionText>
-                        {t(
-                            confirming
-                                ? "pleaseEnterYourPasswordAgain"
-                                : needsRegistration
-                                ? "pleaseEnterYourNewPassword"
-                                : "pleaseEnterYourPassword"
-                        )}
-                    </CaptionText>
+                    <CaptionText>{t(caption)}</CaptionText>
                     <Circles passcode={confirming ? confirm : passcode} />
                     <KeyPad appendPasscode={confirming ? appendConfirm : appendPasscode} />
                 </View>

@@ -6,7 +6,7 @@ import { useNavigation } from "react-navigation-hooks";
 import { Linking } from "expo";
 import { Body, Container, Icon, ListItem, Text } from "native-base";
 import app from "../../../../app.json";
-import TitleText from "../../../components/TitleText";
+import TitleText from "../../../components/texts/TitleText";
 import { Spacing } from "../../../constants/dimension";
 import { ChainContext } from "../../../contexts/ChainContext";
 import useBackupSeedPhraseDialog from "../../../hooks/useBackupSeedPhraseDialog";

@@ -9,9 +9,9 @@ import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils
 import { BigNumber } from "ethers/utils";
 import { Button, Container, Content, Text } from "native-base";
 import platform from "../../../../native-base-theme/variables/platform";
-import AmountInput from "../../../components/AmountInput";
+import AmountInput from "../../../components/inputs/AmountInput";
 import Spinner from "../../../components/Spinner";
-import SubtitleText from "../../../components/SubtitleText";
+import SubtitleText from "../../../components/texts/SubtitleText";
 import { Spacing } from "../../../constants/dimension";
 import { BalancesContext } from "../../../contexts/BalancesContext";
 import { ChainContext } from "../../../contexts/ChainContext";

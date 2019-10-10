@@ -24,6 +24,8 @@
         "invalidSeedWords": "Palabras de semillas inválidas",
         "generatingSeedPhrase": "Generando frase de semilla...",
         "encrypting": "Encriptando su clave privada...",
+        "loading": "Cargando",
+        "amountGreaterThanBalance": "La cantidad debe ser menor o igual a su saldo.",
         "blogUrl": "https://medium.com/alice-finance",
         "telegramUrl": "https://t.me/alicefinanceespanol"
     },
@@ -53,6 +55,13 @@
         "importSeedPhrase": "Importar Frase de Semilla",
         "importSeedPhrase.description": "Introduzca la semilla de la frase que se generada antes. Se compone de 12 palabras.",
         "inputSeedPhraseNotice": "Todas las palabras están en minúsculas.\nCada palabra está separada por un espacio."
+    },
+    "home": {
+        "title": "Inicio",
+        "description": "¡Trae tu cripto a tu Alice Wallet y comienza a ahorrar!",
+        "wallet": "Alice Wallet",
+        "bring": "Traer",
+        "send": "Enviar"
     },
     "exchange": {
         "title": "Intercambios",
@@ -117,7 +126,7 @@
         "myAssets": "Sus Bienes",
         "myAssets.description": "Puedes depositar los activos de la red Ethereum.",
         "alice": "ALICE",
-        "erc20Assets": "ERC-20 Bienes",
+        "erc20Assets": "Bienes de Ethereum",
         "ethereumNetwork": "Ethereum Network",
         "ethereumNetwork.description": "Puede transferir bines en el Ethereum Network a cualquier cuenta en la red de ethereum.",
         "aliceNetwork": "Cartera Alice",
@@ -188,11 +197,13 @@
         "name": "Nombre",
         "email": "Correo Electrónico"
     },
-    "finance": {
-        "aliceIFO": "Gana ALICE Gratis",
-        "aliceIFO.description": "¡Deposite monedas estables DAI y gane una cantidad equivalente de tokens ALICE cada 24 horas!",
-        "aliceIFO.blogUrl": "https://medium.com/alice-finance-español/alice-ifo-f1d19358fa4",
-        "aliceIFO.more": "Más Info",
+    "ifo": {
+        "title": "Gana ALICE Gratis",
+        "description": "¡Deposite monedas estables DAI y gane una cantidad equivalente de tokens ALICE cada 24 horas!",
+        "blogUrl": "https://medium.com/alice-finance-español/alice-ifo-f1d19358fa4",
+        "more": "Más Info"
+    },
+    "savings": {
         "start": "Comienzo",
         "start.depositAsset": "Por favor deposite los activos",
         "start.description": "Se requiere una pequeña cantidad de ETH (menos de 0.1) y DAI para usar los servicios de Alice.",
@@ -211,7 +222,6 @@
         "expectedInterest": "Interés esperado",
         "expectRewards": "Recompensas esperadas",
         "apr": "TIA",
-        "loading": "Cargando",
         "leaderboard": "Clasificación",
         "startSaving": "Ahorrar",
         "startSaving.description": "Los ahorros en Alice, respaldados por contratos inteligentes, garantizan que puede retirar sus activos en cualquier momento.",
@@ -220,7 +230,6 @@
         "amount": "Cantidad",
         "myBalance": "Su Equilibrar",
         "manageAsset": "Administrar activos",
-        "amountGreaterThanBalance": "La cantidad debe ser menor o igual a su saldo.",
         "aNewSavingsStartToday": "Un nuevo ahorro comienza hoy.",
         "savingsFailure": "Falla al iniciar el ahorro. Inténtalo de nuevo.",
         "elapsed": "Transcurrido",

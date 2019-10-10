@@ -7,7 +7,7 @@ import platform from "../../native-base-theme/variables/platform";
 import { AssetContext } from "../contexts/AssetContext";
 import preset from "../styles/preset";
 import { openTx } from "../utils/ether-scan-utils";
-import BigNumberText from "./BigNumberText";
+import BigNumberText from "./texts/BigNumberText";
 
 export const TypeBadge = ({ color, inProgress, withdraw }) => {
     return (

@@ -5,6 +5,8 @@ import Sentry from "sentry-expo";
 
 const trackingTopics = {
     APP_START: "APP_START",
+    DEPOSIT: "DEPOSIT",
+    WITHDRAW: "WITHDRAW",
     ASSET_DEPOSITED: "ASSET_DEPOSITED",
     ASSET_WITHDRAWN: "ASSET_WITHDRAWN",
     SAVINGS_DEPOSITED: "SAVINGS_DEPOSITED",

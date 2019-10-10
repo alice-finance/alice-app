@@ -2,32 +2,33 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Alert, View } from "react-native";
 import { Portal } from "react-native-paper";
-import Dialog from "../react-native-paper/Dialog/Dialog";
+import Dialog from "../../react-native-paper/Dialog/Dialog";
 
 import { SavingsRecord } from "@alice-finance/alice.js/dist/contracts/MoneyMarket";
 import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { BigNumber } from "ethers/utils";
 import { Body, Button, Card, CardItem, Icon, Left, Spinner as NativeSpinner, Text } from "native-base";
-import { ChainContext } from "../contexts/ChainContext";
-import { SavingsContext } from "../contexts/SavingsContext";
-import useAliceClaimer from "../hooks/useAliceClaimer";
-import useAsyncEffect from "../hooks/useAsyncEffect";
-import useMySavingsLoader from "../hooks/useMySavingsLoader";
-import preset from "../styles/preset";
-import { formatValue } from "../utils/big-number-utils";
-import { fetchCollection } from "../utils/firebase-utils";
-import { compoundToAPR } from "../utils/interest-rate-utils";
-import Sentry from "../utils/Sentry";
-import SnackBar from "../utils/SnackBar";
-import AmountInput from "./AmountInput";
-import BigNumberText from "./BigNumberText";
-import MomentText from "./MomentText";
-import NoteText from "./NoteText";
-import Row from "./Row";
-import Spinner from "./Spinner";
-import TokenIcon from "./TokenIcon";
+import { AssetContext } from "../../contexts/AssetContext";
+import { ChainContext } from "../../contexts/ChainContext";
+import { SavingsContext } from "../../contexts/SavingsContext";
+import useAliceClaimer from "../../hooks/useAliceClaimer";
+import useAsyncEffect from "../../hooks/useAsyncEffect";
+import useMySavingsLoader from "../../hooks/useMySavingsLoader";
+import preset from "../../styles/preset";
+import { formatValue } from "../../utils/big-number-utils";
+import { fetchCollection } from "../../utils/firebase-utils";
+import { compoundToAPR } from "../../utils/interest-rate-utils";
+import Sentry from "../../utils/Sentry";
+import SnackBar from "../../utils/SnackBar";
+import AmountInput from "../inputs/AmountInput";
+import Row from "../Row";
+import Spinner from "../Spinner";
+import BigNumberText from "../texts/BigNumberText";
+import MomentText from "../texts/MomentText";
+import NoteText from "../texts/NoteText";
+import TokenIcon from "../TokenIcon";
 
-const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
+const SavingsRecordCard = ({ record }: { record: SavingsRecord }) => {
     const { asset, decimals } = useContext(SavingsContext);
     const [apr] = useState(() => compoundToAPR(record.interestRate, decimals));
     return (
@@ -43,7 +44,7 @@ const SavingRecordCard = ({ record }: { record: SavingsRecord }) => {
 };
 
 const Header = ({ asset, apr, record }) => {
-    const { t } = useTranslation("finance");
+    const { t } = useTranslation("savings");
     const [dialogOpen, setDialogOpen] = useState(false);
     const openDialog = () => setDialogOpen(true);
     const closeDialog = () => setDialogOpen(false);
@@ -53,7 +54,7 @@ const Header = ({ asset, apr, record }) => {
                 <Left>
                     <TokenIcon address={asset!.ethereumAddress.toLocalAddressString()} width={32} height={32} />
                     <Body style={preset.marginLeftNormal}>
-                        <Text style={[preset.fontSize20, preset.colorGrey]}>{asset!.name}</Text>
+                        <Text style={[preset.fontSize24, preset.colorGrey]}>{asset!.symbol}</Text>
                     </Body>
                 </Left>
                 <Button primary={true} rounded={true} transparent={true} small={true} onPress={openDialog}>
@@ -66,36 +67,45 @@ const Header = ({ asset, apr, record }) => {
 };
 
 const Main = ({ asset, record }) => {
-    const { t } = useTranslation("finance");
+    const { t } = useTranslation("savings");
+    const { assets } = useContext(AssetContext);
+    const { claimedAmount } = useClaimedAmountUpdater(record);
     const [profit] = useState(
         record.balance
             .add(record.withdrawals.reduce((previous, current) => previous.add(current.amount), toBigNumber(0)))
             .sub(record.principal)
     );
-    const { claimedAmount } = useClaimedAmountUpdater(record);
-    const assetSuffix = " " + asset!.symbol;
+    const alice = assets.find(a => a.symbol === "ALICE");
     return (
-        <>
-            <CardItem>
-                <View style={preset.flexDirectionRow}>
-                    <View style={[preset.flex1, preset.alignItemsFlexEnd]}>
-                        <Text style={preset.fontSize20}>{t("myBalance")}</Text>
-                        <Text style={preset.fontSize20}>{t("interestEarned")}</Text>
-                        <Text style={preset.fontSize20}>{t("claimedRewards")}</Text>
-                    </View>
-                    <View style={[preset.flex2, preset.alignItemsCenter]}>
-                        <BigNumberText value={record.balance} suffix={assetSuffix} style={preset.fontWeightBold} />
-                        <BigNumberText value={profit} suffix={assetSuffix} style={preset.fontWeightBold} />
-                        <BigNumberText value={claimedAmount} suffix={" ALICE"} style={preset.fontWeightBold} />
-                    </View>
-                </View>
-            </CardItem>
-        </>
+        <CardItem>
+            <Body>
+                <ValueRow label={t("myBalance")} asset={asset!} value={record.balance} />
+                <ValueRow label={t("interestEarned")} asset={asset!} value={profit} />
+                <ValueRow label={t("claimedRewards")} asset={alice!} value={claimedAmount} />
+            </Body>
+        </CardItem>
     );
 };
 
+const ValueRow = ({ label, asset, value }) => (
+    <View style={[preset.flexDirectionRow, preset.alignItemsCenter]}>
+        <Text style={[preset.flex1, preset.fontSize20, preset.textAlignRight]}>{label}</Text>
+        <Text
+            style={[
+                preset.flex1,
+                preset.marginLeftSmall,
+                preset.fontSize20,
+                preset.fontWeightBold,
+                preset.textAlignRight
+            ]}>
+            {formatValue(value, asset.decimals)}
+        </Text>
+        <Text style={[preset.fontSize20, preset.marginLeftSmall, { width: 56 }]}>{asset.symbol}</Text>
+    </View>
+);
+
 const Notes = ({ apr, record }) => {
-    const { t } = useTranslation("finance");
+    const { t } = useTranslation("savings");
     return (
         <View style={[preset.alignFlexEnd, preset.flexDirectionRow, preset.marginLeftNormal, preset.marginRightNormal]}>
             <MomentText date={record.initialTimestamp} note={true} />
@@ -131,7 +141,7 @@ const Footer = ({ record, decimals }) => {
 };
 
 const ClaimButton = ({ claim, amount }) => {
-    const { t } = useTranslation("finance");
+    const { t } = useTranslation("savings");
     const onClaim = useCallback(async () => {
         try {
             await claim();
@@ -150,7 +160,7 @@ const ClaimButton = ({ claim, amount }) => {
 };
 
 const DisabledClaimButton = ({ claimableAt }) => {
-    const { t } = useTranslation("finance");
+    const { t } = useTranslation("savings");
     return (
         <Button primary={true} rounded={true} bordered={true} block={true} disabled={true} iconLeft={true}>
             <Icon type={"MaterialCommunityIcons"} name={"clock-outline"} style={{ color: "grey" }} />
@@ -194,7 +204,7 @@ const WithdrawDialog = ({ visible, onCancel, onOk, record, apr }) => {
 };
 
 const DialogContent = ({ record, apr, onChangeAmount, inProgress }) => {
-    const { t } = useTranslation("finance");
+    const { t } = useTranslation("savings");
     const { asset, decimals } = useContext(SavingsContext);
     return (
         <>
@@ -250,7 +260,7 @@ const useWithdraw = () => {
 };
 
 const WithdrawButton = ({ record, onOk, amount, inProgress, setInProgress }) => {
-    const { t } = useTranslation(["finance", "common"]);
+    const { t } = useTranslation(["savings", "common"]);
     const { withdraw } = useWithdraw();
     const onWithdraw = useCallback(async () => {
         if (amount) {
@@ -296,4 +306,4 @@ const useClaimedAmountUpdater = (record: SavingsRecord) => {
     return { claimedAmount };
 };
 
-export default SavingRecordCard;
+export default SavingsRecordCard;

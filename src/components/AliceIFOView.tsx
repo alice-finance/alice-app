@@ -6,8 +6,8 @@ import { Linking } from "expo";
 import { Button, Text } from "native-base";
 import preset from "../styles/preset";
 import Sentry from "../utils/Sentry";
-import CaptionText from "./CaptionText";
-import TitleText from "./TitleText";
+import CaptionText from "./texts/CaptionText";
+import TitleText from "./texts/TitleText";
 
 const AliceIFOView = () => {
     const { t } = useTranslation("finance");

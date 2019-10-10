@@ -4,9 +4,9 @@ import { Image, View } from "react-native";
 
 import { Updates } from "expo";
 import { Button, Container, Content, Text } from "native-base";
-import CaptionText from "../../components/CaptionText";
-import SubtitleText from "../../components/SubtitleText";
-import { Spacing } from "../../constants/dimension";
+import CaptionText from "../../components/texts/CaptionText";
+import SubtitleText from "../../components/texts/SubtitleText";
+import preset from "../../styles/preset";
 
 const CompleteScreen = () => {
     const { t } = useTranslation(["common", "start"]);
@@ -14,27 +14,22 @@ const CompleteScreen = () => {
         Updates.reload();
     }, []);
     return (
-        <Container style={{ flex: 1 }}>
+        <Container style={preset.flex1}>
             <Content>
                 <SubtitleText aboveText={true}>{t("start:complete")}</SubtitleText>
                 <CaptionText>{t("start:complete.description")}</CaptionText>
-                <View style={{ flex: 1, margin: Spacing.normal }}>
+                <View style={[preset.flex1, preset.marginNormal]}>
                     <Image
                         source={require("../../assets/rabbit.jpg")}
                         fadeDuration={0}
-                        style={{
-                            width: 237,
-                            height: 333,
-                            margin: Spacing.large,
-                            alignSelf: "center"
-                        }}
+                        style={[{ width: 237, height: 333 }, preset.marginLarge, preset.alignCenter]}
                     />
                     <Button
                         info={true}
                         block={true}
                         rounded={true}
                         large={true}
-                        style={{ marginTop: Spacing.normal }}
+                        style={preset.marginTopNormal}
                         onPress={onComplete}>
                         <Text>{t("start")}</Text>
                     </Button>
