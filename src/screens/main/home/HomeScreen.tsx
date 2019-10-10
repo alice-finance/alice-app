@@ -18,6 +18,7 @@ import TitleText from "../../../components/texts/TitleText";
 import { ChainContext } from "../../../contexts/ChainContext";
 import { SavingsContext } from "../../../contexts/SavingsContext";
 import useAsyncEffect from "../../../hooks/useAsyncEffect";
+import useCurrentAPRUpdater from "../../../hooks/useCurrentAPRUpdater";
 import useMySavingsLoader from "../../../hooks/useMySavingsLoader";
 import preset from "../../../styles/preset";
 
@@ -103,15 +104,6 @@ const MySavingsCarousel = ({ myRecords }) => {
     ) : (
         <EmptyView text={t("noSavingsHistory")} />
     );
-};
-
-const useCurrentAPRUpdater = () => {
-    const { loomChain } = useContext(ChainContext);
-    const { setAPR } = useContext(SavingsContext);
-    useAsyncEffect(async () => {
-        const market = loomChain!.getMoneyMarket();
-        setAPR(toBigNumber(await market.getCurrentSavingsAPR()).mul(toBigNumber(100)));
-    }, []);
 };
 
 export default HomeScreen;

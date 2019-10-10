@@ -1,6 +1,7 @@
 import React, { useCallback, useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FlatList, StyleProp, View, ViewStyle } from "react-native";
+import useCurrentAPRUpdater from "../../../hooks/useCurrentAPRUpdater";
 import { defaultKeyExtractor } from "../../../utils/react-native-utils";
 
 import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
@@ -43,6 +44,7 @@ const SavingsScreen = () => {
 
 const NewSavingsSection = () => {
     const { t } = useTranslation("savings");
+    useCurrentAPRUpdater();
     return (
         <View style={preset.marginBottomLarge}>
             <TitleText aboveText={true}>{t("title")}</TitleText>
