@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from "react";
+import React, { useCallback, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { FlatList, StyleProp, View, ViewStyle } from "react-native";
 import useCurrentAPRUpdater from "../../../hooks/useCurrentAPRUpdater";
@@ -16,8 +16,6 @@ import MomentText from "../../../components/texts/MomentText";
 import NoteText from "../../../components/texts/NoteText";
 import SubtitleText from "../../../components/texts/SubtitleText";
 import TitleText from "../../../components/texts/TitleText";
-import TokenIcon from "../../../components/TokenIcon";
-import { AssetContext } from "../../../contexts/AssetContext";
 import { ChainContext } from "../../../contexts/ChainContext";
 import { SavingsContext } from "../../../contexts/SavingsContext";
 import useAsyncEffect from "../../../hooks/useAsyncEffect";
@@ -26,8 +24,8 @@ import useRecentSavingsLoader from "../../../hooks/useRecentSavingsLoader";
 import useSavingsLeaderboardLoader from "../../../hooks/useSavingsLeaderboardLoader";
 import preset from "../../../styles/preset";
 import { formatValue } from "../../../utils/big-number-utils";
-import { compoundToAPR } from "../../../utils/interest-rate-utils";
 import { openAddress, openTx } from "../../../utils/loom-utils";
+import ProfileIcon from "../../../components/ProfileIcon";
 
 const SavingsScreen = () => {
     return (
@@ -46,7 +44,7 @@ const NewSavingsSection = () => {
     const { t } = useTranslation("savings");
     useCurrentAPRUpdater();
     return (
-        <View style={preset.marginBottomLarge}>
+        <View style={preset.marginBottomHuge}>
             <TitleText aboveText={true}>{t("title")}</TitleText>
             <CaptionText style={preset.marginBottomNormal}>{t("description")}</CaptionText>
             <NewSavingsCard />
@@ -66,17 +64,20 @@ const LeaderboardSection = () => {
     }, []);
     useAsyncEffect(load, []);
     return (
-        <View style={preset.marginBottomLarge}>
+        <View style={preset.marginBottomHuge}>
             <SubtitleText aboveText={true}>{t("leaderboard")}</SubtitleText>
-            <CaptionText>{t("leaderboard.description")}</CaptionText>
-            <FlatList
+            <CaptionText style={preset.marginBottomNormal}>{t("leaderboard.description")}</CaptionText>
+            { savingsLeaderboard ?
+            (<FlatList
                 data={savingsLeaderboard}
                 keyExtractor={defaultKeyExtractor}
                 renderItem={renderItem}
                 refreshing={!savingsLeaderboard}
                 onRefresh={load}
-            />
-            {myRank && (
+            />) :
+            (<Spinner compact={true} />)
+            }
+            {savingsLeaderboard && myRank && (
                 <View>
                     <Icon type={"MaterialCommunityIcons"} name={"dots-vertical"} style={preset.marginLeftLarge} />
                     <RankItem rank={myRank} me={true} />
@@ -90,12 +91,13 @@ const RankItem = ({ rank, me }) => {
     const { asset, decimals } = useContext(SavingsContext);
     const onPress = useCallback(() => openAddress(rank.user), []);
     return (
-        <ListItem button={true} noBorder={true} onPress={onPress}>
+        <ListItem button={true} noBorder={true} onPress={onPress} style={{height:52}}>
             <Body style={preset.marginTiny}>
-                <View style={[preset.flex1, preset.flexDirectionRow, preset.alignItemsCenter]}>
+                <View style={[preset.flexDirectionRow, preset.alignItemsCenter]}>
                     <Badge rank={rank.rank} me={me} />
-                    <View style={[preset.flex1, preset.marginLeftSmall]}>
-                        <Text style={[preset.fontSize20, preset.fontWeightBold, preset.textAlignRight]}>
+                    <ProfileIcon address={rank.user} width={48} height={48} style={preset.marginLeftNormal}/>
+                    <View style={[preset.flex1, preset.flexDirectionRow, preset.alignItemsCenter]}>
+                        <Text style={[preset.flex1, preset.fontSize20, preset.textAlignRight]}>
                             {formatValue(toBigNumber(rank.amount), decimals, 4)} {asset!.symbol}
                         </Text>
                     </View>
@@ -155,7 +157,7 @@ const RecentSavings = () => {
                 </SubtitleText>
                 <RefreshButton onPress={onPress} />
             </View>
-            <CaptionText>{t("recentSavings.description")}</CaptionText>
+            <CaptionText style={preset.marginBottomNormal}>{t("recentSavings.description")}</CaptionText>
             {recentSavings ? (
                 <FlatList
                     data={recentSavings}
@@ -171,27 +173,22 @@ const RecentSavings = () => {
 };
 
 const SavingsItem = ({ savings }) => {
-    const { asset, decimals } = useContext(SavingsContext);
+    const { asset } = useContext(SavingsContext);
     const onPress = useCallback(() => openTx(savings.transactionHash), []);
-    const [apr] = useState(() => compoundToAPR(savings.rate, decimals));
     return (
-        <ListItem button={true} iconRight={true} onPress={onPress}>
+        <ListItem button={true} iconRight={true} onPress={onPress} noBorder={true} style={{height:52}}>
             <Body style={[preset.flex0, preset.marginLeftSmall, preset.marginRightSmall]}>
-                <TokenIcon address={asset!.ethereumAddress.toLocalAddressString()} width={32} height={32} />
-                <Text style={[preset.fontSize16, preset.textAlignCenter, { marginLeft: 0 }]}>
-                    {formatValue(toBigNumber(apr), decimals, 2)}%
-                </Text>
+                <ProfileIcon address={savings.owner} width={48} height={48} />
             </Body>
             <Body>
                 <View style={[preset.flex1, preset.flexDirectionRow, preset.alignItemsCenter]}>
-                    <Text style={[preset.flex1, preset.fontSize20]}>
+                    <Text style={[preset.flex2, preset.fontSize20, preset.textAlignRight]}>
                         {formatValue(savings.balance, asset!.decimals)} {asset!.symbol}
                     </Text>
-                    <MomentText date={new Date(savings.timestamp * 1000)} note={true} />
+                    <View style={[preset.flex1, preset.flexDirectionRow]}>
+                        <MomentText date={new Date(savings.timestamp * 1000)} note={true} />
+                    </View>
                 </View>
-                <Text ellipsizeMode="middle" numberOfLines={1} style={[preset.fontSize16, preset.colorGrey]}>
-                    {savings.owner}
-                </Text>
             </Body>
         </ListItem>
     );
@@ -199,9 +196,7 @@ const SavingsItem = ({ savings }) => {
 
 const RecentClaims = () => {
     const { t } = useTranslation(["savings", "common"]);
-    const { assets } = useContext(AssetContext);
-    const asset = assets.find(a => a.symbol === "ALICE");
-    const renderItem = useCallback(({ item }) => <ClaimItem claim={item} asset={asset} />, []);
+    const renderItem = useCallback(({ item }) => <ClaimItem claim={item} />, []);
     const { loadRecentClaims, recentClaims } = useRecentClaimsLoader();
     const onPress = loadRecentClaims;
     useAsyncEffect(loadRecentClaims, []);
@@ -213,7 +208,7 @@ const RecentClaims = () => {
                 </SubtitleText>
                 <RefreshButton onPress={onPress} />
             </View>
-            <CaptionText>{t("recentClaims.description")}</CaptionText>
+            <CaptionText style={preset.marginBottomNormal}>{t("recentClaims.description")}</CaptionText>
             {recentClaims ? (
                 <FlatList
                     data={recentClaims}
@@ -228,21 +223,22 @@ const RecentClaims = () => {
     );
 };
 
-const ClaimItem = ({ claim, asset }) => {
+const ClaimItem = ({ claim }) => {
     const onPress = useCallback(() => openTx(claim.transactionHash), []);
     return (
-        <ListItem button={true} onPress={onPress}>
+        <ListItem button={true} onPress={onPress} noBorder={true} style={{height:52}}>
             <Body style={[preset.flex0, preset.marginLeftSmall, preset.marginRightSmall]}>
-                <TokenIcon address={asset.ethereumAddress.toLocalAddressString()} width={32} height={32} />
+                <ProfileIcon address={claim.user} width={48} height={48} />
             </Body>
             <Body>
                 <View style={[preset.flex1, preset.flexDirectionRow, preset.alignItemsCenter]}>
-                    <Text style={[preset.flex1, preset.fontSize20]}>{formatValue(claim.amount, 18)} ALICE</Text>
-                    <MomentText date={new Date(claim.timestamp * 1000)} note={true} />
+                    <Text style={[preset.flex2, preset.fontSize20, preset.textAlignRight]}>
+                        {formatValue(claim.amount, 18)} ALICE
+                    </Text>
+                    <View style={[preset.flex1, preset.flexDirectionRow]}>
+                        <MomentText date={new Date(claim.timestamp * 1000)} note={true} />
+                    </View>
                 </View>
-                <Text ellipsizeMode="middle" numberOfLines={1} style={[preset.fontSize16, preset.colorGrey]}>
-                    {claim.user}
-                </Text>
             </Body>
         </ListItem>
     );

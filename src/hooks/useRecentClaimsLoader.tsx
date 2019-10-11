@@ -11,7 +11,7 @@ const useRecentClaimsLoader = () => {
                     .doc("events")
                     .collection("Claimed")
                     .orderBy("timestamp", "desc")
-                    .limit(10)
+                    .limit(5)
             )
         );
     }, []);
