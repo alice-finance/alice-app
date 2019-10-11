@@ -11,7 +11,7 @@ const useRecentSavingsLoader = () => {
                     .doc("events")
                     .collection("SavingsDeposited")
                     .orderBy("timestamp", "desc")
-                    .limit(10)
+                    .limit(5)
             )
         );
     }, []);
