@@ -194,7 +194,7 @@
         "startSavings.button": "연이율 {{aprText}}로 저축하기",
         "startSavings.button.withoutApr": "저축하기",
         "startSavings.description": "저축할 금액을 입력해주세요.",
-        "startSavings.description.withoutDai": "AliceFi 지갑으로 암호화폐를 가지고 와서 저축을 시작해보세요!",
+        "startSavings.description.withoutDai": "AliceFi 지갑으로 암호화폐를 가지고 오면 DAI 토큰을 저축할 수 있습니다.",
         "startSavings.note": "* 연이율은 시장 상황에 따라 변할 수 있습니다.",
         "noSavingsHistory": "저축 내역이 없습니다.",
         "starting": "시작하는 중...",

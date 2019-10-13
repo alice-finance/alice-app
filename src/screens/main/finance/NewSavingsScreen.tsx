@@ -7,6 +7,7 @@ import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils
 import { BigNumber } from "ethers/utils";
 import { Button, Card, CardItem, Container, Content, Text } from "native-base";
 import StartSavingsButton from "../../../components/buttons/StartSavingsButton";
+import DaiUsdView from "../../../components/DaiUsdView";
 import SavingsAmountInput from "../../../components/inputs/SavingsAmountInput";
 import Spinner from "../../../components/Spinner";
 import BigNumberText from "../../../components/texts/BigNumberText";
@@ -30,6 +31,7 @@ const NewSavingsScreen = () => {
                 {myBalance.isZero() ? (
                     <>
                         <CaptionText>{t("startSavings.description.withoutDai")}</CaptionText>
+                        <DaiUsdView />
                         <ReceiveDaiSection />
                     </>
                 ) : (
