@@ -7,14 +7,14 @@ import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
 import { BigNumber } from "ethers/utils";
 import platform from "../../../native-base-theme/variables/platform";
 import preset from "../../styles/preset";
-import { parseValue } from "../../utils/big-number-utils";
+import { formatValue, parseValue } from "../../utils/big-number-utils";
 
 interface AmountInputProps {
     asset: ERC20Asset;
     max?: BigNumber;
     disabled?: boolean;
     placeholderHidden?: boolean;
-    initialValue?: string;
+    initialValue?: BigNumber;
     onChangeAmount: (amount: BigNumber | null) => void;
     style?: StyleProp<ViewStyle>;
     inputStyle?: StyleProp<TextStyle>;
@@ -22,7 +22,7 @@ interface AmountInputProps {
 
 const AmountInput: FunctionComponent<AmountInputProps> = props => {
     const { t } = useTranslation("common");
-    const [value, setValue] = useState(props.initialValue || "");
+    const [value, setValue] = useState(props.initialValue ? formatValue(props.initialValue, props.asset.decimals) : "");
     const [error, setError] = useState("");
     const onChangeValue = useCallback(
         (newValue: string) => {
@@ -53,7 +53,7 @@ const Input = ({ props, value, onChangeValue }) => {
     }, []);
     return (
         <TextInput
-            autoFocus={true}
+            selectTextOnFocus={true}
             keyboardType="numeric"
             placeholder={props.placeholderHidden ? null : props.asset.symbol}
             value={value}

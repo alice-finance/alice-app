@@ -32,6 +32,7 @@ const preset = StyleSheet.create({
     colorDarkGrey: { color: "darkgrey" },
     colorGrey: { color: "grey" },
     colorPrimary: { color: platform.brandPrimary },
+    colorSuccess: { color: platform.brandSuccess },
     colorInfo: { color: platform.brandInfo },
     colorDanger: { color: platform.brandDanger },
     colorDark: { color: platform.brandDark },

@@ -157,7 +157,7 @@ const ClaimButton = ({ claim, amount }) => {
 };
 
 const DisabledClaimButton = ({ claimableAt }) => {
-    const { t } = useTranslation("savings");
+    const { t } = useTranslation(["savings", "common"]);
     return (
         <Button primary={true} rounded={true} bordered={true} block={true} disabled={true} iconLeft={true}>
             <Icon type={"MaterialCommunityIcons"} name={"clock-outline"} style={{ color: "grey" }} />
@@ -166,7 +166,7 @@ const DisabledClaimButton = ({ claimableAt }) => {
                 {claimableAt ? (
                     <MomentText date={claimableAt} ago={true} note={true} />
                 ) : (
-                    <NoteText>{t("loading")}</NoteText>
+                    <NoteText>{t("common:loading")}</NoteText>
                 )}
             </View>
         </Button>

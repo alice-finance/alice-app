@@ -13,6 +13,7 @@ import { formatValue } from "../../utils/big-number-utils";
 import AmountInput from "./AmountInput";
 
 interface SavingsAmountInputProps {
+    initialAmount?: BigNumber;
     onAmountChanged: (amount: BigNumber | null) => void;
     onAPRChanged?: (apr: BigNumber | null) => void;
     onLoadingStarted?: () => void;
@@ -28,6 +29,7 @@ const SavingsAmountInput: FunctionComponent<SavingsAmountInputProps> = props => 
             <View style={[preset.flexDirectionRow, preset.alignItemsCenter]}>
                 <Text style={preset.fontSize24}>{t("amount")}</Text>
                 <AmountInput
+                    initialValue={props.initialAmount}
                     asset={asset!}
                     placeholderHidden={true}
                     onChangeAmount={onChangeAmount}
@@ -47,7 +49,7 @@ const SavingsAmountInput: FunctionComponent<SavingsAmountInputProps> = props => 
 
 const useSavingsAmountInputEffect = (props: SavingsAmountInputProps) => {
     const { asset } = useContext(SavingsContext);
-    const [amount, setAmount] = useState<BigNumber | null>(null);
+    const [amount, setAmount] = useState<BigNumber | null>(props.initialAmount || null);
     const [apr, setAPR] = useState<BigNumber>(toBigNumber(0));
     const { loomChain } = useContext(ChainContext);
     const aprText = formatValue(apr.mul(100), asset!.decimals, 2) + " %";

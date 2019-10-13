@@ -5,7 +5,8 @@ import { View } from "react-native";
 import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { BigNumber } from "ethers/utils";
 import { Body, Card, CardItem, Container, Content, Left, Right, Text } from "native-base";
-import StartSavingButton from "../../../components/buttons/StartSavingsButton";
+import StartSavingsButton from "../../../components/buttons/StartSavingsButton";
+import DaiUsdView from "../../../components/DaiUsdView";
 import SavingsAmountInput from "../../../components/inputs/SavingsAmountInput";
 import Spinner from "../../../components/Spinner";
 import BigNumberText from "../../../components/texts/BigNumberText";
@@ -28,7 +29,8 @@ const SavingsSimulationScreen = () => {
             <Content>
                 <TitleText aboveText={true}>{t("simulation")}</TitleText>
                 <CaptionText style={preset.marginBottomNormal}>{t("simulation.description")}</CaptionText>
-                <View style={[preset.marginLeftLarge, preset.marginRightLarge, preset.marginTopLarge]}>
+                <View style={[preset.marginLarge]}>
+                    <DaiUsdView />
                     <SavingsAmountInput
                         onAmountChanged={setAmount}
                         onAPRChanged={setAPR}
@@ -83,17 +85,18 @@ const Main = ({ asset, decimals, apr, amount }) => {
 };
 
 const Result = ({ apr, amount, loading }) => {
-    const { t } = useTranslation("savings");
+    const { t } = useTranslation(["savings", "common"]);
     const { asset, decimals } = useContext(SavingsContext);
-    return (
-        amount &&
-        (loading ? (
-            <Spinner compact={true} label={t("loading")} />
+    return amount ? (
+        loading ? (
+            <Spinner compact={true} label={t("common:loading")} />
         ) : (
             <View style={[preset.marginNormal, preset.marginTopLarge]}>
                 <ExpectationCard asset={asset} decimals={decimals} apr={apr} amount={amount} />
             </View>
-        ))
+        )
+    ) : (
+        <CaptionText style={preset.marginNormal}>{t("simulation.input")}</CaptionText>
     );
 };
 
@@ -103,7 +106,7 @@ const ExpectationCard = ({ asset, decimals, apr, amount }) => {
             <Header asset={asset} />
             <Main asset={asset} decimals={decimals} apr={apr} amount={amount} />
             <CardItem>
-                <StartSavingButton />
+                <StartSavingsButton apr={apr} />
             </CardItem>
         </Card>
     );

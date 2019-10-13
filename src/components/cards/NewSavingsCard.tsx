@@ -4,12 +4,12 @@ import { View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
 import { Body, Button, Card, CardItem, Left, Text } from "native-base";
+import { ChainContext } from "../../contexts/ChainContext";
 import { SavingsContext } from "../../contexts/SavingsContext";
 import useAssetBalancesUpdater from "../../hooks/useAssetBalancesUpdater";
 import useAsyncEffect from "../../hooks/useAsyncEffect";
 import preset from "../../styles/preset";
 import Sentry from "../../utils/Sentry";
-import StartSavingButton from "../buttons/StartSavingsButton";
 import Spinner from "../Spinner";
 import BigNumberText from "../texts/BigNumberText";
 import TokenIcon from "../TokenIcon";
@@ -62,7 +62,7 @@ const Footer = ({ refreshing }) => {
             <View style={[preset.flexDirectionRow, preset.marginBottomSmall]}>
                 <SavingsSimulationButton />
                 <View style={preset.marginTiny} />
-                <StartSavingButton disabled={refreshing} />
+                <StartButton disabled={refreshing} />
             </View>
         </CardItem>
     );
@@ -84,6 +84,21 @@ const SavingsSimulationButton = () => {
             onPress={onShowLeaderboard}
             style={preset.flex1}>
             <Text style={preset.fontSize16}>{t("simulation")}</Text>
+        </Button>
+    );
+};
+
+const StartButton = ({ disabled }) => {
+    const { t } = useTranslation("common");
+    const { push } = useNavigation();
+    const { isReadOnly } = useContext(ChainContext);
+    const onPress = useCallback(() => {
+        Sentry.track(Sentry.trackingTopics.START_SAVING);
+        push(isReadOnly ? "Start" : "NewSavings");
+    }, []);
+    return (
+        <Button primary={true} rounded={true} block={true} style={preset.flex1} disabled={disabled} onPress={onPress}>
+            <Text>{t("start")}</Text>
         </Button>
     );
 };
