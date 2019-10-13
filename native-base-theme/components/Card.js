@@ -19,7 +19,7 @@ export default (variables /*: * */ = variable) => {
             shadowOpacity: null,
             elevation: null
         },
-        marginVertical: 5,
+        marginVertical: 10,
         marginHorizontal: 2,
         borderWidth: variables.borderWidth,
         borderRadius: variables.cardBorderRadius,

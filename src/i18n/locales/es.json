@@ -59,9 +59,11 @@
     },
     "home": {
         "title": "Inicio",
-        "description": "¡Trae tu cripto a tu Alice Wallet y comienza a ahorrar!",
-        "wallet": "Alice Wallet",
-        "bring": "Traer",
+        "description": "¡Trae tu cripto a tu cartera de AliceFi y comienza a ahorrar!",
+        "pendingAmount": "Monto pendiente",
+        "wallet": "Cartera de AliceFi",
+        "receive": "Traer",
+        "receive.description": "Elija una criptomoneda para recibir.",
         "send": "Enviar"
     },
     "exchange": {

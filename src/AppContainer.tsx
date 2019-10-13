@@ -23,6 +23,8 @@ import NewSavingsScreen from "./screens/main/finance/NewSavingsScreen";
 import SavingsScreen from "./screens/main/finance/SavingsScreen";
 import SavingsSimulationScreen from "./screens/main/finance/SavingsSimulationScreen";
 import HomeScreen from "./screens/main/home/HomeScreen";
+import ReceiveScreen from "./screens/main/home/ReceiveScreen";
+import SendScreen from "./screens/main/home/SendScreen";
 import ProfileScreen from "./screens/main/profile/ProfileScreen";
 import ResetAccountScreen from "./screens/main/profile/ResetAccountScreen";
 import NotConnectedScreen from "./screens/NotConnectedScreen";
@@ -100,6 +102,8 @@ const AndroidTabNavigator = createMaterialBottomTabNavigator(tabs, {
 
 const MainNavigator = createDefaultStackNavigator({
     Tab: Platform.OS === "ios" ? IOSTabNavigator : AndroidTabNavigator,
+    Receive: ReceiveScreen,
+    Send: SendScreen,
     NewSavings: NewSavingsScreen,
     SavingsSimulation: SavingsSimulationScreen,
     ManageAsset: ManageAssetScreen,

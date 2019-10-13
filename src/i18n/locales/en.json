@@ -59,9 +59,11 @@
     },
     "home": {
         "title": "Home",
-        "description": "Bring your crypto to your Alice Wallet and start savings!",
-        "wallet": "Alice Wallet",
-        "bring": "Bring",
+        "description": "Bring your crypto to your AliceFi Wallet and start savings!",
+        "pendingAmount": "Pending Amount",
+        "wallet": "AliceFi Wallet",
+        "receive": "Receive",
+        "receive.description": "Choose a cryptocurrency to receive.",
         "send": "Send"
     },
     "exchange": {

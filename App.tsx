@@ -3,9 +3,10 @@ import "node-libs-react-native/globals";
 import "./globals";
 import "ethers/dist/shims.js";
 import React from "react";
-import { Root, StyleProvider } from "native-base";
+import { Root, StyleProvider, View } from "native-base";
 import { I18nextProvider } from "react-i18next";
 import firebase from "firebase";
+import FlashMessage from "react-native-flash-message";
 import getTheme from "./native-base-theme/components";
 import platform from "./native-base-theme/variables/platform";
 import AppContainer from "./src/AppContainer";
@@ -15,6 +16,7 @@ import { Portal } from "react-native-paper";
 import { ethers } from "ethers";
 import { YellowBox, Platform, StatusBar } from "react-native";
 import { useScreens } from "react-native-screens";
+import preset from "./src/styles/preset";
 import Sentry from "./src/utils/Sentry";
 
 if (__DEV__) {
@@ -47,7 +49,10 @@ export default class App extends React.Component {
                         <Root>
                             {Platform.OS === "ios" && <StatusBar barStyle="dark-content" />}
                             <Portal.Host>
-                                <AppContainer screenProps={{ t: i18n.t }} />
+                                <View style={preset.flex1}>
+                                    <AppContainer screenProps={{ t: i18n.t }} />
+                                    <FlashMessage position="top" />
+                                </View>
                             </Portal.Host>
                         </Root>
                     </StyleProvider>

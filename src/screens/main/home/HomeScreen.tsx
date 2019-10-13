@@ -3,10 +3,10 @@ import { useTranslation } from "react-i18next";
 import { Dimensions, View } from "react-native";
 import Carousel, { Pagination } from "react-native-snap-carousel";
 
-import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { Container, Content } from "native-base";
 import platform from "../../../../native-base-theme/variables/platform";
 import NewSavingsCard from "../../../components/cards/NewSavingsCard";
+import PendingAmountCard from "../../../components/cards/PendingAmountCard";
 import SavingsRecordCard from "../../../components/cards/SavingsRecordCard";
 import WalletCard from "../../../components/cards/WalletCard";
 import EmptyView from "../../../components/EmptyView";
@@ -15,11 +15,14 @@ import CaptionText from "../../../components/texts/CaptionText";
 import NoteText from "../../../components/texts/NoteText";
 import SubtitleText from "../../../components/texts/SubtitleText";
 import TitleText from "../../../components/texts/TitleText";
+import { AssetContext } from "../../../contexts/AssetContext";
+import { BalancesContext } from "../../../contexts/BalancesContext";
 import { ChainContext } from "../../../contexts/ChainContext";
 import { SavingsContext } from "../../../contexts/SavingsContext";
 import useAsyncEffect from "../../../hooks/useAsyncEffect";
 import useCurrentAPRUpdater from "../../../hooks/useCurrentAPRUpdater";
 import useMySavingsLoader from "../../../hooks/useMySavingsLoader";
+import usePendingDepositChecker from "../../../hooks/usePendingDepositChecker";
 import preset from "../../../styles/preset";
 
 const HomeScreen = () => {
@@ -34,6 +37,7 @@ const HomeScreen = () => {
                 <View>
                     <TitleText aboveText={true}>{t("title")}</TitleText>
                     <CaptionText style={preset.marginBottomNormal}>{t("description")}</CaptionText>
+                    <PendingAmountsSection />
                     <View style={preset.marginBottomLarge}>
                         <WalletCard />
                     </View>
@@ -49,6 +53,27 @@ const HomeScreen = () => {
                 </View>
             </Content>
         </Container>
+    );
+};
+
+const PendingAmountsSection = () => {
+    const { t } = useTranslation("home");
+    const { getAssetByAddress } = useContext(AssetContext);
+    const { getBalance } = useContext(BalancesContext);
+    const { addressesWithPendingDeposit } = usePendingDepositChecker();
+    return (
+        <>
+            {addressesWithPendingDeposit.length > 0 && (
+                <SubtitleText aboveText={true}>{t("pendingAmount")}</SubtitleText>
+            )}
+            {addressesWithPendingDeposit.map(address => (
+                <PendingAmountCard
+                    key={address.toLocalAddressString()}
+                    asset={getAssetByAddress(address)}
+                    amount={getBalance(address)}
+                />
+            ))}
+        </>
     );
 };
 

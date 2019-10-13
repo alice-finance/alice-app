@@ -14,7 +14,6 @@ import { EMPTY_MNEMONIC } from "../constants/bip39";
 import { AssetContext } from "../contexts/AssetContext";
 import { ChainContext } from "../contexts/ChainContext";
 import { SavingsContext } from "../contexts/SavingsContext";
-import useAssetBalancesUpdater from "../hooks/useAssetBalancesUpdater";
 import useUpdateChecker from "../hooks/useUpdateChecker";
 import { getGasPrice } from "../utils/ether-gas-utils";
 import { mapAccounts } from "../utils/loom-utils";
@@ -35,7 +34,6 @@ const useLoader = () => {
     const { setMnemonic, setEthereumChain, setLoomChain } = useContext(ChainContext);
     const { setAssets } = useContext(AssetContext);
     const { setDecimals, setAsset } = useContext(SavingsContext);
-    const { update: updateAssetBalances } = useAssetBalancesUpdater();
     const { checkForUpdate } = useUpdateChecker();
     const load = async () => {
         ExpoSplashScreen.preventAutoHide();
@@ -54,7 +52,6 @@ const useLoader = () => {
         setAsset(asset!);
         setDecimals(decimals);
         setAssets(assets);
-        await updateAssetBalances();
         checkForUpdate();
         trackAppStart(ethereumChain, loomChain);
     };

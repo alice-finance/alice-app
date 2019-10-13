@@ -30,11 +30,11 @@
     "max-func-body-length": [
       true,
       {
-        "func-body-length": 30,
-        "func-expression-body-length": 30,
-        "arrow-body-length": 30,
-        "method-body-length": 30,
-        "ctor-body-length": 30,
+        "func-body-length": 32,
+        "func-expression-body-length": 32,
+        "arrow-body-length": 32,
+        "method-body-length": 32,
+        "ctor-body-length": 32,
         "ignore-comments": true
       }
     ]

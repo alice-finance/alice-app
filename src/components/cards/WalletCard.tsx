@@ -4,25 +4,23 @@ import { FlatList, View } from "react-native";
 import { useFocusState, useNavigation } from "react-navigation-hooks";
 import { defaultKeyExtractor } from "../../utils/react-native-utils";
 
-import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
 import { Button, Card, CardItem, Text } from "native-base";
 import { AssetContext } from "../../contexts/AssetContext";
-import { BalancesContext } from "../../contexts/BalancesContext";
+import { ChainContext } from "../../contexts/ChainContext";
 import { PendingTransactionsContext } from "../../contexts/PendingTransactionsContext";
 import useAssetBalancesUpdater from "../../hooks/useAssetBalancesUpdater";
 import useAsyncEffect from "../../hooks/useAsyncEffect";
 import useDepositionRecovery from "../../hooks/useDepositionRecovery";
 import usePendingWithdrawalHandler from "../../hooks/usePendingWithdrawalHandler";
 import preset from "../../styles/preset";
-import { formatValue } from "../../utils/big-number-utils";
 import Sentry from "../../utils/Sentry";
+import AssetListItem from "../AssetListItem";
 import RefreshButton from "../buttons/RefreshButton";
 import HeadlineText from "../texts/HeadlineText";
-import TokenIcon from "../TokenIcon";
 
 const WalletCard = () => {
     const { assets } = useContext(AssetContext);
-    const renderItem = useCallback(({ item }) => <AssetListItem asset={item} />, []);
+    const renderItem = useCallback(({ item }) => <AssetListItem noBorder={true} asset={item} />, []);
     const { updating, update } = useWalletEffects();
     return (
         <View style={preset.marginNormal}>
@@ -33,25 +31,6 @@ const WalletCard = () => {
                 </CardItem>
                 <Footer />
             </Card>
-        </View>
-    );
-};
-
-const AssetListItem = ({ asset }: { asset: ERC20Asset }) => {
-    const { getBalance } = useContext(BalancesContext);
-    const balance = getBalance(asset.loomAddress);
-    return (
-        <View style={[preset.marginLeftSmall, preset.marginRightSmall, preset.marginBottomSmall]}>
-            <View style={[preset.flexDirectionRow, preset.alignItemsCenter]}>
-                <TokenIcon address={asset.ethereumAddress.toLocalAddressString()} width={24} height={24} />
-                <Text style={[preset.flex1, preset.marginLeftSmall, preset.fontSize20, preset.colorGrey]}>
-                    {asset.name}
-                </Text>
-                <Text style={[preset.fontSize20, preset.fontWeightBold, preset.textAlignRight]}>
-                    {formatValue(balance, asset.decimals)}
-                </Text>
-                <Text style={[preset.fontSize20, preset.marginLeftSmall, { width: 56 }]}>{asset.symbol}</Text>
-            </View>
         </View>
     );
 };
@@ -68,21 +47,43 @@ const Header = ({ updating, update }) => {
     );
 };
 
-const Footer = () => (
-    <CardItem>
-        <View style={[preset.flexDirectionRow, preset.marginBottomSmall]}>
-            <SendButton />
-            <View style={preset.marginTiny} />
-            <BringButton />
-        </View>
-    </CardItem>
-);
+const Footer = () => {
+    const { isReadOnly } = useContext(ChainContext);
+    return (
+        <CardItem>
+            {isReadOnly ? (
+                <CreateWalletButton />
+            ) : (
+                <View style={[preset.flexDirectionRow, preset.marginBottomSmall]}>
+                    <SendButton />
+                    <View style={preset.marginTiny} />
+                    <ReceiveButton />
+                </View>
+            )}
+        </CardItem>
+    );
+};
+
+const CreateWalletButton = () => {
+    const { t } = useTranslation("profile");
+    const { push } = useNavigation();
+    const onPress = useCallback(() => {
+        Sentry.track(Sentry.trackingTopics.START);
+        push("Start");
+    }, []);
+    return (
+        <Button primary={true} bordered={true} rounded={true} block={true} onPress={onPress} style={preset.flex1}>
+            <Text>{t("createWallet")}</Text>
+        </Button>
+    );
+};
 
 const SendButton = () => {
     const { t } = useTranslation("home");
     const { push } = useNavigation();
     const onPress = useCallback(() => {
-        Sentry.track(Sentry.trackingTopics.WITHDRAW);
+        Sentry.track(Sentry.trackingTopics.SEND);
+        push("Send");
     }, []);
     return (
         <Button primary={true} bordered={true} rounded={true} block={true} onPress={onPress} style={preset.flex1}>
@@ -91,15 +92,16 @@ const SendButton = () => {
     );
 };
 
-const BringButton = () => {
+const ReceiveButton = () => {
     const { t } = useTranslation("home");
     const { push } = useNavigation();
     const onPress = useCallback(() => {
-        Sentry.track(Sentry.trackingTopics.DEPOSIT);
+        Sentry.track(Sentry.trackingTopics.RECEIVE);
+        push("Receive");
     }, []);
     return (
         <Button primary={true} rounded={true} block={true} onPress={onPress} style={preset.flex1}>
-            <Text>{t("bring")}</Text>
+            <Text>{t("receive")}</Text>
         </Button>
     );
 };

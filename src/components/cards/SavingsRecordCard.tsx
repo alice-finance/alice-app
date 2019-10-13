@@ -52,10 +52,7 @@ const Header = ({ asset, apr, record }) => {
         <>
             <CardItem>
                 <Left>
-                    <TokenIcon address={asset!.ethereumAddress.toLocalAddressString()} width={32} height={32} />
-                    <Body style={preset.marginLeftNormal}>
-                        <Text style={[preset.fontSize24, preset.colorGrey]}>{asset!.symbol}</Text>
-                    </Body>
+                    <TokenIcon address={asset!.ethereumAddress.toLocalAddressString()} width={28} height={28} />
                 </Left>
                 <Button primary={true} rounded={true} transparent={true} small={true} onPress={openDialog}>
                     <Text style={{ paddingRight: 12 }}>{t("withdrawSavings")}</Text>

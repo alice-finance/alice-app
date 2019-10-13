@@ -200,7 +200,7 @@ export default {
     listBorderColor: "#c9c9c9",
     listDividerBg: "#f4f4f4",
     listBtnUnderlayColor: "#DDD",
-    listItemPadding: platform === "ios" ? 10 : 12,
+    listItemPadding: platform === "ios" ? 8 : 10,
     listNoteColor: "#808080",
     listNoteSize: 13,
 
