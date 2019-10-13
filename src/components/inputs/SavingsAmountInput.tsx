@@ -14,9 +14,9 @@ import AmountInput from "./AmountInput";
 
 interface SavingsAmountInputProps {
     onAmountChanged: (amount: BigNumber | null) => void;
-    onAPRChanged: (apr: BigNumber | null) => void;
-    onLoadingStarted: () => void;
-    onLoadingFinished: () => void;
+    onAPRChanged?: (apr: BigNumber | null) => void;
+    onLoadingStarted?: () => void;
+    onLoadingFinished?: () => void;
 }
 
 const SavingsAmountInput: FunctionComponent<SavingsAmountInputProps> = props => {
@@ -33,7 +33,7 @@ const SavingsAmountInput: FunctionComponent<SavingsAmountInputProps> = props => 
                     onChangeAmount={onChangeAmount}
                     style={[preset.flex1, preset.marginLeftNormal, preset.marginRightSmall]}
                 />
-                <Text style={[preset.fontSize24, preset.colorDarkGrey]}>{asset!.symbol}</Text>
+                <Text style={[preset.fontSize36, preset.colorDarkGrey]}>{asset!.symbol}</Text>
             </View>
             <View style={[preset.flexDirectionRow, preset.alignItemsCenter, preset.marginTopSmall]}>
                 <Text style={preset.fontSize24}>{t("apr")}</Text>
@@ -48,21 +48,27 @@ const SavingsAmountInput: FunctionComponent<SavingsAmountInputProps> = props => 
 const useSavingsAmountInputEffect = (props: SavingsAmountInputProps) => {
     const { asset } = useContext(SavingsContext);
     const [amount, setAmount] = useState<BigNumber | null>(null);
-    const [apr, setAPR] = useState<BigNumber | null>(toBigNumber(0));
+    const [apr, setAPR] = useState<BigNumber>(toBigNumber(0));
     const { loomChain } = useContext(ChainContext);
-    const aprText = formatValue(toBigNumber(apr).mul(100), asset!.decimals, 2) + " %";
+    const aprText = formatValue(apr.mul(100), asset!.decimals, 2) + " %";
     const onChangeAmount = useCallback(a => {
         setAmount(a);
         props.onAmountChanged(a);
     }, []);
     useAsyncEffect(async () => {
         if (amount) {
-            props.onLoadingStarted();
+            if (props.onLoadingStarted) {
+                props.onLoadingStarted();
+            }
             const market = loomChain!.getMoneyMarket();
             const aprValue = await market.getExpectedSavingsAPR(amount);
-            setAPR(apr);
-            props.onAPRChanged(aprValue);
-            props.onLoadingFinished();
+            setAPR(aprValue);
+            if (props.onAPRChanged) {
+                props.onAPRChanged(aprValue);
+            }
+            if (props.onLoadingFinished) {
+                props.onLoadingFinished();
+            }
         }
     }, [amount]);
     return { aprText, onChangeAmount };
