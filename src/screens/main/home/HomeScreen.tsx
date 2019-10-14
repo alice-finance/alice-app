@@ -58,7 +58,6 @@ const HomeScreen = () => {
 
 const PendingAmountsSection = () => {
     const { t } = useTranslation("home");
-    const { getAssetByAddress } = useContext(AssetContext);
     const { getBalance } = useContext(BalancesContext);
     const { addressesWithPendingDeposit } = usePendingDepositChecker();
     return (
@@ -69,7 +68,7 @@ const PendingAmountsSection = () => {
             {addressesWithPendingDeposit.map(address => (
                 <PendingAmountCard
                     key={address.toLocalAddressString()}
-                    asset={getAssetByAddress(address)}
+                    address={address}
                     amount={getBalance(address)}
                 />
             ))}

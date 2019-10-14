@@ -20,8 +20,7 @@ const usePendingDepositChecker = () => {
             })
             .map(asset => asset.ethereumAddress);
         const pendingAddresses = getPendingDepositAddresses();
-        SnackBar.success(JSON.stringify(pendingAddresses));
-        setAddressesWithPendingDeposit([...addressesWithBalance, ...pendingAddresses]);
+        setAddressesWithPendingDeposit(Array.from(new Set([...addressesWithBalance, ...pendingAddresses])));
     }, [lastUpdated]);
     return { addressesWithPendingDeposit };
 };
