@@ -76,7 +76,7 @@
         "Amount.erc20.notEnoughFee": "No tiene suficiente ETH para obtener {{symbol}}. Deposite 0.01 ETH primero",
         "Amount.erc20.next": "Pasos siguientes",
         "Amount.erc20.receiveFee": "Obtener tarifa",
-        "Amount.viewTx": "Ver transacciones",
+        "Amount.viewTx": "Detalle",
         "wallet": "Cartera de AliceFi",
         "wallet.myFeeBalance": "Saldo De Mi Tarifa",
         "wallet.myFeeBalance.description": "Cada modificación en AliceFi se registra en blockchain. Su tarifa se utiliza para el proceso.",

@@ -76,7 +76,7 @@
         "pendingAmount.erc20.notEnoughFee": "{{symbol}}을 가져오기 위한 수수료(ETH)가 부족합니다. 우선 0.01 ETH를 입금해주세요.",
         "pendingAmount.erc20.next": "다음 단계",
         "pendingAmount.erc20.receiveFee": "수수료 가져오기",
-        "pendingAmount.viewTx": "트랜잭션 보기",
+        "pendingAmount.viewTx": "자세히",
         "wallet": "AliceFi 지갑",
         "wallet.myFeeBalance": "나의 수수료 잔액",
         "wallet.myFeeBalance.description": "AliceFi의 모든 거래 내역은 블록체인에 투명하게 기록됩니다. 블록에 기록하기 위한 수수료가 필요합니다.",

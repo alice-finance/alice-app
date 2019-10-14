@@ -11,7 +11,7 @@ const usePersistentState = <T extends {}>(key: string, initialState: any) => {
             setState(value === null ? initialState : JSON.parse(value));
         }, 0);
     }, []);
-    const setPersistentState = useCallback(async newState => {
+    const setPersistentState = useCallback(async (newState: T) => {
         try {
             const stateToStore = newState instanceof Function ? newState(state) : newState;
             await AsyncStorage.setItem(key, JSON.stringify(stateToStore));

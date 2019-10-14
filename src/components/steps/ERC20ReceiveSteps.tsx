@@ -8,6 +8,7 @@ import { Body, Button, CardItem, Left, Right, Text } from "native-base";
 import platform from "../../../native-base-theme/variables/platform";
 import { Spacing } from "../../constants/dimension";
 import { ChainContext } from "../../contexts/ChainContext";
+import { EthereumContext } from "../../contexts/EthereumContext";
 import { PendingTransactionsContext } from "../../contexts/PendingTransactionsContext";
 import useAsyncEffect from "../../hooks/useAsyncEffect";
 import preset from "../../styles/preset";
@@ -72,11 +73,7 @@ const ERC20ReceiveInProgress = ({ transaction, currentStep, showRefreshButton = 
     return (
         <>
             <DescriptionItem description={t("pendingAmount.erc20.step" + currentStep + ".inProgress")} />
-            {showRefreshButton ? (
-                <RefreshItem transaction={transaction} />
-            ) : (
-                <InProgressItem transaction={transaction} />
-            )}
+            {showRefreshButton ? <RefreshItem /> : <InProgressItem transaction={transaction} />}
         </>
     );
 };
@@ -217,16 +214,18 @@ const DepositERC20ButtonItem = ({ asset, amount }) => {
     );
 };
 
-const RefreshItem = ({ transaction }) => {
+const RefreshItem = () => {
     const { t } = useTranslation("common");
-    const onPress = useCallback(() => openTx(transaction.hash), [transaction]);
+    const { ethereumChain } = useContext(ChainContext);
+    const { setCurrentBlockNumber } = useContext(EthereumContext);
+    const onPress = useCallback(async () => {
+        setCurrentBlockNumber(await ethereumChain!.getProvider().getBlockNumber());
+    }, []);
     return (
         <CardItem footer={true}>
             <Left />
             <Right>
                 <Button success={true} bordered={true} rounded={true} onPress={onPress}>
-                    <View style={{ width: Spacing.small }} />
-                    <Spinner compact={true} small={true} color={platform.brandSuccess} />
                     <Text>{t("refresh")}</Text>
                 </Button>
             </Right>
