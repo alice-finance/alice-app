@@ -17,8 +17,7 @@ import TokenIcon from "../TokenIcon";
 const NewSavingsCard = () => {
     const { t } = useTranslation("savings");
     const { asset, apr } = useContext(SavingsContext);
-    const { updating, update } = useAssetBalancesUpdater();
-    const refreshing = !asset || updating;
+    const { update } = useAssetBalancesUpdater();
     useAsyncEffect(update, []);
     return (
         <View style={[preset.marginNormal]}>
@@ -39,7 +38,7 @@ const NewSavingsCard = () => {
                         )}
                     </View>
                 </CardItem>
-                <Footer refreshing={refreshing} />
+                <Footer />
             </Card>
         </View>
     );
@@ -56,13 +55,13 @@ const Header = ({ asset }) => (
     </CardItem>
 );
 
-const Footer = ({ refreshing }) => {
+const Footer = () => {
     return (
         <CardItem>
             <View style={[preset.flexDirectionRow, preset.marginBottomSmall]}>
                 <SavingsSimulationButton />
                 <View style={preset.marginTiny} />
-                <StartButton disabled={refreshing} />
+                <StartButton disabled={false} />
             </View>
         </CardItem>
     );

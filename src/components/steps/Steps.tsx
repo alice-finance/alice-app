@@ -45,7 +45,11 @@ const Step = ({ index, completed, current, done = false }) => {
             {completed ? (
                 <Icon type={"MaterialIcons"} name={"check"} style={[preset.fontSize14, preset.colorLight]} />
             ) : done ? (
-                <Icon type={"MaterialIcons"} name={"star"} style={[preset.fontSize20, preset.colorLight]} />
+                <Icon
+                    type={"MaterialIcons"}
+                    name={"star"}
+                    style={[preset.fontSize20, current ? preset.colorSuccess : preset.colorLight]}
+                />
             ) : (
                 <Text style={[preset.fontSize16, preset.fontWeightBold, { color: current ? "black" : "white" }]}>
                     {index + 1}

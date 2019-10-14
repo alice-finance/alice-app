@@ -105,7 +105,7 @@ const FeeSection = () => {
 const TokenItem = ({ iconSource = null as ImageSourcePropType | null, text, note = "", onPress }) => {
     return (
         <ListItem onPress={onPress}>
-            <View style={[preset.flexDirectionRow, preset.marginNormal, preset.justifyContentCenter]}>
+            <View style={[preset.flexDirectionRow, preset.marginNormal, preset.alignItemsCenter]}>
                 {iconSource ? (
                     <Image source={iconSource} fadeDuration={0} style={[{ width: 24, height: 24 }]} />
                 ) : (

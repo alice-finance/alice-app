@@ -110,10 +110,9 @@ const CreateWalletButton = () => {
 
 const SendButton = () => {
     const { t } = useTranslation("home");
-    const { push } = useNavigation();
     const onPress = useCallback(() => {
         Sentry.track(Sentry.trackingTopics.SEND);
-        push("Send");
+        Alert.alert(t("send"), t("send.warning"));
     }, []);
     return (
         <Button primary={true} bordered={true} rounded={true} block={true} onPress={onPress} style={preset.flex1}>

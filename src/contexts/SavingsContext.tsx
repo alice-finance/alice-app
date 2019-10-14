@@ -21,6 +21,7 @@ export const SavingsContext = React.createContext({
     myTotalWithdrawal: null as ethers.utils.BigNumber | null
 });
 
+// tslint:disable-next-line:max-func-body-length
 export const SavingsProvider = ({ children }) => {
     const [decimals, setDecimals] = useState(0);
     const [asset, setAsset] = useState<ERC20Asset | null>(null);

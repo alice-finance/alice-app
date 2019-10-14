@@ -8,6 +8,7 @@ import platform from "../../../native-base-theme/variables/platform";
 import { Spacing } from "../../constants/dimension";
 import { ETH_MAX_FEE } from "../../constants/token";
 import { AssetContext } from "../../contexts/AssetContext";
+import { ChainContext } from "../../contexts/ChainContext";
 import { PendingTransactionsContext } from "../../contexts/PendingTransactionsContext";
 import useAsyncEffect from "../../hooks/useAsyncEffect";
 import useKyberNetworkProxy from "../../hooks/useKyberNetworkProxy";
@@ -19,23 +20,20 @@ import BigNumberText from "../texts/BigNumberText";
 import Steps from "./Steps";
 
 const ETHReceiveSteps = ({ asset, amount, currentStep }) => {
-    const {
-        getLastPendingDepositTransaction,
-        removePendingDepositTransaction,
-        confirmPendingDepositTransaction
-    } = useContext(PendingTransactionsContext);
+    const { getLastPendingDepositTransaction, confirmPendingDepositTransaction } = useContext(
+        PendingTransactionsContext
+    );
+    const { ethereumChain } = useContext(ChainContext);
     const pendingTransaction = getLastPendingDepositTransaction(asset.ethereumAddress);
     useAsyncEffect(async () => {
         if (pendingTransaction && !pendingTransaction.blockHash) {
-            try {
-                const receipt = await pendingTransaction.wait();
-                confirmPendingDepositTransaction(asset.ethereumAddress, receipt);
-            } catch (e) {
-                SnackBar.danger(e);
-                if (pendingTransaction.hash) {
-                    removePendingDepositTransaction(asset.ethereumAddress, pendingTransaction.hash);
-                }
-            }
+            confirmPendingDepositTransaction(asset.ethereumAddress, await pendingTransaction.wait());
+        }
+    }, [pendingTransaction]);
+    useAsyncEffect(async () => {
+        if (pendingTransaction && pendingTransaction.hash && !pendingTransaction.blockHash) {
+            const receipt = await ethereumChain!.getProvider().getTransactionReceipt(pendingTransaction.hash);
+            confirmPendingDepositTransaction(asset.ethereumAddress, receipt);
         }
     }, [pendingTransaction]);
     return (
@@ -44,7 +42,7 @@ const ETHReceiveSteps = ({ asset, amount, currentStep }) => {
             {currentStep === 2 ? (
                 <ETHReceiveStep2 asset={asset} amount={amount} pendingTransaction={pendingTransaction} />
             ) : (
-                <ETHReceiveDone />
+                <ETHReceiveDone asset={asset} pendingTransaction={pendingTransaction} />
             )}
         </>
     );
@@ -80,9 +78,27 @@ const ETHReceiveStep2Ready = ({ asset, amount }) => {
     );
 };
 
-const ETHReceiveDone = () => {
-    const { t } = useTranslation("home");
-    return <DescriptionItem description={t("pendingAmount.eth.done")} />;
+const ETHReceiveDone = ({ asset, pendingTransaction }) => {
+    const { t } = useTranslation(["home", "common"]);
+    const { clearPendingDepositTransactions } = useContext(PendingTransactionsContext);
+    const onPress = useCallback(() => {
+        if (pendingTransaction.hash) {
+            clearPendingDepositTransactions(asset.ethereumAddress);
+        }
+    }, [asset, pendingTransaction]);
+    return (
+        <>
+            <DescriptionItem description={t("pendingAmount.eth.done")} />
+            <CardItem footer={true}>
+                <Left />
+                <Right>
+                    <Button primary={true} bordered={true} rounded={true} onPress={onPress}>
+                        <Text style={preset.fontSize16}>{t("common:ok")}</Text>
+                    </Button>
+                </Right>
+            </CardItem>
+        </>
+    );
 };
 
 const ConvertView = ({ fromAsset, toAsset, fromAmount, toAmount }) => {

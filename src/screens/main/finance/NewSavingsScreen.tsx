@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
-import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { BigNumber } from "ethers/utils";
 import { Button, Card, CardItem, Container, Content, Text } from "native-base";
 import StartSavingsButton from "../../../components/buttons/StartSavingsButton";
@@ -22,8 +21,8 @@ const NewSavingsScreen = () => {
     const { t } = useTranslation(["savings", "common"]);
     const { asset } = useContext(SavingsContext);
     const { getBalance } = useContext(BalancesContext);
-    const [amount, setAmount] = useState<BigNumber>(toBigNumber(0));
     const myBalance = getBalance(asset!.loomAddress);
+    const [amount, setAmount] = useState<BigNumber>(myBalance);
     return (
         <Container>
             <Content>

@@ -21,10 +21,17 @@ const ERC20ReceiveSteps = ({ asset, amount, currentStep }) => {
     const { getLastPendingDepositTransaction, confirmPendingDepositTransaction } = useContext(
         PendingTransactionsContext
     );
+    const { ethereumChain } = useContext(ChainContext);
     const pendingTransaction = getLastPendingDepositTransaction(asset.ethereumAddress);
     useAsyncEffect(async () => {
         if (pendingTransaction && !pendingTransaction.blockHash) {
             confirmPendingDepositTransaction(asset.ethereumAddress, await pendingTransaction.wait());
+        }
+    }, [pendingTransaction]);
+    useAsyncEffect(async () => {
+        if (pendingTransaction && pendingTransaction.hash && !pendingTransaction.blockHash) {
+            const receipt = await ethereumChain!.getProvider().getTransactionReceipt(pendingTransaction.hash);
+            confirmPendingDepositTransaction(asset.ethereumAddress, receipt);
         }
     }, [pendingTransaction]);
     return (
@@ -37,7 +44,7 @@ const ERC20ReceiveSteps = ({ asset, amount, currentStep }) => {
             ) : currentStep === 4 ? (
                 <ERC20ReceiveStep4 asset={asset} amount={amount} pendingTransaction={pendingTransaction} />
             ) : (
-                <ERC20ReceiveDone />
+                <ERC20ReceiveDone asset={asset} pendingTransaction={pendingTransaction} />
             )}
         </>
     );
@@ -63,9 +70,27 @@ const ERC20ReceiveStep4 = ({ asset, amount, pendingTransaction }) => {
     return <ERC20ReceiveInProgress transaction={pendingTransaction} currentStep={4} showRefreshButton={true} />;
 };
 
-const ERC20ReceiveDone = () => {
-    const { t } = useTranslation("home");
-    return <DescriptionItem description={t("pendingAmount.erc20.done")} />;
+const ERC20ReceiveDone = ({ asset, pendingTransaction }) => {
+    const { t } = useTranslation(["home", "common"]);
+    const { clearPendingDepositTransactions } = useContext(PendingTransactionsContext);
+    const onPress = useCallback(() => {
+        if (pendingTransaction.hash) {
+            clearPendingDepositTransactions(asset.ethereumAddress);
+        }
+    }, [asset, pendingTransaction]);
+    return (
+        <>
+            <DescriptionItem description={t("pendingAmount.erc20.done")} />
+            <CardItem footer={true}>
+                <Left />
+                <Right>
+                    <Button primary={true} bordered={true} rounded={true} onPress={onPress}>
+                        <Text style={preset.fontSize16}>{t("common:ok")}</Text>
+                    </Button>
+                </Right>
+            </CardItem>
+        </>
+    );
 };
 
 const ERC20ReceiveInProgress = ({ transaction, currentStep, showRefreshButton = false }) => {
@@ -136,16 +161,26 @@ const DescriptionItem = ({ description, error = false }) => (
 );
 
 const ReceiveFeeButtonItem = () => {
-    const { t } = useTranslation("home");
+    const { t } = useTranslation(["home", "common"]);
     const { push } = useNavigation();
-    const onPress = useCallback(async () => {
+    const { ethereumChain } = useContext(ChainContext);
+    const { setCurrentBlockNumber } = useContext(EthereumContext);
+    const onRefresh = useCallback(async () => {
+        setCurrentBlockNumber(await ethereumChain!.getProvider().getBlockNumber());
+    }, []);
+    const onReceive = useCallback(async () => {
         push("ReceiveStep2", { assetName: "fee" });
     }, []);
     return (
         <CardItem footer={true}>
             <Left />
             <Right>
-                <Button primary={true} bordered={true} rounded={true} onPress={onPress}>
+                <Button primary={true} bordered={true} rounded={true} onPress={onRefresh}>
+                    <Text style={preset.fontSize16}>{t("common:refresh")}</Text>
+                </Button>
+            </Right>
+            <Right>
+                <Button primary={true} rounded={true} onPress={onReceive}>
                     <Text style={preset.fontSize16}>{t("pendingAmount.erc20.receiveFee")}</Text>
                 </Button>
             </Right>
