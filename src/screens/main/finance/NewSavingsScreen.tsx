@@ -50,7 +50,7 @@ const ReceiveDaiSection = () => {
     const { t } = useTranslation(["home"]);
     const { push } = useNavigation();
     const onPress = useCallback(() => {
-        push("Receive");
+        push("ReceiveStep1");
     }, []);
     return (
         <View style={[preset.marginLarge]}>

@@ -20,7 +20,7 @@ import HeadlineText from "../texts/HeadlineText";
 
 const WalletCard = () => {
     const { assets } = useContext(AssetContext);
-    const renderItem = useCallback(({ item }) => <AssetListItem noBorder={true} asset={item} />, []);
+    const renderItem = useCallback(({ item }) => <AssetListItem asset={item} />, []);
     const { updating, update } = useWalletEffects();
     return (
         <View style={preset.marginNormal}>
@@ -97,7 +97,7 @@ const ReceiveButton = () => {
     const { push } = useNavigation();
     const onPress = useCallback(() => {
         Sentry.track(Sentry.trackingTopics.RECEIVE);
-        push("Receive");
+        push("ReceiveStep1");
     }, []);
     return (
         <Button primary={true} rounded={true} block={true} onPress={onPress} style={preset.flex1}>

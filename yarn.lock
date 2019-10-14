@@ -7894,6 +7894,11 @@ react-native-keyboard-aware-scroll-view@0.8.0:
     prop-types "^15.6.2"
     react-native-iphone-x-helper "^1.0.3"
 
+react-native-loading-dots@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/react-native-loading-dots/-/react-native-loading-dots-1.1.1.tgz#b858a79090752cfb19fbdf99bcf177c881d6cbf4"
+  integrity sha512-S7q23PMPCP9iTet2ENVvjJy5iYfu4Truqqhg99e1y7pR2N1m8sfpJK4vavngDkyQR64+TGVa3v0B0vA/urbBQQ==
+
 react-native-maps@*, react-native-maps@0.24.2:
   version "0.24.2"
   resolved "https://registry.yarnpkg.com/react-native-maps/-/react-native-maps-0.24.2.tgz#19974f967cb0c2e24dab74ca879118e0932571b2"

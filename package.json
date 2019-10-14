@@ -33,12 +33,14 @@
     "moment": "^2.24.0",
     "native-base": "2.12.1",
     "node-libs-react-native": "^1.0.3",
+    "prop-types": "latest",
     "react": "16.8.3",
     "react-i18next": "^10.10.0",
     "react-moment": "^0.9.2",
     "react-native": "https://github.com/expo/react-native/archive/sdk-33.0.0.tar.gz",
     "react-native-dotenv": "^0.2.0",
     "react-native-flash-message": "^0.1.15",
+    "react-native-loading-dots": "^1.1.1",
     "react-native-paper": "^2.15.2",
     "react-native-progress-webview": "^1.1.2",
     "react-native-qrcode": "latest",
@@ -51,8 +53,7 @@
     "redux": "^4.0.4",
     "sentry-expo": "^1.13.0",
     "vm-browserify": "1.1.0",
-    "whatwg-url": "^7.0.0",
-    "prop-types": "latest"
+    "whatwg-url": "^7.0.0"
   },
   "devDependencies": {
     "@types/expo": "^32.0.13",
