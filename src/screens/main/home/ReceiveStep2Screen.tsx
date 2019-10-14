@@ -3,7 +3,9 @@ import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import LoadingDots from "react-native-loading-dots";
 import { Dialog, Portal } from "react-native-paper";
+import { useNavigation } from "react-navigation-hooks";
 
+import { ERC20Asset } from "@alice-finance/alice.js/dist";
 import { Body, Button, Card, CardItem, Container, Content, Icon, Text } from "native-base";
 import CaptionText from "../../../components/texts/CaptionText";
 import NoteText from "../../../components/texts/NoteText";
@@ -16,6 +18,8 @@ const ReceiveStep2Screen = () => {
     const { ethereumChain } = useContext(ChainContext);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [waiting, setWaiting] = useState(false);
+    const { getParam } = useNavigation();
+    const assetName: ERC20Asset = getParam("assetName");
     const address = ethereumChain!.getAddress().toLocalAddressString();
     const onOk = useCallback(() => {
         setDialogOpen(false);
@@ -24,13 +28,13 @@ const ReceiveStep2Screen = () => {
     return (
         <Container>
             <Content>
-                <SubtitleText style={{ zIndex: 100 }}>{t("receive")}</SubtitleText>
-                <CaptionText style={[preset.marginBottomNormal, { zIndex: 100 }]}>{t("receive.step2")}</CaptionText>
+                <SubtitleText>{t("receive." + assetName)}</SubtitleText>
+                <CaptionText style={[preset.marginBottomNormal]}>{t("receive.step2." + assetName)}</CaptionText>
                 <AddressCard address={address} />
                 <CopyButton openDialog={useCallback(() => setDialogOpen(true), [])} />
                 {waiting && <WaitingSection />}
             </Content>
-            <AddressCopiedDialog visible={dialogOpen} onOk={onOk} />
+            <AddressCopiedDialog assetName={assetName} visible={dialogOpen} onOk={onOk} />
         </Container>
     );
 };
@@ -74,13 +78,17 @@ const WaitingSection = () => {
     return (
         <View style={preset.marginLarge}>
             <Text style={[preset.fontSize24, preset.fontWeightBold]}>{t("receive.waiting")}</Text>
-            <LoadingDots size={10} />
             <NoteText>{t("receive.waiting.description")}</NoteText>
+            <View style={[preset.marginTopHuge, preset.alignItemsCenter]}>
+                <View style={[{ width: 100 }]}>
+                    <LoadingDots size={10} />
+                </View>
+            </View>
         </View>
     );
 };
 
-const AddressCopiedDialog = ({ visible, onOk }) => {
+const AddressCopiedDialog = ({ assetName, visible, onOk }) => {
     const { t } = useTranslation(["home", "common"]);
     return (
         <Portal>
@@ -101,7 +109,7 @@ const AddressCopiedDialog = ({ visible, onOk }) => {
                             ]}>
                             {t("receive.addressCopied")}
                         </Text>
-                        <Text style={preset.marginTopNormal}>{t("receive.addressCopied.description")}</Text>
+                        <Text style={preset.marginTopNormal}>{t("receive.addressCopied." + assetName)}</Text>
                     </View>
                 </Dialog.Content>
                 <Button primary={true} rounded={true} block={true} onPress={onOk} style={preset.marginNormal}>

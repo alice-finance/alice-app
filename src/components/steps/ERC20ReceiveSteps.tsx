@@ -1,6 +1,7 @@
 import React, { useCallback, useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
+import { useNavigation } from "react-navigation-hooks";
 
 import { BigNumber } from "ethers/utils";
 import { Body, Button, CardItem, Left, Right, Text } from "native-base";
@@ -58,7 +59,7 @@ const ERC20ReceiveStep3 = ({ asset, amount, pendingTransaction }) => {
 };
 
 const ERC20ReceiveStep4 = ({ asset, amount, pendingTransaction }) => {
-    return <ERC20ReceiveInProgress transaction={pendingTransaction} currentStep={4} hideTxButton={true} />;
+    return <ERC20ReceiveInProgress transaction={pendingTransaction} currentStep={4} showRefreshButton={true} />;
 };
 
 const ERC20ReceiveDone = () => {
@@ -66,12 +67,16 @@ const ERC20ReceiveDone = () => {
     return <DescriptionItem description={t("pendingAmount.erc20.done")} />;
 };
 
-const ERC20ReceiveInProgress = ({ transaction, currentStep, hideTxButton = false }) => {
+const ERC20ReceiveInProgress = ({ transaction, currentStep, showRefreshButton = false }) => {
     const { t } = useTranslation("home");
     return (
         <>
             <DescriptionItem description={t("pendingAmount.erc20.step" + currentStep + ".inProgress")} />
-            {!hideTxButton && <InProgressItem transaction={transaction} />}
+            {showRefreshButton ? (
+                <RefreshItem transaction={transaction} />
+            ) : (
+                <InProgressItem transaction={transaction} />
+            )}
         </>
     );
 };
@@ -83,10 +88,13 @@ const ERC20ReceiveReady = ({ asset, amount, currentStep }) => {
     useAsyncEffect(async () => setETHBalance(await ethereumChain!.balanceOfETHAsync()), [ethereumChain]);
     return ethBalance ? (
         ethBalance.isZero() ? (
-            <DescriptionItem
-                description={t("pendingAmount.erc20.notEnoughFee", { symbol: asset.symbol })}
-                error={true}
-            />
+            <>
+                <DescriptionItem
+                    description={t("pendingAmount.erc20.notEnoughFee", { symbol: asset.symbol })}
+                    error={true}
+                />
+                <ReceiveFeeButtonItem />
+            </>
         ) : (
             <>
                 <DescriptionItem description={t("pendingAmount.erc20.step" + currentStep, { symbol: asset.symbol })} />
@@ -129,6 +137,24 @@ const DescriptionItem = ({ description, error = false }) => (
         </Body>
     </CardItem>
 );
+
+const ReceiveFeeButtonItem = () => {
+    const { t } = useTranslation("home");
+    const { push } = useNavigation();
+    const onPress = useCallback(async () => {
+        push("ReceiveStep2", { assetName: "fee" });
+    }, []);
+    return (
+        <CardItem footer={true}>
+            <Left />
+            <Right>
+                <Button primary={true} bordered={true} rounded={true} onPress={onPress}>
+                    <Text style={preset.fontSize16}>{t("pendingAmount.erc20.receiveFee")}</Text>
+                </Button>
+            </Right>
+        </CardItem>
+    );
+};
 
 const ApproveButtonItem = ({ asset, amount }) => {
     const { t } = useTranslation("home");
@@ -185,6 +211,23 @@ const DepositERC20ButtonItem = ({ asset, amount }) => {
             <Right>
                 <Button primary={true} bordered={true} rounded={true} onPress={onPress} disabled={pressed}>
                     <Text style={preset.fontSize16}>{t("pendingAmount.erc20.next")}</Text>
+                </Button>
+            </Right>
+        </CardItem>
+    );
+};
+
+const RefreshItem = ({ transaction }) => {
+    const { t } = useTranslation("common");
+    const onPress = useCallback(() => openTx(transaction.hash), [transaction]);
+    return (
+        <CardItem footer={true}>
+            <Left />
+            <Right>
+                <Button success={true} bordered={true} rounded={true} onPress={onPress}>
+                    <View style={{ width: Spacing.small }} />
+                    <Spinner compact={true} small={true} color={platform.brandSuccess} />
+                    <Text>{t("refresh")}</Text>
                 </Button>
             </Right>
         </CardItem>

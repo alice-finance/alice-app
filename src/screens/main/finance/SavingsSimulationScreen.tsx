@@ -28,7 +28,7 @@ const SavingsSimulationScreen = () => {
         <Container>
             <Content>
                 <TitleText aboveText={true}>{t("simulation")}</TitleText>
-                <CaptionText style={preset.marginBottomNormal}>{t("simulation.description")}</CaptionText>
+                <CaptionText style={preset.marginBottomNormal}>{t("simulation.input")}</CaptionText>
                 <View style={[preset.marginLarge]}>
                     <DaiUsdView />
                     <SavingsAmountInput
@@ -96,7 +96,7 @@ const Result = ({ apr, amount, loading }) => {
             </View>
         )
     ) : (
-        <CaptionText style={preset.marginNormal}>{t("simulation.input")}</CaptionText>
+        <View />
     );
 };
 

@@ -1,11 +1,14 @@
 import React, { useCallback, useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { FlatList, View } from "react-native";
+import { Alert, FlatList, Text as NativeText, View } from "react-native";
 import { useFocusState, useNavigation } from "react-navigation-hooks";
 import { defaultKeyExtractor } from "../../utils/react-native-utils";
 
-import { Button, Card, CardItem, Text } from "native-base";
+import { Address } from "@alice-finance/alice.js/dist";
+import { ZERO_ADDRESS } from "@alice-finance/alice.js/dist/constants";
+import { Button, Card, CardItem, Icon, Text } from "native-base";
 import { AssetContext } from "../../contexts/AssetContext";
+import { BalancesContext } from "../../contexts/BalancesContext";
 import { ChainContext } from "../../contexts/ChainContext";
 import { PendingTransactionsContext } from "../../contexts/PendingTransactionsContext";
 import useAssetBalancesUpdater from "../../hooks/useAssetBalancesUpdater";
@@ -13,6 +16,7 @@ import useAsyncEffect from "../../hooks/useAsyncEffect";
 import useDepositionRecovery from "../../hooks/useDepositionRecovery";
 import usePendingWithdrawalHandler from "../../hooks/usePendingWithdrawalHandler";
 import preset from "../../styles/preset";
+import { formatValue } from "../../utils/big-number-utils";
 import Sentry from "../../utils/Sentry";
 import AssetListItem from "../AssetListItem";
 import RefreshButton from "../buttons/RefreshButton";
@@ -29,6 +33,7 @@ const WalletCard = () => {
                 <CardItem>
                     <FlatList data={assets} keyExtractor={defaultKeyExtractor} renderItem={renderItem} />
                 </CardItem>
+                <FeeBalanceView />
                 <Footer />
             </Card>
         </View>
@@ -43,6 +48,31 @@ const Header = ({ updating, update }) => {
             <View>
                 <RefreshButton disabled={updating} onPress={update} />
             </View>
+        </View>
+    );
+};
+
+const FeeBalanceView = () => {
+    const { t } = useTranslation("home");
+    const { getBalance } = useContext(BalancesContext);
+    const myEthBalance = getBalance(Address.createEthereumAddress(ZERO_ADDRESS));
+    const onPressMore = useCallback(() => {
+        Alert.alert(t("wallet.myFeeBalance"), t("wallet.myFeeBalance.description"));
+    }, []);
+    return (
+        <View style={[preset.flexDirectionRow]}>
+            <View style={preset.flex1} />
+            <Button
+                rounded={true}
+                transparent={true}
+                small={true}
+                onPress={onPressMore}
+                style={[preset.marginRightNormal, preset.marginBottomSmall]}>
+                <NativeText style={[preset.fontSize16, preset.colorGrey, preset.textAlignRight]}>
+                    {t("wallet.myFeeBalance") + " : " + formatValue(myEthBalance, 18) + " ETH"}
+                </NativeText>
+                <Icon type={"AntDesign"} name={"questioncircleo"} style={preset.fontSize14} />
+            </Button>
         </View>
     );
 };

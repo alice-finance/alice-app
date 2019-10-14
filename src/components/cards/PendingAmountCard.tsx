@@ -21,7 +21,7 @@ const PendingAmountCard = ({ asset, amount }) => {
     return (
         <View style={[preset.marginLeftNormal, preset.marginRightNormal, preset.marginBottomSmall]}>
             <Card>
-                <CardItem style={[preset.marginTopSmall]}>
+                <CardItem style={[preset.marginTopSmall, preset.marginBottomSmall]}>
                     <Left>
                         <TokenIcon address={address} width={28} height={28} />
                         <BigNumberText value={amount} suffix={" " + asset.symbol} style={preset.marginLeftSmall} />
