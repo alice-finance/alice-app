@@ -98,7 +98,7 @@ const ERC20ReceiveInProgress = ({ transaction, currentStep, showRefreshButton = 
     return (
         <>
             <DescriptionItem description={t("pendingAmount.erc20.step" + currentStep + ".inProgress")} />
-            {showRefreshButton ? <RefreshItem /> : <InProgressItem transaction={transaction} />}
+            {<InProgressItem transaction={transaction} showRefreshButton={showRefreshButton} />}
         </>
     );
 };
@@ -249,31 +249,24 @@ const DepositERC20ButtonItem = ({ asset, amount }) => {
     );
 };
 
-const RefreshItem = () => {
-    const { t } = useTranslation("common");
+const InProgressItem = ({ transaction, showRefreshButton }) => {
+    const { t } = useTranslation(["home", "common"]);
     const { ethereumChain } = useContext(ChainContext);
     const { setCurrentBlockNumber } = useContext(EthereumContext);
-    const onPress = useCallback(async () => {
+    const onPress = useCallback(() => openTx(transaction.hash), [transaction]);
+    const onRefresh = useCallback(async () => {
         setCurrentBlockNumber(await ethereumChain!.getProvider().getBlockNumber());
     }, []);
     return (
         <CardItem footer={true}>
             <Left />
-            <Right>
-                <Button primary={true} bordered={true} rounded={true} onPress={onPress}>
-                    <Text>{t("refresh")}</Text>
-                </Button>
-            </Right>
-        </CardItem>
-    );
-};
-
-const InProgressItem = ({ transaction }) => {
-    const { t } = useTranslation("home");
-    const onPress = useCallback(() => openTx(transaction.hash), [transaction]);
-    return (
-        <CardItem footer={true}>
-            <Left />
+            {showRefreshButton && (
+                <Right>
+                    <Button primary={true} bordered={true} rounded={true} onPress={onRefresh}>
+                        <Text>{t("common:refresh")}</Text>
+                    </Button>
+                </Right>
+            )}
             <Right>
                 <Button success={true} bordered={true} rounded={true} onPress={onPress}>
                     <View style={{ width: Spacing.small }} />
