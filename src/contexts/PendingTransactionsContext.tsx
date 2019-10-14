@@ -38,8 +38,8 @@ export const PendingTransactionsProvider = ({ children }) => {
     const getPendingDepositAddresses = useCallback(
         () =>
             Object.keys(pendingDepositTransactions)
-                .filter(address => pendingDepositTransactions[address].length > 0)
-                .map(address => Address.createEthereumAddress(address)),
+                .map(address => Address.createEthereumAddress(address))
+                .filter(address => getPendingDepositTransactions(address).length > 0),
         []
     );
     const getPendingDepositTransactions = useCallback(
@@ -94,8 +94,8 @@ export const PendingTransactionsProvider = ({ children }) => {
     const getPendingWithdrawalAddresses = useCallback(
         () =>
             Object.keys(pendingWithdrawalTransactions)
-                .filter(address => pendingWithdrawalTransactions[address].length > 0)
-                .map(address => Address.createEthereumAddress(address)),
+                .map(address => Address.createEthereumAddress(address))
+                .filter(address => getPendingWithdrawalTransactions(address).length > 0),
         []
     );
     const getPendingWithdrawalTransactions = useCallback(

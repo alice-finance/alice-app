@@ -260,7 +260,7 @@ const RefreshItem = () => {
         <CardItem footer={true}>
             <Left />
             <Right>
-                <Button success={true} bordered={true} rounded={true} onPress={onPress}>
+                <Button primary={true} bordered={true} rounded={true} onPress={onPress}>
                     <Text>{t("refresh")}</Text>
                 </Button>
             </Right>

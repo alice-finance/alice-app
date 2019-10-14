@@ -5,6 +5,7 @@ import { ETH_MAX_FEE } from "../constants/token";
 import { AssetContext } from "../contexts/AssetContext";
 import { BalancesContext } from "../contexts/BalancesContext";
 import { PendingTransactionsContext } from "../contexts/PendingTransactionsContext";
+import SnackBar from "../utils/SnackBar";
 
 const usePendingDepositChecker = () => {
     const { assets } = useContext(AssetContext);
@@ -19,6 +20,7 @@ const usePendingDepositChecker = () => {
             })
             .map(asset => asset.ethereumAddress);
         const pendingAddresses = getPendingDepositAddresses();
+        SnackBar.success(JSON.stringify(pendingAddresses));
         setAddressesWithPendingDeposit([...addressesWithBalance, ...pendingAddresses]);
     }, [lastUpdated]);
     return { addressesWithPendingDeposit };
