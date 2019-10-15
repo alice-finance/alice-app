@@ -16,12 +16,12 @@ import { IWithdrawalReceipt } from "loom-js/dist/contracts/transfer-gateway";
 import { Body, Button, Card, CardItem, Container, Content, Left, ListItem, Text, View } from "native-base";
 import platform from "../../../../native-base-theme/variables/platform";
 import BalanceView from "../../../components/BalanceView";
-import BigNumberText from "../../../components/BigNumberText";
-import CaptionText from "../../../components/CaptionText";
 import EmptyView from "../../../components/EmptyView";
-import HeadlineText from "../../../components/HeadlineText";
 import Spinner from "../../../components/Spinner";
-import TitleText from "../../../components/TitleText";
+import BigNumberText from "../../../components/texts/BigNumberText";
+import CaptionText from "../../../components/texts/CaptionText";
+import HeadlineText from "../../../components/texts/HeadlineText";
+import TitleText from "../../../components/texts/TitleText";
 import TransactionLogListItem, { TypeBadge } from "../../../components/TransactionLogListItem";
 import { BalancesContext } from "../../../contexts/BalancesContext";
 import useAssetBalancesUpdater from "../../../hooks/useAssetBalancesUpdater";
@@ -147,7 +147,7 @@ const ManageDepositsScreen = () => {
     return (
         <Container>
             <Content>
-                <TitleText aboveText={true}>{t("manageDepositedAmount")}</TitleText>
+                <TitleText aboveText={true}>{t("transferAssets")}</TitleText>
                 <BalanceCard
                     title={t("ethereumNetwork")}
                     description={t("ethereumNetwork.description")}

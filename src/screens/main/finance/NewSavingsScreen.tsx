@@ -1,102 +1,120 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
-import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { BigNumber } from "ethers/utils";
-import { Button, Container, Text } from "native-base";
-import AmountInput from "../../../components/AmountInput";
-import CaptionText from "../../../components/CaptionText";
-import Row from "../../../components/Row";
+import { Button, Card, CardItem, Container, Content, Text } from "native-base";
+import StartSavingsButton from "../../../components/buttons/StartSavingsButton";
+import DaiUsdView from "../../../components/DaiUsdView";
+import SavingsAmountInput from "../../../components/inputs/SavingsAmountInput";
 import Spinner from "../../../components/Spinner";
-import TitleText from "../../../components/TitleText";
+import BigNumberText from "../../../components/texts/BigNumberText";
+import CaptionText from "../../../components/texts/CaptionText";
+import TitleText from "../../../components/texts/TitleText";
 import { BalancesContext } from "../../../contexts/BalancesContext";
-import { ChainContext } from "../../../contexts/ChainContext";
 import { SavingsContext } from "../../../contexts/SavingsContext";
 import useSavingsStarter from "../../../hooks/useSavingsStarter";
 import preset from "../../../styles/preset";
-import { formatValue } from "../../../utils/big-number-utils";
-import Sentry from "../../../utils/Sentry";
 
 const NewSavingsScreen = () => {
-    const { push } = useNavigation();
-    const { t } = useTranslation(["finance", "common"]);
-    const { loomChain } = useContext(ChainContext);
-    const { asset, decimals } = useContext(SavingsContext);
-    const { getBalance, updateBalance } = useContext(BalancesContext);
-    const [amount, setAmount] = useState<BigNumber | null>(toBigNumber(0));
-    const [aprText, setAprText] = useState(t("loading"));
-    const [loadingAPR, setLoadingAPR] = useState(false);
+    const { t } = useTranslation(["savings", "common"]);
+    const { asset } = useContext(SavingsContext);
+    const { getBalance } = useContext(BalancesContext);
     const myBalance = getBalance(asset!.loomAddress);
-    const myBalanceText = formatValue(myBalance, asset!.decimals) + " " + asset!.symbol;
-    const { starting, start } = useSavingsStarter(asset, amount);
-    const onPressManageAsset = useCallback(() => {
-        Sentry.track(Sentry.trackingTopics.MANAGE_ASSETS);
-        push("AssetsTab");
-    }, []);
-    useEffect(() => {
-        const refresh = async () => {
-            const balance = await loomChain!.balanceOfERC20Async(asset!);
-            updateBalance(asset!.loomAddress, toBigNumber(balance));
-        };
-        refresh();
-    }, []);
-    useEffect(() => {
-        if (amount) {
-            const load = async () => {
-                setLoadingAPR(true);
-                const market = loomChain!.getMoneyMarket();
-                const expected = await market.getExpectedSavingsAPR(amount);
-                setAprText(formatValue(toBigNumber(expected).mul(100), decimals, 2) + " %");
-                setLoadingAPR(false);
-            };
-            load();
-        }
-    }, [amount]);
+    const [amount, setAmount] = useState<BigNumber>(myBalance);
     return (
         <Container>
-            <TitleText aboveText={true}>{t("startSaving")}</TitleText>
-            <CaptionText style={preset.marginBottomNormal}>{t("startSaving.description")}</CaptionText>
-            <View style={[preset.marginLeftNormal, preset.marginRightNormal]}>
-                <AmountInput
-                    asset={asset!}
-                    max={myBalance}
-                    disabled={myBalance.isZero() || starting}
-                    style={[preset.marginLeftSmall, preset.marginRightSmall]}
-                    onChangeAmount={setAmount}
-                />
-                <View style={[preset.marginLeftNormal, preset.marginTopNormal, preset.marginRightNormal]}>
-                    <Row label={t("apr")} value={loadingAPR ? t("loading") : aprText} />
-                    <Row label={t("myBalance")} value={myBalanceText} error={myBalance.isZero()} />
-                </View>
-                {starting ? (
-                    <Spinner compact={true} label={t("starting")} />
+            <Content>
+                <TitleText aboveText={true}>{t("startSavings")}</TitleText>
+                {myBalance.isZero() ? (
+                    <>
+                        <CaptionText>{t("startSavings.description.withoutDai")}</CaptionText>
+                        <DaiUsdView />
+                        <ReceiveDaiSection />
+                    </>
                 ) : (
                     <>
-                        <Button
-                            primary={true}
-                            rounded={true}
-                            block={true}
-                            style={preset.marginSmall}
-                            disabled={!amount || amount.isZero() || loadingAPR}
-                            onPress={start}>
-                            <Text>{t("common:start")}</Text>
-                        </Button>
-                        <Button
-                            primary={true}
-                            rounded={true}
-                            block={true}
-                            bordered={true}
-                            iconRight={true}
-                            style={preset.marginSmall}
-                            onPress={onPressManageAsset}>
-                            <Text>{t("manageAsset")}</Text>
-                        </Button>
+                        <CaptionText>{t("startSavings.description")}</CaptionText>
+                        <MyBalanceCard />
+                        <StartSavingsSection asset={asset} amount={amount} setAmount={setAmount} />
                     </>
                 )}
-            </View>
+            </Content>
         </Container>
+    );
+};
+
+const ReceiveDaiSection = () => {
+    const { t } = useTranslation(["home"]);
+    const { push } = useNavigation();
+    const onPress = useCallback(() => {
+        push("ReceiveStep1");
+    }, []);
+    return (
+        <View style={[preset.marginLarge]}>
+            <Button primary={true} rounded={true} block={true} onPress={onPress}>
+                <Text>{t("receive")}</Text>
+            </Button>
+        </View>
+    );
+};
+
+const StartSavingsSection = ({ asset, amount, setAmount }) => {
+    const { t } = useTranslation(["savings", "common"]);
+    const { navigate } = useNavigation();
+    const { getBalance } = useContext(BalancesContext);
+    const [loading, setLoading] = useState(false);
+    const { starting, start } = useSavingsStarter(asset, amount);
+    const myBalance = getBalance(asset.loomAddress);
+    const onPressStart = useCallback(async () => {
+        await start();
+        navigate("HomeTab");
+    }, [start]);
+    return (
+        <View style={[preset.marginLarge]}>
+            <SavingsAmountInput
+                initialAmount={myBalance}
+                onAmountChanged={setAmount}
+                onLoadingStarted={useCallback(() => setLoading(true), [])}
+                onLoadingFinished={useCallback(() => setLoading(false), [])}
+            />
+            {starting ? (
+                <Spinner compact={true} label={t("starting")} />
+            ) : (
+                <StartSavingsButton
+                    onPress={onPressStart}
+                    disabled={amount.isZero() || amount.gt(myBalance) || loading}
+                    style={preset.marginTopLarge}
+                />
+            )}
+        </View>
+    );
+};
+
+const MyBalanceCard = () => {
+    const { t } = useTranslation("savings");
+    const { asset } = useContext(SavingsContext);
+    const { getBalance } = useContext(BalancesContext);
+    const myBalance = getBalance(asset!.loomAddress);
+    return (
+        <View style={preset.marginNormal}>
+            <Card>
+                <CardItem>
+                    <View style={[preset.flex1, preset.flexDirectionColumn, preset.marginSmall]}>
+                        <Text style={preset.fontSize14}>{t("myBalance")}</Text>
+                        <View style={[preset.flexDirectionRow, preset.alignItemsCenter]}>
+                            <BigNumberText
+                                value={myBalance}
+                                suffix={asset!.symbol}
+                                decimalPlaces={4}
+                                style={[preset.flex1, preset.fontSize24]}
+                            />
+                        </View>
+                    </View>
+                </CardItem>
+            </Card>
+        </View>
     );
 };
 

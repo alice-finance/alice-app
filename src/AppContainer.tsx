@@ -13,18 +13,22 @@ import { createMaterialBottomTabNavigator } from "react-navigation-material-bott
 import platform from "../native-base-theme/variables/platform";
 import TabBarIcon from "./components/TabBarIcon";
 import AuthScreen from "./screens/AuthScreen";
-import AssetsScreen from "./screens/main/assets/AssetsScreen";
 import DepositScreen from "./screens/main/assets/DepositScreen";
 import ManageAssetScreen from "./screens/main/assets/ManageAssetScreen";
 import ManageDepositsScreen from "./screens/main/assets/ManageDepositsScreen";
 import MyAddressScreen from "./screens/main/assets/MyAddressScreen";
 import TransferAssetScreen from "./screens/main/assets/TransferAssetScreen";
 import WithdrawalScreen from "./screens/main/assets/WithdrawalScreen";
-import FinanceScreen from "./screens/main/finance/FinanceScreen";
 import NewSavingsScreen from "./screens/main/finance/NewSavingsScreen";
-import SavingsLeaderboardScreen from "./screens/main/finance/SavingsLeaderboardScreen";
+import SavingsScreen from "./screens/main/finance/SavingsScreen";
+import SavingsSimulationScreen from "./screens/main/finance/SavingsSimulationScreen";
+import HomeScreen from "./screens/main/home/HomeScreen";
+import ReceiveStep1Screen from "./screens/main/home/ReceiveStep1Screen";
+import ReceiveStep2Screen from "./screens/main/home/ReceiveStep2Screen";
+import SendScreen from "./screens/main/home/SendScreen";
 import ProfileScreen from "./screens/main/profile/ProfileScreen";
 import ResetAccountScreen from "./screens/main/profile/ResetAccountScreen";
+import NotConnectedScreen from "./screens/NotConnectedScreen";
 import SplashScreen from "./screens/SplashScreen";
 import CompleteScreen from "./screens/start/CompleteScreen";
 import ConfirmMnemonicScreen from "./screens/start/ConfirmMnemonicScreen";
@@ -57,13 +61,13 @@ const tabBarNavigationOptions = (name, iconName) => ({ screenProps }) => ({
 });
 
 const tabs = {
-    FinanceTab: {
-        screen: FinanceScreen,
+    HomeTab: {
+        screen: HomeScreen,
         navigationOptions: tabBarNavigationOptions("home", "home")
     },
-    AssetsTab: {
-        screen: AssetsScreen,
-        navigationOptions: tabBarNavigationOptions("assets", "pie-chart")
+    SavingsTab: {
+        screen: SavingsScreen,
+        navigationOptions: tabBarNavigationOptions("savings", "present")
     },
     ProfileTab: {
         screen: ProfileScreen,
@@ -99,8 +103,11 @@ const AndroidTabNavigator = createMaterialBottomTabNavigator(tabs, {
 
 const MainNavigator = createDefaultStackNavigator({
     Tab: Platform.OS === "ios" ? IOSTabNavigator : AndroidTabNavigator,
+    ReceiveStep1: ReceiveStep1Screen,
+    ReceiveStep2: ReceiveStep2Screen,
+    Send: SendScreen,
     NewSavings: NewSavingsScreen,
-    SavingsLeaderboard: SavingsLeaderboardScreen,
+    SavingsSimulation: SavingsSimulationScreen,
     ManageAsset: ManageAssetScreen,
     MyAddress: MyAddressScreen,
     TransferAsset: TransferAssetScreen,
@@ -118,6 +125,7 @@ const MainNavigator = createDefaultStackNavigator({
 
 const AppNavigator = createSwitchNavigator({
     Splash: SplashScreen,
+    NotConnected: NotConnectedScreen,
     Main: MainNavigator
 });
 

@@ -6,9 +6,9 @@ import { defaultKeyExtractor } from "../../../utils/react-native-utils";
 
 import { Body, Container, Icon, Left, ListItem, Text } from "native-base";
 import platform from "../../../../native-base-theme/variables/platform";
-import CaptionText from "../../../components/CaptionText";
 import EmptyView from "../../../components/EmptyView";
-import TitleText from "../../../components/TitleText";
+import CaptionText from "../../../components/texts/CaptionText";
+import TitleText from "../../../components/texts/TitleText";
 import preset from "../../../styles/preset";
 
 export class Exchange {

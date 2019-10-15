@@ -2,12 +2,13 @@ import React, { useCallback, useContext } from "react";
 import { useTranslation } from "react-i18next";
 
 import { ERC20Asset } from "@alice-finance/alice.js";
+import { Address } from "@alice-finance/alice.js/dist";
 import { Body, Icon, Left, ListItem, Text, View } from "native-base";
 import platform from "../../native-base-theme/variables/platform";
 import { AssetContext } from "../contexts/AssetContext";
 import preset from "../styles/preset";
 import { openTx } from "../utils/ether-scan-utils";
-import BigNumberText from "./BigNumberText";
+import BigNumberText from "./texts/BigNumberText";
 
 export const TypeBadge = ({ color, inProgress, withdraw }) => {
     return (
@@ -29,6 +30,7 @@ export const TypeBadge = ({ color, inProgress, withdraw }) => {
     );
 };
 
+// tslint:disable-next-line:max-func-body-length
 const TransactionLogListItem = ({
     asset,
     item,
@@ -39,14 +41,15 @@ const TransactionLogListItem = ({
     blockNumber: number | null;
 }) => {
     const { t } = useTranslation("asset");
-    const { getAssetByEthereumAddress } = useContext(AssetContext);
+    const { getAssetByAddress } = useContext(AssetContext);
     const withdraw = !!item.value;
     const swap = !!item.actualDestAmount;
     const blockConfirmNumber = __DEV__ ? 15 : 10;
     const inProgress =
         !swap && blockNumber && item.log.blockNumber && blockNumber - item.log.blockNumber <= blockConfirmNumber;
     const color = inProgress ? platform.brandWarning : withdraw ? platform.brandDanger : platform.brandInfo;
-    const symbol = swap && getAssetByEthereumAddress(item.dest) ? getAssetByEthereumAddress(item.dest)!.symbol : "";
+    const a = getAssetByAddress(Address.createEthereumAddress(item.dest));
+    const symbol = swap && a ? a!.symbol : "";
     return (
         <ListItem
             noBorder={true}

@@ -20,7 +20,7 @@ const startSavings = async (loomChain, asset, amount) => {
 
 const useSavingsStarter = (asset: ERC20Asset | null, amount: ethers.utils.BigNumber | null) => {
     const { pop } = useNavigation();
-    const { t } = useTranslation("finance");
+    const { t } = useTranslation("savings");
     const { loomChain } = useContext(ChainContext);
     const [starting, setStarting] = useState(false);
     const { update } = useAssetBalancesUpdater();

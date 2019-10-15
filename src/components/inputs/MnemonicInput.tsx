@@ -4,9 +4,9 @@ import { Platform, TextInput, View, ViewProps } from "react-native";
 
 import { wordlists } from "bip39";
 import { Text } from "native-base";
-import platform from "../../native-base-theme/variables/platform";
-import preset from "../styles/preset";
-import MnemonicChip from "./MnemonicChip";
+import platform from "../../../native-base-theme/variables/platform";
+import preset from "../../styles/preset";
+import MnemonicChip from "../MnemonicChip";
 
 const MAX_MNEMONIC = 12;
 

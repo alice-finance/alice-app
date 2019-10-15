@@ -8,10 +8,11 @@ import LoomChain from "@alice-finance/alice.js/dist/chains/LoomChain";
 import { wordlists } from "bip39";
 import * as SecureStore from "expo-secure-store";
 import { Button, Container, Content, Text } from "native-base";
-import CaptionText from "../../components/CaptionText";
-import MnemonicInput from "../../components/MnemonicInput";
+import MnemonicInput from "../../components/inputs/MnemonicInput";
 import Spinner from "../../components/Spinner";
-import SubtitleText from "../../components/SubtitleText";
+import CaptionText from "../../components/texts/CaptionText";
+import SubtitleText from "../../components/texts/SubtitleText";
+import useChainsInitializer from "../../hooks/useChainsInitializer";
 import preset from "../../styles/preset";
 import { ethereumPrivateKeyFromMnemonic, loomPrivateKeyFromMnemonic } from "../../utils/crypto-utils";
 import { mapAccounts } from "../../utils/loom-utils";
@@ -19,43 +20,9 @@ import Sentry from "../../utils/Sentry";
 
 const ImportMnemonicScreen = () => {
     const { t } = useTranslation(["start", "common"]);
-    const { push } = useNavigation();
-    const [confirmed, setConfirmed] = useState(false);
-    const [encrypting, setEncrypting] = useState(false);
-    const [mnemonic, setMnemonic] = useState("");
-
-    const onChangeMnemonic = useCallback(
-        newMnemonic => {
-            const words = newMnemonic.split(" ");
-            setConfirmed(words.length === 12 && words.every(word => wordlists.english.includes(word)));
-            setMnemonic(newMnemonic.trim());
-        },
-        [wordlists]
-    );
-    const onComplete = useCallback(async () => {
-        if (confirmed) {
-            const onSuccess = () => {
-                setEncrypting(true);
-                setTimeout(async () => {
-                    try {
-                        const ethereumPrivateKey = ethereumPrivateKeyFromMnemonic(mnemonic);
-                        const loomPrivateKey = loomPrivateKeyFromMnemonic(mnemonic);
-                        await SecureStore.setItemAsync("mnemonic", mnemonic);
-                        await SecureStore.setItemAsync("ethereumPrivateKey", ethereumPrivateKey);
-                        await SecureStore.setItemAsync("loomPrivateKey", loomPrivateKey);
-                        const ethereumChain = new EthereumChain(ethereumPrivateKey, __DEV__);
-                        const loomChain = new LoomChain(loomPrivateKey, __DEV__);
-                        await mapAccounts(ethereumChain, loomChain);
-                        Sentry.track(Sentry.trackingTopics.WALLET_IMPORTED);
-                        push("Complete");
-                    } finally {
-                        setEncrypting(false);
-                    }
-                }, 100);
-            };
-            push("Auth", { needsRegistration: true, onSuccess });
-        }
-    }, [confirmed, mnemonic]);
+    const { mnemonic, confirmed, encrypting, onChangeMnemonic, setEncrypting } = useImportMnemonicScreenEffect();
+    const onStartEncrypting = () => setEncrypting(true);
+    const onFinishEncrypting = () => setEncrypting(false);
     return (
         <Container>
             <Content>
@@ -68,14 +35,11 @@ const ImportMnemonicScreen = () => {
                         <View style={preset.marginSmall}>
                             <MnemonicInput onChangeMnemonic={onChangeMnemonic} style={preset.marginTopNormal} />
                             {confirmed && (
-                                <Button
-                                    block={true}
-                                    rounded={true}
-                                    disabled={!confirmed}
-                                    style={preset.marginTopNormal}
-                                    onPress={onComplete}>
-                                    <Text>{t("common:next")}</Text>
-                                </Button>
+                                <NextButton
+                                    mnemonic={mnemonic}
+                                    onStartEncrypting={onStartEncrypting}
+                                    onFinishEncrypting={onFinishEncrypting}
+                                />
                             )}
                         </View>
                     )}
@@ -83,6 +47,47 @@ const ImportMnemonicScreen = () => {
             </Content>
         </Container>
     );
+};
+
+const NextButton = ({ mnemonic, onStartEncrypting, onFinishEncrypting }) => {
+    const { t } = useTranslation("common");
+    const { push } = useNavigation();
+    const { initialize } = useChainsInitializer();
+    const onPress = useCallback(async () => {
+        const onSuccess = () => {
+            onStartEncrypting();
+            setTimeout(async () => {
+                try {
+                    await initialize(mnemonic);
+                    Sentry.track(Sentry.trackingTopics.WALLET_IMPORTED);
+                    push("Complete");
+                } finally {
+                    onFinishEncrypting();
+                }
+            }, 100);
+        };
+        push("Auth", { needsRegistration: true, onSuccess });
+    }, [mnemonic]);
+    return (
+        <Button block={true} rounded={true} style={preset.marginTopNormal} onPress={onPress}>
+            <Text>{t("next")}</Text>
+        </Button>
+    );
+};
+
+const useImportMnemonicScreenEffect = () => {
+    const [confirmed, setConfirmed] = useState(false);
+    const [encrypting, setEncrypting] = useState(false);
+    const [mnemonic, setMnemonic] = useState("");
+    const onChangeMnemonic = useCallback(
+        newMnemonic => {
+            const words = newMnemonic.split(" ");
+            setConfirmed(words.length === 12 && words.every(word => wordlists.english.includes(word)));
+            setMnemonic(newMnemonic.trim());
+        },
+        [wordlists]
+    );
+    return { mnemonic, confirmed, encrypting, onChangeMnemonic, setEncrypting };
 };
 
 export default ImportMnemonicScreen;

@@ -4,8 +4,8 @@ import { Clipboard, View } from "react-native";
 import QRCode from "react-native-qrcode";
 
 import { Button, Container, Text } from "native-base";
-import CaptionText from "../../../components/CaptionText";
-import HeadlineText from "../../../components/HeadlineText";
+import CaptionText from "../../../components/texts/CaptionText";
+import HeadlineText from "../../../components/texts/HeadlineText";
 import { Spacing } from "../../../constants/dimension";
 import { ChainContext } from "../../../contexts/ChainContext";
 import preset from "../../../styles/preset";

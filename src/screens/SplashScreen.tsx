@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import { NetInfo } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
 
 import Alice from "@alice-finance/alice.js/dist";
@@ -13,52 +14,48 @@ import { EMPTY_MNEMONIC } from "../constants/bip39";
 import { AssetContext } from "../contexts/AssetContext";
 import { ChainContext } from "../contexts/ChainContext";
 import { SavingsContext } from "../contexts/SavingsContext";
-import useAssetBalancesUpdater from "../hooks/useAssetBalancesUpdater";
 import useUpdateChecker from "../hooks/useUpdateChecker";
 import { getGasPrice } from "../utils/ether-gas-utils";
 import { mapAccounts } from "../utils/loom-utils";
 import Sentry from "../utils/Sentry";
 
 const SplashScreen = () => {
-    const { load, onError, onFinish } = useLoader();
+    const { navigate } = useNavigation();
+    const { load } = useLoader();
+    const onFinish = () => {
+        navigate("Main");
+        ExpoSplashScreen.hide();
+    };
+    const onError = () => navigate("NotConnected");
     return <AppLoading startAsync={load} onFinish={onFinish} onError={onError} />;
-};
-
-const trackAppStart = (ethereumAddress, plasmaAddress) => {
-    Sentry.setTrackingInfo(ethereumAddress, plasmaAddress);
-    Sentry.track(Sentry.trackingTopics.APP_START);
 };
 
 const useLoader = () => {
     const { setMnemonic, setEthereumChain, setLoomChain } = useContext(ChainContext);
     const { setAssets } = useContext(AssetContext);
     const { setDecimals, setAsset } = useContext(SavingsContext);
-    const { navigate } = useNavigation();
-    const { update: updateAssetBalances } = useAssetBalancesUpdater();
     const { checkForUpdate } = useUpdateChecker();
     const load = async () => {
         ExpoSplashScreen.preventAutoHide();
         await loadFonts();
         await loadResources();
+        await throwIfNotConnected();
         const { mnemonic, loomChain, ethereumChain } = await loadChainContext();
         setMnemonic(mnemonic);
         setLoomChain(loomChain);
         setEthereumChain(ethereumChain);
-        trackAppStart(ethereumChain.getAddress().toLocalAddressString(), loomChain.getAddress().toLocalAddressString());
         // Patch getGasPrice function
         ethereumChain.getProvider().getGasPrice = getGasPrice;
+
         const assets = await loomChain.getERC20AssetsAsync();
         const { asset, decimals } = await loadSavingsContext(loomChain, assets);
         setAsset(asset!);
         setDecimals(decimals);
         setAssets(assets);
-        await updateAssetBalances();
         checkForUpdate();
-        navigate("Main");
+        trackAppStart(ethereumChain, loomChain);
     };
-    const onFinish = () => ExpoSplashScreen.hide();
-    const onError = () => navigate("Start");
-    return { load, onError, onFinish };
+    return { load };
 };
 
 const loadFonts = (): Promise<void> => {
@@ -77,12 +74,30 @@ const loadFonts = (): Promise<void> => {
 };
 
 const loadResources = (): Promise<void[]> => {
-    const images = [require("../assets/icon.png"), require("../assets/rabbit.jpg")];
+    const images = [
+        require("../assets/not-connected.jpg"),
+        require("../assets/icon.png"),
+        require("../assets/rabbit.jpg")
+    ];
     return Promise.all(
         images.map(image => {
             return Asset.fromModule(image).downloadAsync();
         })
     );
+};
+
+const throwIfNotConnected = async () => {
+    if (!(await NetInfo.isConnected.fetch())) {
+        throw new Error("Connectivity Error");
+    }
+};
+
+const trackAppStart = (ethereumChain, loomChain) => {
+    Sentry.setTrackingInfo(
+        ethereumChain.getAddress().toLocalAddressString(),
+        loomChain.getAddress().toLocalAddressString()
+    );
+    Sentry.track(Sentry.trackingTopics.APP_START);
 };
 
 const loadChainContext = async () => {

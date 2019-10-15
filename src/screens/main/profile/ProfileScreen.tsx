@@ -1,12 +1,12 @@
 import React, { useCallback, useContext, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Clipboard, View } from "react-native";
+import { Clipboard } from "react-native";
 import { useNavigation } from "react-navigation-hooks";
-
 import { Linking } from "expo";
-import { Body, Container, Icon, ListItem, Text } from "native-base";
+import { Body, Container, Content, Icon, ListItem, Text } from "native-base";
 import app from "../../../../app.json";
-import TitleText from "../../../components/TitleText";
+import TitleText from "../../../components/texts/TitleText";
+import ProfileIcon from "../../../components/ProfileIcon";
 import { Spacing } from "../../../constants/dimension";
 import { ChainContext } from "../../../contexts/ChainContext";
 import useBackupSeedPhraseDialog from "../../../hooks/useBackupSeedPhraseDialog";
@@ -17,19 +17,20 @@ const ProfileScreen = () => {
     const { isReadOnly } = useContext(ChainContext);
     return (
         <Container>
-            <View>
+            <Content>
                 <TitleText>{t("myProfile")}</TitleText>
                 {isReadOnly && <CreateWalletItem />}
-                <CustomerSupportItem />
                 {!isReadOnly && (
                     <>
+                        <MyProfileIconItem />
                         <MyAddressItem />
                         <BackUpSeedPhraseItem />
                         <ResetAccountItem />
                     </>
                 )}
+                <CustomerSupportItem />
                 <AppVersionItem />
-            </View>
+            </Content>
         </Container>
     );
 };
@@ -61,6 +62,12 @@ const CustomerSupportItem = () => {
             onPress={onPressCustomerSupport}
         />
     );
+};
+
+const MyProfileIconItem = () => {
+    const { loomChain } = useContext(ChainContext);
+    const address = loomChain!.getAddress().toLocalAddressString();
+    return <ProfileIcon address={address} width={120} height={120} style={{marginLeft: Spacing.normal}}/>;
 };
 
 const MyAddressItem = () => {
