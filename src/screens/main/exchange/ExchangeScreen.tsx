@@ -16,10 +16,10 @@ export class Exchange {
 }
 
 const items = [
-    new Exchange("Upxide", "KRW", "https://www.upxide.com/", "https://www.upxide.com/exchange/KRW_DAI"),
-    new Exchange("Coinbase", "USD", "https://www.coinbase.com", "https://www.coinbase.com/price/dai"),
-    new Exchange("Yobit", "USD", "https://yobit.net", "https://yobit.net/en/trade/DAI/USD"),
-    new Exchange("Bibox", "ETH", "https://www.bibox.com", "https://www.bibox.com/exchange?coinPair=ETH_DAI")
+    new Exchange("Upxide", "KRW", "https://www.upxide.com/", "https://www.upxide.com/exchange/KRW_SAI"),
+    new Exchange("Coinbase", "USD", "https://www.coinbase.com", "https://www.coinbase.com/price/SAI"),
+    new Exchange("Yobit", "USD", "https://yobit.net", "https://yobit.net/en/trade/SAI/USD"),
+    new Exchange("Bibox", "ETH", "https://www.bibox.com", "https://www.bibox.com/exchange?coinPair=ETH_SAI")
 ];
 
 const ExchangeScreen = () => {
@@ -57,7 +57,7 @@ const ItemView = ({ exchange }: { exchange: Exchange }) => {
             </Left>
             <Body>
                 <Text style={[preset.fontSize20, preset.fontWeightBold]}>{exchange.name}</Text>
-                <Text note={true}>DAI ↔ {exchange.market}</Text>
+                <Text note={true}>SAI ↔ {exchange.market}</Text>
             </Body>
             <Icon type="MaterialIcons" name="chevron-right" style={preset.colorPrimary} />
         </ListItem>

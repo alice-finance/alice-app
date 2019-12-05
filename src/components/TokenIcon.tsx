@@ -10,7 +10,6 @@ interface TokenIconProps extends ViewProps {
 }
 
 const TokenIcon: React.FunctionComponent<TokenIconProps> = ({ address, width, height, style }) => {
-    address = address && address.toString().toLowerCase();
     const [loaded, setLoaded] = useState(false);
     const onLoad = useCallback(() => setLoaded(true), [loaded]);
     const uri =

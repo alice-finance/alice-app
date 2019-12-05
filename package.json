@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@alice-finance/alice-proxies": "^1.0.1",
-    "@alice-finance/alice.js": "1.1.7",
+    "@alice-finance/alice.js": "1.1.8",
     "@alice-finance/money-market": "^0.1.9",
     "@alice-finance/token": "^0.9.11",
     "@expo/vector-icons": "^10.0.0",

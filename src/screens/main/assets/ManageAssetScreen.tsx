@@ -24,18 +24,8 @@ const ManageAssetScreen = () => {
     const { push, getParam } = useNavigation();
     const { isFocused } = useFocusState();
     const asset: ERC20Asset = getParam("asset");
-    const { ethereumChain } = useContext(ChainContext);
     const [] = useState(false);
-    const { getBalance } = useContext(BalancesContext);
-    const { blockNumber, activateListener, deactivateListener } = useEthereumBlockNumberListener();
-    const balance = getBalance(asset.loomAddress);
-    const { items, refreshLogs } = useLogRefresher(asset);
-    const renderItem = ({ item }) => <TransactionLogListItem asset={asset} item={item} blockNumber={blockNumber} />;
-    useEffect(() => {
-        if (isFocused && ethereumChain != null) {
-            refreshLogs();
-        }
-    }, [isFocused, ethereumChain]);
+    const transferable = !asset.loomAddress.isZero();
 
     if (asset) {
         return (
@@ -61,38 +51,10 @@ const ManageAssetScreen = () => {
                             <Text>{t("send")}</Text>
                         </Button>
                     </View>
-                    <HeadlineText aboveText={true}>{t("myAssetsInAliceNetwork")}</HeadlineText>
-                    <CaptionText>{t("myAssetsInAliceNetwork.description")}</CaptionText>
-                    <View
-                        style={[
-                            preset.alignCenter,
-                            preset.flexDirectionColumn,
-                            preset.alignItemsCenter,
-                            preset.marginTopLarge,
-                            preset.marginBottomNormal
-                        ]}>
-                        <BalanceView asset={asset} balance={balance} />
-                    </View>
-                    <Button
-                        primary={true}
-                        rounded={true}
-                        transparent={true}
-                        iconRight={true}
-                        style={preset.alignFlexEnd}
-                        onPress={useCallback(() => push("ManageDeposits", { asset }), [asset])}>
-                        <Text style={{ paddingRight: 0 }}>{t("manageAssetsInAliceNetwork")}</Text>
-                        <Icon type={"MaterialIcons"} name={"keyboard-arrow-right"} />
-                    </Button>
-                    <HeadlineText aboveText={true}>{t("latestTransactions")}</HeadlineText>
-                    {items ? (
-                        <FlatList
-                            data={items.slice(0, 5)}
-                            keyExtractor={defaultKeyExtractor}
-                            renderItem={renderItem}
-                            ListEmptyComponent={<EmptyView />}
-                        />
+                    {transferable ? (
+                        <TransferableAssetView asset={asset} isFocused={isFocused} />
                     ) : (
-                        <Spinner compact={true} />
+                        <NotTransferableAssetView />
                     )}
                 </Content>
             </Container>
@@ -100,6 +62,72 @@ const ManageAssetScreen = () => {
     } else {
         return <Container />;
     }
+};
+
+interface TransferableAssetViewProps {
+    asset: ERC20Asset;
+    isFocused: boolean;
+}
+
+const TransferableAssetView = ({ asset, isFocused }: TransferableAssetViewProps) => {
+    const { push } = useNavigation();
+    const { t } = useTranslation(["asset", "profile", "common"]);
+    const { getBalance } = useContext(BalancesContext);
+    const balance = getBalance(asset.loomAddress);
+    return (
+        <View>
+            <HeadlineText aboveText={true}>{t("myAssetsInAliceNetwork")}</HeadlineText>
+            <CaptionText>{t("myAssetsInAliceNetwork.description")}</CaptionText>
+            <View style={balanceWrapperStyle}>
+                <BalanceView asset={asset} balance={balance} />
+            </View>
+            <Button
+                primary={true}
+                rounded={true}
+                transparent={true}
+                iconRight={true}
+                style={preset.alignFlexEnd}
+                onPress={useCallback(() => push("ManageDeposits", { asset }), [asset])}>
+                <Text style={{ paddingRight: 0 }}>{t("manageAssetsInAliceNetwork")}</Text>
+                <Icon type={"MaterialIcons"} name={"keyboard-arrow-right"} />
+            </Button>
+            <HeadlineText aboveText={true}>{t("latestTransactions")}</HeadlineText>
+            <LogsView asset={asset} isFocused={isFocused} />
+        </View>
+    );
+};
+
+const NotTransferableAssetView = () => {
+    const { t } = useTranslation(["asset", "profile", "common"]);
+    return (
+        <View>
+            <HeadlineText aboveText={true}>{t("assetNotTransferable")}</HeadlineText>
+            <CaptionText>{t("assetNotTransferable.description")}</CaptionText>
+        </View>
+    );
+};
+
+const LogsView = ({ asset, isFocused }: { asset: ERC20Asset; isFocused: boolean }) => {
+    const { ethereumChain } = useContext(ChainContext);
+    const { blockNumber } = useEthereumBlockNumberListener();
+    const { items, refreshLogs } = useLogRefresher(asset);
+    const renderItem = ({ item }) => <TransactionLogListItem asset={asset} item={item} blockNumber={blockNumber} />;
+    useEffect(() => {
+        if (isFocused && ethereumChain != null) {
+            refreshLogs();
+        }
+    }, [isFocused, ethereumChain]);
+
+    return items ? (
+        <FlatList
+            data={items.slice(0, 5)}
+            keyExtractor={defaultKeyExtractor}
+            renderItem={renderItem}
+            ListEmptyComponent={<EmptyView />}
+        />
+    ) : (
+        <Spinner compact={true} />
+    );
 };
 
 const TokenView = ({ asset }: { asset: ERC20Asset }) => {
@@ -120,5 +148,13 @@ const TokenView = ({ asset }: { asset: ERC20Asset }) => {
         </View>
     );
 };
+
+const balanceWrapperStyle = [
+    preset.alignCenter,
+    preset.flexDirectionColumn,
+    preset.alignItemsCenter,
+    preset.marginTopLarge,
+    preset.marginBottomNormal
+];
 
 export default ManageAssetScreen;
