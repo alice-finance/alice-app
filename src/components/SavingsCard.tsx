@@ -39,7 +39,7 @@ const SavingsCard = () => {
                     {!isReadOnly && <Column label={t("mySavings")} value={myTotalBalance} />}
                     <Column label={t("apr")} value={apr} small={!isReadOnly} />
                 </CardItem>
-                <Footer refreshing={refreshing} />
+                <Footer />
             </Card>
         </View>
     );
@@ -54,13 +54,13 @@ const Column = ({ label, value, small = false }) => (
     </View>
 );
 
-const Footer = ({ refreshing }) => {
+const Footer = ({}) => {
     return (
         <CardItem style={preset.marginBottomSmall}>
             <Body style={preset.alignItemsFlexEnd}>
                 <View style={preset.flexDirectionRow}>
                     <LeaderboardButton />
-                    <StartSavingButton refreshing={refreshing} />
+                    <StartSavingButton />
                 </View>
             </Body>
         </CardItem>
@@ -81,7 +81,7 @@ const LeaderboardButton = () => {
     );
 };
 
-const StartSavingButton = ({ refreshing }) => {
+const StartSavingButton = ({}) => {
     const { t } = useTranslation("finance");
     const { push } = useNavigation();
     const { isReadOnly } = useContext(ChainContext);
@@ -90,7 +90,7 @@ const StartSavingButton = ({ refreshing }) => {
         push(isReadOnly ? "Start" : "NewSavings");
     }, []);
     return (
-        <Button primary={true} rounded={true} disabled={refreshing} onPress={onStart} style={preset.marginLeftSmall}>
+        <Button primary={true} rounded={true} disabled={true} onPress={onStart} style={preset.marginLeftSmall}>
             <Text style={preset.fontSize16}>{t("startSaving")}</Text>
         </Button>
     );

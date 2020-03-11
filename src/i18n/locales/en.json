@@ -245,5 +245,10 @@
         "error": "Error",
         "fetchInfoError": "Unable to get update information.",
         "latestVersion": "Alice is up to date"
+    },
+    "closing": {
+        "title": "We are closing",
+        "description":"Alice Finance will not be available after March 31, 2020",
+        "button": "Learn More"
     }
 }

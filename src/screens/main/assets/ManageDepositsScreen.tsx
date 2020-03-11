@@ -156,6 +156,7 @@ const ManageDepositsScreen = () => {
                     buttonBordered={false}
                     buttonText={t("deposit")}
                     onPressButton={useCallback(() => push("Deposit", { asset }), [asset])}
+                    disabled={true}
                 />
                 <BalanceCard
                     title={t("aliceNetwork")}
@@ -185,7 +186,16 @@ const ManageDepositsScreen = () => {
     );
 };
 
-const BalanceCard = ({ title, description, balance, asset, buttonText, buttonBordered, onPressButton }) => {
+const BalanceCard = ({
+    title,
+    description,
+    balance,
+    asset,
+    buttonText,
+    buttonBordered,
+    onPressButton,
+    disabled = false
+}) => {
     return (
         <View style={[preset.marginNormal]}>
             <Card>
@@ -211,6 +221,7 @@ const BalanceCard = ({ title, description, balance, asset, buttonText, buttonBor
                             bordered={buttonBordered}
                             rounded={true}
                             onPress={onPressButton}
+                            disabled={disabled}
                             style={[preset.alignFlexEnd, preset.marginSmall]}>
                             <Text>{buttonText}</Text>
                         </Button>

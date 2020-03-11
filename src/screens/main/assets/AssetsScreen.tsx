@@ -7,7 +7,7 @@ import { defaultKeyExtractor } from "../../../utils/react-native-utils";
 import ERC20Asset from "@alice-finance/alice.js/dist/ERC20Asset";
 import { Body, Button, Container, Icon, ListItem } from "native-base";
 import BalanceView from "../../../components/BalanceView";
-import CaptionText from "../../../components/CaptionText";
+import ClosingView from "../../../components/ClosingView";
 import TitleText from "../../../components/TitleText";
 import TokenIcon from "../../../components/TokenIcon";
 import { Spacing } from "../../../constants/dimension";
@@ -122,8 +122,9 @@ const ListHeader = () => {
     const { t } = useTranslation("asset");
     return (
         <View>
+            <ClosingView />
             <TitleText aboveText={true}>{t("myAssets")}</TitleText>
-            <CaptionText style={preset.marginBottomLarge}>{t("myAssets.description")}</CaptionText>
+            {/*<CaptionText style={preset.marginBottomLarge}>{t("myAssets.description")}</CaptionText>*/}
         </View>
     );
 };

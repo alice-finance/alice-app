@@ -7,17 +7,14 @@ import { defaultKeyExtractor } from "../../../utils/react-native-utils";
 
 import { toBigNumber } from "@alice-finance/alice.js/dist/utils/big-number-utils";
 import { Linking } from "expo";
-import { Body, Button, Container, Content, Icon, ListItem, Text } from "native-base";
+import { Body, Button, Card, CardItem, Container, Content, Icon, Left, ListItem, Text } from "native-base";
 import platform from "../../../../native-base-theme/variables/platform";
-import AliceIFOView from "../../../components/AliceIFOView";
-import CaptionText from "../../../components/CaptionText";
+import ClosingView from "../../../components/ClosingView";
 import EmptyView from "../../../components/EmptyView";
 import MomentText from "../../../components/MomentText";
 import SavingRecordCard from "../../../components/SavingRecordCard";
-import SavingsCard from "../../../components/SavingsCard";
 import Spinner from "../../../components/Spinner";
 import SubtitleText from "../../../components/SubtitleText";
-import TitleText from "../../../components/TitleText";
 import TokenIcon from "../../../components/TokenIcon";
 import { AssetContext } from "../../../contexts/AssetContext";
 import { ChainContext } from "../../../contexts/ChainContext";
@@ -49,10 +46,12 @@ const FinanceScreen = () => {
         <Container>
             <Content>
                 <View>
-                    {(isReadOnly || (myTotalBalance && myTotalBalance.isZero())) && <AliceIFOView />}
-                    <TitleText aboveText={true}>{t("savings")}</TitleText>
-                    <CaptionText style={preset.marginBottomNormal}>{t("savings.description")}</CaptionText>
-                    <SavingsCard />
+                    <ClosingView />
+
+                    {/*{(isReadOnly || (myTotalBalance && myTotalBalance.isZero())) && <AliceIFOView />}*/}
+                    {/*<TitleText aboveText={true}>{t("savings")}</TitleText>*/}
+                    {/*<CaptionText style={preset.marginBottomNormal}>{t("savings.description")}</CaptionText>*/}
+                    {/*<SavingsCard />*/}
                     {!isReadOnly && <MySavings />}
                     <RecentSavings />
                     <RecentClaims asset={alice} />

@@ -154,7 +154,7 @@ const Actions = ({ record, apr }) => {
         <View style={preset.marginBottomTiny}>
             <CardItem>
                 <Left />
-                <Button primary={true} rounded={true} transparent={true} small={true} onPress={openDialog}>
+                <Button primary={true} rounded={true} transparent={false} small={true} onPress={openDialog}>
                     <Text style={{ paddingRight: 12 }}>{t("withdrawSavings")}</Text>
                 </Button>
             </CardItem>
