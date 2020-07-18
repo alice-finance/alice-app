@@ -28,7 +28,7 @@
     "hdkey": "^1.1.1",
     "i18next": "^15.1.2",
     "identicon.js": "^2.3.3",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.19",
     "loom-js": "1.54.2",
     "moment": "^2.24.0",
     "native-base": "2.12.1",
