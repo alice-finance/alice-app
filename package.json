@@ -30,7 +30,7 @@
     "identicon.js": "^2.3.3",
     "lodash": "^4.17.11",
     "loom-js": "1.54.2",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "native-base": "2.12.1",
     "node-libs-react-native": "^1.0.3",
     "prop-types": "latest",
